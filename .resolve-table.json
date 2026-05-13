@@ -1,0 +1,5 @@
+{
+    "src/client/Roact/Applications/HUD/Frames/ActiveEffects.lua": "use-source",
+    "src/server/Services/DataService.lua": "use-source",
+    "src/ServerStorage/ServerConfig.lua": "skip"
+}
