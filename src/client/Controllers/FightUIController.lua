@@ -227,6 +227,69 @@ function FightUIController:PlayKickResultEffect(result: string)
 	end
 end
 
+function FightUIController:ShowPenaltyProgress(round: number)
+	local penaltyProgress = self._fightHud:FindFirstChild("PenaltyProgress")
+	if not penaltyProgress then
+		return
+	end
+
+	local goals = penaltyProgress:FindFirstChild("Goals")
+	if not goals then
+		return
+	end
+
+	local questText = penaltyProgress:FindFirstChild("QuestText")
+	if not questText then
+		return
+	end
+
+	for i = 1, (round - 1) do
+		local goal = goals:FindFirstChild(tostring(i))
+		if goal then
+			if goal:FindFirstChild("Success") then
+				goal.Success.Visible = true
+			end
+		end
+	end
+
+	questText.Text = "Score 5 penalties in a row! (" .. (round - 1) .. "/5)"
+
+	penaltyProgress.Visible = true
+end
+
+function FightUIController:HidePenaltyProgress()
+	local penaltyProgress = self._fightHud:FindFirstChild("PenaltyProgress")
+	if not penaltyProgress then
+		return
+	end
+
+	penaltyProgress.Visible = false
+
+	local goals = penaltyProgress:FindFirstChild("Goals")
+	if not goals then
+		return
+	end
+
+	local questText = penaltyProgress:FindFirstChild("QuestText")
+	if not questText then
+		return
+	end
+
+	for i = 1, 5 do
+		local goal = goals:FindFirstChild(tostring(i))
+		if goal then
+			if goal:FindFirstChild("Success") then
+				goal.Success.Visible = false
+			end
+			if goal:FindFirstChild("Fail") then
+				goal.Fail.Visible = false
+			end
+		end
+	end
+
+	questText.Text = "Score 5 penalties in a row! (0/5)"
+end
+
 -- #endregion
 
 -- #region Boss Intro Functions

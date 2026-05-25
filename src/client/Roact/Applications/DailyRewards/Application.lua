@@ -26,11 +26,14 @@ local WeekFrame = require(Frames.WeekFrame)
 -- Constants
 local FramesConstants = require(StarterPlayer.StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
 
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
+
 -- Controllers
 local DataCacheController = Knit.GetController("DataCacheController")
 local DailyRewardsController = Knit.GetController("DailyRewardsController")
 local MonetizationController = Knit.GetController("MonetizationController")
-local UIController = Knit.GetController("UIController")
 
 -- UI
 local UI = DataCacheController:GetFile("Images")
@@ -204,87 +207,16 @@ function DailyRewards(_, hooks)
 		Visible = UIReducer.CurrentUI == FramesConstants.DailyRewards,
 		ZIndex = 1,
 	}, {
-		Popup = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			Position = UDim2.fromScale(0.5, 0.5),
-			BorderColor3 = Color3.fromHex("000000"),
-			ZIndex = 2,
-			BorderSizePixel = 0,
-			Size = UDim2.fromScale(0.7, 0.7),
+		Content = Blue_Background({
+			title = "Daily Rewards",
+			titleIcon = UI.Rewards or "rbxassetid://72857982925608",
+			size = UDim2.fromScale(0.7, 0.7),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1.6,
+			condition = UIReducer.CurrentUI == FramesConstants.DailyRewards,
+			align = Enum.TextXAlignment.Left,
+			hooks = hooks,
 		}, {
-			Title = RewardsTitle(),
-
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {
-				AspectRatio = 1.6,
-			}),
-
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-
-			UICorner = Roact.createElement("UICorner", {}),
-
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Close = Roact.createElement("ImageButton", {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.94, 0.08),
-				BorderColor3 = Color3.fromHex("000000"),
-				Size = UDim2.fromScale(0.09, 0.09),
-				BorderSizePixel = 0,
-				BackgroundColor3 = Color3.fromHex("ffffff"),
-				ZIndex = 10,
-
-				[Roact.Event.MouseButton1Click] = function()
-					UIController:HideFrame()
-				end,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("ff362f")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("8d1414")),
-					}),
-					Rotation = 90,
-				}),
-
-				UICorner = Roact.createElement("UICorner", {
-					CornerRadius = UDim.new(0, 6),
-				}),
-
-				UIStroke = Roact.createElement("UIStroke", {
-					Color = Color3.fromHex("8f0000"),
-					Thickness = 3,
-				}),
-
-				Icon = Roact.createElement("ImageLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					ScaleType = Enum.ScaleType.Fit,
-					BackgroundTransparency = 1,
-					Position = UDim2.fromScale(0.5, 0.5),
-					BackgroundColor3 = Color3.fromHex("ffffff"),
-					ZIndex = 11,
-					Image = "rbxassetid://120045489184571",
-					Size = UDim2.fromScale(0.5, 0.5),
-				}),
-
-				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-			}),
 
 			Container = Roact.createElement("ScrollingFrame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),

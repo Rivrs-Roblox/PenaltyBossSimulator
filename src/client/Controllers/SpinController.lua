@@ -48,7 +48,7 @@ local SpinController = Knit.CreateController({
 --|| Functions ||--
 function SpinController:Spin(wheel: string)
 	local Wheel =
-		Players.LocalPlayer.PlayerGui:FindFirstChild("GameScreenGui").Spins.Popup.Container[`{wheel}`].WheelHolder.Wheel
+		Players.LocalPlayer.PlayerGui:FindFirstChild("GameScreenGui").Spins.Content.Container[`{wheel}`].WheelHolder.Wheel
 	if not Wheel then
 		return NotificationController:Notify({
 			text = self.Template.Messages.Notifications.Wheel_Not_Found(wheel),

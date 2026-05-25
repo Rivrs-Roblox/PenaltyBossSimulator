@@ -26,9 +26,9 @@ return function(props, items: table)
 	}, {
 		Grid = Roact.createElement("UIGridLayout", {
 			SortOrder = Enum.SortOrder.LayoutOrder,
-			CellSize = UDim2.fromScale(0.47, 0.125),
+			CellSize = UDim2.fromScale(0.46, 0.14),
 			FillDirectionMaxCells = 2,
-			CellPadding = UDim2.fromScale(0.02, 0.015),
+			CellPadding = UDim2.fromScale(0.03, 0),
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		}),
 		Roact.createFragment(items),

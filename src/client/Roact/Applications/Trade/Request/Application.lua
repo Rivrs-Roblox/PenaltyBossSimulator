@@ -6,12 +6,17 @@
 
 -- Game Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterPlayer = game:GetService("StarterPlayer")
 
 -- Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Roact = require(ReplicatedStorage.Packages.roact)
 local RoactHooks = require(ReplicatedStorage.Packages.hooks)
 local RoduxHooks = require(ReplicatedStorage.Packages.roduxhooks)
+
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
 
 -- Controllers
 local TradeController = Knit.GetController("TradeController")
@@ -124,43 +129,17 @@ function Trading(_, hooks)
         BackgroundTransparency = 1,
         ZIndex = 2,
     }, {
-        Content = Roact.createElement("Frame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = Color3.fromHex("ffffff"),
-            Position = UDim2.fromScale(0.5, 0.461),
-            BorderSizePixel = 0,
-            Size = UDim2.fromScale(0.5, 0.4),
-            Visible = TradeReducer.IncomingRequest ~= nil and TradeReducer.Trading == false,
-            ZIndex = 2,
+        Content = Blue_Background({
+            title = "Hey!",
+            titleIcon = TITLE_ICON,
+            size = UDim2.fromScale(0.5, 0.4),
+            pos = UDim2.fromScale(0.5, 0.461),
+            ratio = 2.2,
+            condition = TradeReducer.IncomingRequest ~= nil and TradeReducer.Trading == false,
+            align = Enum.TextXAlignment.Left,
+            hooks = hooks,
+            showClose = false,
         }, {
-            Ratio = Roact.createElement("UIAspectRatioConstraint", {
-                AspectRatio = 2.2,
-            }),
-
-            UICorner = Roact.createElement("UICorner", {}),
-
-            UIGradient = Roact.createElement("UIGradient", {
-                Color = ColorSequence.new({
-                    ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-                    ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-                }),
-                Rotation = 90,
-            }),
-
-            UIStroke = Roact.createElement("UIStroke", {
-                Color = Color3.fromHex("ffffff"),
-                Thickness = 5,
-            }, {
-                UIGradient = Roact.createElement("UIGradient", {
-                    Color = ColorSequence.new({
-                        ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-                        ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-                    }),
-                    Rotation = 90,
-                }),
-            }),
-
-            Title = TitleBar(),
 
             InfoText = Roact.createElement("TextLabel", {
                 TextWrapped = true,

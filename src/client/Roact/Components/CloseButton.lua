@@ -71,11 +71,11 @@ return function(action, hooks, params)
 			Rotation = 90,
 		}),
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
 			Color = Color3.fromHex("8f0000"),
-			Thickness = 3,
+			Thickness = 2,
 		}),
 		Icon = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),

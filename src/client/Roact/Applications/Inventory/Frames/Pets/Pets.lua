@@ -51,10 +51,7 @@ local COUNTER_ICON = "rbxassetid://103901141281428"
 local PLUS_ICON = "rbxassetid://98999428594161"
 
 local function getPetIcon(images, petName: string)
-	return images[petName]
-		or images[petName:gsub("Gold ", ""):gsub("Rainbow ", "")]
-		or images.Pets
-		or ""
+	return images[petName] or images[petName:gsub("Gold ", ""):gsub("Rainbow ", "")] or images.Pets or ""
 end
 
 local function getPetPower(petsData, petsReducer, petName: string)
@@ -123,7 +120,7 @@ local function createActionButton(params: table)
 		UICorner = Roact.createElement("UICorner", {
 			CornerRadius = UDim.new(0, 6),
 		}),
-		
+
 		UIStroke = Roact.createElement("UIStroke", {
 			Color = params.strokeColor,
 			Thickness = 2,
@@ -231,7 +228,7 @@ local function createBottomBar(params: table)
 		DeleteButton = createActionButton({
 			order = 2,
 			text = params.isDeleting and "Confirm" or "Delete",
-			strokeColor = Color3.fromHex("da5b5d"),
+			strokeColor = Color3.fromRGB(94, 39, 40),
 			gradientTop = Color3.fromHex("ff3134"),
 			gradientBottom = Color3.fromHex("822b2d"),
 			action = params.onDelete,
@@ -241,14 +238,14 @@ local function createBottomBar(params: table)
 			LayoutOrder = 1,
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			ZIndex = 10,
-			BackgroundColor3 = Color3.fromHex("3b65a3"),
+			BackgroundColor3 = Color3.fromRGB(37, 65, 103),
 			Size = UDim2.fromScale(0.57, 1),
 		}, {
 			UICorner = Roact.createElement("UICorner", {
 				CornerRadius = UDim.new(0, 6),
 			}),
 			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("6f88e1"),
+				Color = Color3.fromRGB(29, 36, 59),
 				Thickness = 2,
 			}),
 			Icon = Roact.createElement("ImageLabel", {
@@ -299,7 +296,7 @@ local function createBottomBar(params: table)
 		RightButton = createActionButton({
 			order = 3,
 			text = params.isDeleting and "Cancel" or "Equip Best",
-			strokeColor = Color3.fromHex("04da01"),
+			strokeColor = Color3.fromRGB(2, 83, 0),
 			gradientTop = Color3.fromHex("00d921"),
 			gradientBottom = Color3.fromHex("0e820e"),
 			action = params.onRight,

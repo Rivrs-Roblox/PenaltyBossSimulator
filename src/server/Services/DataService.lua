@@ -409,7 +409,9 @@ function DataService:ChangeValue(player: Player, key: string, value: number, can
 		self.Client[TYPES[key]]:Fire(player, value)
 
 		if key == "Money2" then
-			self.Client.PowerUpdated:Fire(player, data.Money2)
+			if not data.TutorialComplete then
+				self.Client.PowerUpdated:Fire(player, data.Money2)
+			end
 			self.PowerUpdatedSignal:Fire(player, data.Money2)
 		end
 	end) -- Send information to client to update stores

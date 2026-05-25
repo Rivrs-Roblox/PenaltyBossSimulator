@@ -31,6 +31,20 @@ local function formatValue(value)
 	return if type(value) == "number" then FormatNumber(value) else value
 end
 
+local ICON_MAP = {
+	Rebirth = "rbxassetid://106303260347906",
+	Money2 = "Money2_NoStroke",
+}
+
+local function getIcon(name: string)
+	local icon = ICON_MAP[name]
+	if icon and string.sub(icon, 1, 10) == "rbxassetid" then
+		return icon
+	end
+
+	return UI[icon or name]
+end
+
 -- Row
 return function(params: {})
 	setmetatable(params, {
@@ -41,13 +55,12 @@ return function(params: {})
 			pos = UDim2.fromScale(0.5, 0.5),
 			size = UDim2.fromScale(1, 0.2),
 			layoutOrder = 1,
-		}
+		},
 	})
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 0.85,
-		BackgroundColor3 = Color3.fromHex("ffffff"),
+		BackgroundColor3 = Color3.fromHex("3d557d"),
 		BorderSizePixel = 0,
 		Position = params.pos,
 		Size = params.size,
@@ -55,13 +68,13 @@ return function(params: {})
 		ZIndex = 3,
 	}, {
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 
 		CurrentIcon = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Image = UI[params.name],
+			Image = getIcon(params.name),
 			Position = UDim2.fromScale(0.07, 0.5),
 			ScaleType = Enum.ScaleType.Fit,
 			Size = UDim2.fromScale(0.9, 0.9),
@@ -73,7 +86,7 @@ return function(params: {})
 		CurrentText = Text({
 			text = formatValue(params.currentValue),
 			color = Color3.fromHex("ffffff"),
-			position = UDim2.fromScale(0.29, 0.5),
+			position = UDim2.fromScale(0.27, 0.5),
 			size = UDim2.fromScale(0.283, 0.6),
 			anchorPoint = Vector2.new(0.5, 0.5),
 			align = Enum.TextXAlignment.Left,
@@ -85,9 +98,9 @@ return function(params: {})
 		Arrow = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Image = "rbxassetid://112270660846602",
-			ImageTransparency = 0.7,
-			Position = UDim2.fromScale(0.5, 0.5),
+			Image = "rbxassetid://101704422195260",
+			ImageColor3 = Color3.fromHex("1aff00"),
+			Position = UDim2.fromScale(0.45, 0.5),
 			ScaleType = Enum.ScaleType.Fit,
 			Size = UDim2.fromScale(0.6, 0.6),
 			ZIndex = 4,
@@ -98,7 +111,7 @@ return function(params: {})
 		NextIcon = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Image = UI[params.name],
+			Image = getIcon(params.name),
 			Position = UDim2.fromScale(0.604, 0.5),
 			ScaleType = Enum.ScaleType.Fit,
 			Size = UDim2.fromScale(0.9, 0.9),
@@ -109,7 +122,7 @@ return function(params: {})
 
 		NextText = Text({
 			text = formatValue(params.nextValue),
-			color = Color3.fromHex("ffffff"),
+			color = Color3.fromHex("1aff00"),
 			position = UDim2.fromScale(0.831, 0.5),
 			size = UDim2.fromScale(0.283, 0.6),
 			anchorPoint = Vector2.new(0.5, 0.5),

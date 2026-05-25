@@ -218,6 +218,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Featured = Featured({ order = 2, hooks = hooks }),
 
@@ -229,6 +230,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Players = Players({ order = 4, hooks = hooks }),
 
@@ -240,6 +242,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Coaches = Coaches({ order = 6, hooks = hooks }),
 
@@ -251,6 +254,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Pets = Pets({ order = 8, hooks = hooks }),
 
@@ -263,6 +267,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Gamepasses = Gamepasses({ order = 10, hooks = hooks }, GamepassItems),
 
@@ -275,6 +280,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Wins = Wins({ order = 12, hooks = hooks }),
 
@@ -287,6 +293,7 @@ function Store(_, hooks)
 					color = Color3.fromHex("ffffff"),
 					index = 2,
 					align = Enum.TextXAlignment.Left,
+					stroke = 2,
 				}),
 				Boosts = Boosts({ order = 14, hooks = hooks }),
 

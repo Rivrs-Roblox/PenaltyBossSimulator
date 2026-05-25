@@ -18,6 +18,31 @@ local StarterPlayerScripts = StarterPlayer.StarterPlayerScripts
 local Components = StarterPlayerScripts.Client.Roact.Components
 local Text = require(Components.Text)
 
+local themeConfig = {
+	["Purple"] = {
+		strokeGradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("6e06ff")),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)),
+		}),
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("aa7afd")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("6731b9")),
+		}),
+		effect = Color3.fromRGB(213, 140, 255),
+	},
+	["Gold"] = {
+		strokeGradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("ff0000")),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)),
+		}),
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("ffa231")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("cf2d2d")),
+		}),
+		effect = Color3.fromRGB(255, 238, 0),
+	},
+}
+
 return function(props)
 	setmetatable(props, {
 		__index = {
@@ -30,10 +55,13 @@ return function(props)
 			price1 = props.price1 or "0",
 			price3 = props.price3 or "0",
 			price8 = props.price8 or "0",
+			theme = "Purple",
 		},
 	})
 
 	local eggData = Eggs[props.eggId]
+
+	local theme = themeConfig[props.theme]
 
 	return Roact.createElement("Frame", {
 		LayoutOrder = props.order,
@@ -45,9 +73,11 @@ return function(props)
 			hooks = props.hooks,
 			eggData = eggData,
 		}),
-		UICorner = Roact.createElement("UICorner", {}),
+		UICorner = Roact.createElement("UICorner", {
+			CornerRadius = UDim.new(0, 2),
+		}),
 		Effect = Roact.createElement("ImageLabel", {
-			ImageColor3 = Color3.fromHex("ffee00"),
+			ImageColor3 = theme.effect,
 			Image = "rbxassetid://106335669168445",
 			BackgroundTransparency = 1,
 			Position = UDim2.fromScale(0.147, 0.64),
@@ -86,24 +116,29 @@ return function(props)
 			position = UDim2.fromScale(0.98, 0.05),
 			index = 5,
 			size = UDim2.fromScale(0.5, 0.12),
+			children = {
+				UIStroke = Roact.createElement("UIStroke", {
+					Color = Color3.fromHex("ffffff"),
+					Thickness = 2,
+				}, {
+					UIGradient = Roact.createElement("UIGradient", {
+						Color = theme.strokeGradient,
+						Rotation = 90,
+					}),
+				}),
+			},
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
 			Color = Color3.fromHex("ffffff"),
-			Thickness = 3,
+			Thickness = 2,
 		}, {
 			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("3442ff")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("dd2528")),
-				}),
-				Rotation = -90,
+				Color = theme.strokeGradient,
+				Rotation = 90,
 			}),
 		}),
 		UIGradient = Roact.createElement("UIGradient", {
-			Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromHex("5a39ff")),
-				ColorSequenceKeypoint.new(1, Color3.fromHex("dd0004")),
-			}),
+			Color = theme.gradient,
 			Rotation = 90,
 		}),
 		Buttons = Roact.createElement("Frame", {
@@ -111,9 +146,7 @@ return function(props)
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			BackgroundTransparency = 1,
 			Position = UDim2.fromScale(0.646, 0.96),
-			BorderColor3 = Color3.fromHex("000000"),
 			ZIndex = 4,
-			BorderSizePixel = 0,
 			Size = UDim2.fromScale(0.67, 0.17),
 		}, {
 			Buy = Roact.createElement("ImageButton", {
@@ -122,14 +155,16 @@ return function(props)
 				Size = UDim2.fromScale(0.3, 1),
 				ZIndex = 2,
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.fromHex("ffba81"),
+				BackgroundColor3 = Color3.fromRGB(55, 173, 22),
 				[Roact.Event.Activated] = function()
 					StoreController:BuyItem({ name = props.product1 })
 				end,
 			}, {
-				UICorner = Roact.createElement("UICorner", {}),
+				UICorner = Roact.createElement("UICorner", {
+					CornerRadius = UDim.new(0, 2),
+				}),
 				UIStroke = Roact.createElement("UIStroke", {
-					Color = Color3.fromHex("ffe149"),
+					Color = Color3.fromRGB(255, 255, 255),
 					Thickness = 2,
 				}),
 				PriceText = Text({
@@ -140,7 +175,7 @@ return function(props)
 					index = 3,
 					size = UDim2.fromScale(0.8, 0.6),
 					stroke = 1.5,
-					strokeColor = Color3.fromHex("a3690c"),
+					strokeColor = Color3.fromHex("000000"),
 				}),
 			}),
 			Buy3 = Roact.createElement("ImageButton", {
@@ -149,14 +184,16 @@ return function(props)
 				Size = UDim2.fromScale(0.3, 1),
 				ZIndex = 2,
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.fromHex("ffc73a"),
+				BackgroundColor3 = Color3.fromRGB(0, 238, 75),
 				[Roact.Event.Activated] = function()
 					StoreController:BuyItem({ name = props.product3 })
 				end,
 			}, {
-				UICorner = Roact.createElement("UICorner", {}),
+				UICorner = Roact.createElement("UICorner", {
+					CornerRadius = UDim.new(0, 2),
+				}),
 				UIStroke = Roact.createElement("UIStroke", {
-					Color = Color3.fromHex("fff569"),
+					Color = Color3.fromRGB(255, 255, 255),
 					Thickness = 2,
 				}),
 				PriceText = Text({
@@ -167,7 +204,7 @@ return function(props)
 					index = 3,
 					size = UDim2.fromScale(0.8, 0.6),
 					stroke = 1.5,
-					strokeColor = Color3.fromHex("a3690c"),
+					strokeColor = Color3.fromHex("000000"),
 				}),
 			}),
 			Buy8 = Roact.createElement("ImageButton", {
@@ -176,14 +213,16 @@ return function(props)
 				Size = UDim2.fromScale(0.3, 1),
 				ZIndex = 2,
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.fromHex("ff7b23"),
+				BackgroundColor3 = Color3.fromRGB(255, 200, 0),
 				[Roact.Event.Activated] = function()
 					StoreController:BuyItem({ name = props.product8 })
 				end,
 			}, {
-				UICorner = Roact.createElement("UICorner", {}),
+				UICorner = Roact.createElement("UICorner", {
+					CornerRadius = UDim.new(0, 2),
+				}),
 				UIStroke = Roact.createElement("UIStroke", {
-					Color = Color3.fromHex("ffb625"),
+					Color = Color3.fromRGB(255, 255, 255),
 					Thickness = 2,
 				}),
 				PriceText = Text({
@@ -194,7 +233,7 @@ return function(props)
 					index = 3,
 					size = UDim2.fromScale(0.8, 0.6),
 					stroke = 1.5,
-					strokeColor = Color3.fromHex("a3690c"),
+					strokeColor = Color3.fromHex("000000"),
 				}),
 			}),
 			List = Roact.createElement("UIListLayout", {

@@ -25,6 +25,7 @@ local Text = require(Components.Text)
 local DataCacheController = Knit.GetController("DataCacheController")
 local UI = DataCacheController:GetFile("Images")
 local Items = DataCacheController:GetFile("Items")
+local Template = DataCacheController:GetFile("Template")
 
 return function(hooks)
 	local InventoryReducer = RoduxHooks.useSelector(hooks, function(state)
@@ -46,7 +47,12 @@ return function(hooks)
 				name = Fruit.Name,
 				power = `x{Fruit.Number}`,
 				bg_color = Items[Fruit.Name].Color,
+				duration = Items[Fruit.Name].Duration,
 				type = "Fruit",
+				effect = "+" .. (Items[Fruit.Name].Boost * 100) .. "% " .. Items[Fruit.Name].Type
+					:gsub("Money1", Template.Economy.Money1)
+					:gsub("Money2", Template.Economy.Money2)
+					:gsub("_", " "),
 				hover = Items[Fruit.Name].Description,
 			})
 

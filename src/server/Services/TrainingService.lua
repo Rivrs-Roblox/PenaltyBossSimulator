@@ -19,6 +19,9 @@ local Helpers = ReplicatedStorage.Shared.Helpers
 local FindValue = require(Helpers.Table.FindValue)
 local FormatNumber = require(Helpers.Numbers.FormatNumber)
 
+-- Data
+local TrainingAnimationData = require(ReplicatedStorage.Shared.Data.TrainingAnimationData)
+
 local TrainingAreas
 local TrainingAreasData
 local PlayersInTraining = {}
@@ -26,6 +29,7 @@ local PlayersInTraining = {}
 local FACE_DURATION = 1
 local FACE_RESPONSIVENESS = 50
 local FACE_MAX_TORQUE = 400000
+local VIP_TRAINING_INDEX = 5
 
 local TrainingService = Knit.CreateService({
 	Name = "TrainingService",
@@ -55,10 +59,9 @@ function TrainingService.Client:CheckAvailability(player: Player, trainingArea)
 	return self.Server:CheckAvailability(player, trainingArea)
 end
 
-function TrainingService.Client:ShootTrainingBall(player: Player, trainingArea)
-	return self.Server:ShootTrainingBall(player, trainingArea)
+function TrainingService.Client:ShootTrainingBall(player: Player, trainingArea, speedMultiplier)
+	return self.Server:ShootTrainingBall(player, trainingArea, speedMultiplier)
 end
-
 
 --|| Functions ||--
 
@@ -78,6 +81,103 @@ end
 
 local function isPlayerFighting(player: Player): boolean
 	return FightService ~= nil and FightService.Sessions ~= nil and FightService.Sessions[player] ~= nil
+end
+
+local function getTrainingAnimationData(index: number)
+	return TrainingAnimationData.Areas[index] or TrainingAnimationData.Default
+end
+
+local function getKickContactTime(animData): number
+	local events = animData and animData.Events
+	local kickContact = events and events.KickContact
+	local time = kickContact and kickContact.Time
+
+	if typeof(time) == "number" then
+		return time
+	end
+
+	local defaultEvents = TrainingAnimationData.Default.Events
+	local defaultKickContact = defaultEvents and defaultEvents.KickContact
+	return (defaultKickContact and defaultKickContact.Time) or 0.3
+end
+
+local function getAnimationBaseSpeed(animData): number
+	local speed = animData and animData.Speed
+	if typeof(speed) == "number" and speed > 0 then
+		return speed
+	end
+
+	return TrainingAnimationData.Default.Speed or 1
+end
+
+local function getMaxSpeedMultiplier(animData): number
+	return tonumber(animData and animData.MaxSpeedMultiplier)
+		or tonumber(TrainingAnimationData.Default.MaxSpeedMultiplier)
+		or 3
+end
+
+local function getBallData(animData)
+	local defaultBallData = TrainingAnimationData.Default.Ball or {}
+	return (animData and animData.Ball) or defaultBallData, defaultBallData
+end
+
+local function getBallNumber(animData, key: string, fallback: number): number
+	local ballData, defaultBallData = getBallData(animData)
+	local value = ballData and ballData[key]
+	if typeof(value) == "number" then
+		return value
+	end
+
+	local defaultValue = defaultBallData and defaultBallData[key]
+	if typeof(defaultValue) == "number" then
+		return defaultValue
+	end
+
+	return fallback
+end
+
+local function buildTrainingShotConfig(trainingArea, requestedSpeedMultiplier)
+	local index = tonumber(trainingArea:GetAttribute("Index")) or TrainingAnimationData.Default.Index or 1
+	local animData = getTrainingAnimationData(index)
+
+	local speedMultiplier = tonumber(requestedSpeedMultiplier) or 1
+	speedMultiplier = math.clamp(speedMultiplier, 1, getMaxSpeedMultiplier(animData))
+
+	local baseSpeed = getAnimationBaseSpeed(animData)
+	local playbackSpeed = math.max(0.01, baseSpeed * speedMultiplier)
+	local kickContactTime = getKickContactTime(animData)
+	local windupTime = kickContactTime / playbackSpeed
+
+	local projectileLifetime = getBallNumber(animData, "Lifetime", 2)
+	local curveHeight = getBallNumber(animData, "CurveHeight", 12)
+	local startForwardOffset = getBallNumber(animData, "StartForwardOffset", 2.0)
+	local startRightOffset = getBallNumber(animData, "StartRightOffset", 0.5)
+	local startHeightOffset = getBallNumber(animData, "StartHeightOffset", 0.2)
+
+	local minimumCooldown = tonumber(animData.MinimumShootCooldown)
+		or tonumber(TrainingAnimationData.Default.MinimumShootCooldown)
+		or 1.15
+	local cooldownPadding = tonumber(animData.CooldownPadding)
+		or tonumber(TrainingAnimationData.Default.CooldownPadding)
+		or 0.15
+
+	return {
+		TrainingIndex = index,
+		TrainingZone = trainingArea:GetAttribute("Area"),
+		AnimationId = animData.Id or TrainingAnimationData.Default.Id,
+		BaseSpeed = baseSpeed,
+		SpeedMultiplier = speedMultiplier,
+		PlaybackSpeed = playbackSpeed,
+		KickContactTime = kickContactTime,
+		WindupTime = windupTime,
+		ProjectileLifetime = projectileLifetime,
+		BallLifetime = projectileLifetime, -- backward compatibility untuk client/patch lama
+		CurveHeight = curveHeight,
+		StartForwardOffset = startForwardOffset,
+		StartRightOffset = startRightOffset,
+		StartHeightOffset = startHeightOffset,
+		CooldownTime = math.max(minimumCooldown, windupTime + projectileLifetime + cooldownPadding),
+	}
 end
 
 function TrainingService:IsPlayerInTrainingArea(player: Player, trainingArea): boolean
@@ -144,7 +244,7 @@ function TrainingService:FacePlayerToTrainingTarget(player: Player, target)
 	return true
 end
 
-function TrainingService:ShootTrainingBall(player: Player, trainingArea)
+function TrainingService:ShootTrainingBall(player: Player, trainingArea, speedMultiplier)
 	if typeof(trainingArea) ~= "Instance" then
 		return false
 	end
@@ -154,12 +254,13 @@ function TrainingService:ShootTrainingBall(player: Player, trainingArea)
 	end
 
 	local target = trainingArea:FindFirstChild("Target")
+	local shotConfig = buildTrainingShotConfig(trainingArea, speedMultiplier)
 
 	-- Paksa hadap sekarang tanggung jawab TrainingService, bukan BallService.
 	-- Kalau player sedang fight, FacePlayerToTrainingTarget akan return false dan tidak mengubah rotasi.
 	self:FacePlayerToTrainingTarget(player, target)
 
-	return BallService:ShootBall(player, target)
+	return BallService:ShootBall(player, target, shotConfig)
 end
 
 function TrainingService:Training(player: Player, trainingArea)
@@ -192,8 +293,7 @@ function TrainingService:Training(player: Player, trainingArea)
 		-- if BoostEventService.CurrentBoost and BoostEventService.CurrentBoost.type == "Money2" then
 		-- 	powerGet = powerGet * BoostEventService.CurrentBoost.multiplier
 		-- end
-		
-		
+
 		--SeasonService:Increase(player, "MONEY_2 Daily", 1)
 		--SeasonService:Increase(player, "MONEY_2 Weekly", 1)
 		DataService:ChangeValue(player, "Money2", powerGet, false)
@@ -208,7 +308,7 @@ function TrainingService:StartTraining(player: Player, trainingArea)
 		PlayersInTraining[trainingArea] = {}
 
 		local index = trainingArea:GetAttribute("Index")
-		if index == 4 then
+		if index == VIP_TRAINING_INDEX then
 			for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
 				if descendant:IsA("MeshPart") then
 					if descendant.Name == "Handle" or descendant.Name == "Weight" then
@@ -236,7 +336,7 @@ function TrainingService:StopTraining(player: Player, trainingArea)
 			PlayersInTraining[trainingArea] = nil
 
 			local index = trainingArea:GetAttribute("Index")
-			if index == 4 then
+			if index == VIP_TRAINING_INDEX then
 				for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
 					if descendant:IsA("MeshPart") then
 						if descendant.Name == "Handle" or descendant.Name == "Weight" then
@@ -326,13 +426,12 @@ function TrainingService:KnitStart()
 		end
 
 		local BillboardGui = trainingArea.Parent.Requirement.BillboardGui
-        
+
 		local requiredText = BillboardGui:FindFirstChild("RequiredText")
 		if requiredText then
 			requiredText.Text = `{FormatNumber(TrainingAreasData[area][index].PowerRequirement)} Required`
 		end
-		
-             
+
 		--requiredText.Text = `{FormatNumber(TrainingAreasData[area][index].PowerRequirement)} Required`
 	end
 end

@@ -34,12 +34,13 @@ return function(props)
 			productName = data.productName,
 			icon = charData.Image,
 			multiplier = charData.Multiplier,
+			flag = charData.Flag,
 			price = `{Template.Messages.Robux_Icon} {MonetizationController:GetPrice(data.productName) or 339}`,
 		})
 	end
 
 	PlayerCardsElements["List"] = Roact.createElement("UIListLayout", {
-		Padding = UDim.new(0.025, 0),
+		Padding = UDim.new(0.02, 0),
 		FillDirection = Enum.FillDirection.Horizontal,
 		HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		SortOrder = Enum.SortOrder.LayoutOrder,
@@ -47,8 +48,9 @@ return function(props)
 
 	return Roact.createElement("Frame", {
 		LayoutOrder = props.order,
+		Position = UDim2.fromScale(0, -0.02),
 		BackgroundTransparency = 1,
-		Size = UDim2.fromScale(1, 0.866),
+		Size = UDim2.fromScale(1, 0.72),
 	}, {
 		Roact.createFragment(PlayerCardsElements),
 	})

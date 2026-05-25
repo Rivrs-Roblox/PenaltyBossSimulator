@@ -500,6 +500,8 @@ function FightController:StopPointer()
 		return warn("[FightController] Failed to evaluate kick on server")
 	end
 
+	FightUIController:HidePenaltyProgress()
+
 	local isSpecialKick = resultData.IsSpecialKick
 
 	if isSpecialKick then
@@ -629,6 +631,8 @@ function FightController:SetupPenaltyRound()
 	local shootCam = self:GetPenaltyZonePart("ShootCameraPos")
 	local goalArea = self:GetPenaltyZonePart("GoalArea")
 	CameraController:SetShootCamera(shootCam, goalArea)
+
+	FightUIController:ShowPenaltyProgress(self.CurrentWave)
 
 	-- Delay sebelum show dynamic bar
 	Promise.delay(2):andThen(function()
@@ -774,7 +778,7 @@ function FightController:StartFight(area: string)
 	end
 
 	UIController:HideFrame()
-	UIController:RemoveHUD({ ignoreTopFrame = true, hideSpinWheel = true })
+	UIController:RemoveHUD({ ignoreTopFrame = true, hideSpinWheel = true, ignoreBottomFrame = true })
 
 	TeleportEffectFrame("Close")
 
@@ -783,60 +787,31 @@ function FightController:StartFight(area: string)
 	FightService:StartFight(fightInstance.PenaltyZone)
 end
 
-function FightController:AutoWin()
-	if
-		self.IsFighting
-		or TeleportController.IsTeleporting
-		or AutoController.IsAutoTraining
-		or EggsController.Hatching
-	then
-		return false
-	end
-
-	local _, data = DataService:GetData():await()
-	if not data then
-		return false
-	end
-
-	local area = getBestPenaltyZone(data, self.Template.Enemies)
-	if not area then
-		return false
-	end
-
-	if self.AutoFightTarget ~= nil and area == nil then
-		self.AutoFightTarget = nil
-		return false
-	elseif
-		self.AutoFightTarget == nil
-		or self.AutoFightTarget ~= area and Store:getState()["FightReducer"].Fighting == false
-	then
-		self.AutoFightTarget = area
-
-		task.spawn(function()
-			while self.AutoFightTarget ~= nil do
-				if not self._isOkayToStart then
-					task.wait(0.1)
-					continue
-				end
-
-				self:StartFight(area)
-				while self.AutoFightTarget ~= nil and self.IsFighting do
+function FightController:StartAutoWinTask()
+	task.spawn(function()
+		while true do
+			if AutoController.IsAutoWinning then
+				if self.IsFighting then
 					if self.IsKicking then
 						self:StopPointer()
 					end
-					task.wait(0.5)
+				elseif self._isOkayToStart then
+					local _, data = DataService:GetData():await()
+					if not data then
+						continue
+					end
+
+					local area = getBestPenaltyZone(data, self.Template.Enemies)
+
+					if area then
+						self:StartFight(area)
+					end
 				end
-
-				task.wait(0.5)
 			end
-		end)
 
-		return true
-	end
-end
-
-function FightController:StopAutoWin()
-	self.AutoFightTarget = nil
+			task.wait(0.5)
+		end
+	end)
 end
 
 function FightController:SetInputConnections()
@@ -1168,6 +1143,8 @@ function FightController:KnitStart()
 	end
 
 	CollectionService:GetInstanceAddedSignal("PenaltyZone"):Connect(setupPenaltyZone)
+
+	self:StartAutoWinTask()
 end
 --	#endregion
 

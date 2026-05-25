@@ -20,6 +20,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 6,
+			PowerRequirement = 3_600,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 9,
 			PowerRequirement = 0,
 			VIP = true,
@@ -42,6 +47,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 100,
+			PowerRequirement = 88_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 112,
 			PowerRequirement = 0,
 			VIP = true,
@@ -64,6 +74,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 300,
+			PowerRequirement = 720_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 405,
 			PowerRequirement = 0,
 			VIP = true,
@@ -86,6 +101,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 1_000,
+			PowerRequirement = 4_800_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 1_350,
 			PowerRequirement = 0,
 			VIP = true,
@@ -108,6 +128,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 3_610,
+			PowerRequirement = 40_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 4_950,
 			PowerRequirement = 0,
 			VIP = true,
@@ -130,6 +155,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 12_200,
+			PowerRequirement = 340_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 16_650,
 			PowerRequirement = 0,
 			VIP = true,
@@ -152,6 +182,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 42_700,
+			PowerRequirement = 2_800_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 58_500,
 			PowerRequirement = 0,
 			VIP = true,
@@ -174,6 +209,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 148_000,
+			PowerRequirement = 24_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 202_500,
 			PowerRequirement = 0,
 			VIP = true,
@@ -196,6 +236,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 509_000,
+			PowerRequirement = 200_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 697_500,
 			PowerRequirement = 0,
 			VIP = true,
@@ -218,6 +263,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 1_740_000,
+			PowerRequirement = 1_600_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 2_385_000,
 			PowerRequirement = 0,
 			VIP = true,
@@ -240,6 +290,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 5_920_000,
+			PowerRequirement = 14_000_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 8_100_000,
 			PowerRequirement = 0,
 			VIP = true,
@@ -262,6 +317,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 20_400_000,
+			PowerRequirement = 112_000_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 27_900_000,
 			PowerRequirement = 0,
 			VIP = true,
@@ -284,6 +344,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 69_000_000,
+			PowerRequirement = 960_000_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 94_500_000,
 			PowerRequirement = 0,
 			VIP = true,
@@ -306,6 +371,11 @@ return table.freeze({
 			VIP = false,
 		},
 		[4] = {
+			PowerPerSecond = 237_000_000,
+			PowerRequirement = 8_000_000_000_000_000,
+			VIP = false,
+		},
+		[5] = {
 			PowerPerSecond = 324_000_000,
 			PowerRequirement = 0,
 			VIP = true,

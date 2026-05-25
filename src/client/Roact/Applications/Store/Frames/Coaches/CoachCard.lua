@@ -29,6 +29,7 @@ local function SubCardComp(props, hooks)
 			name = "Jos Morningho",
 			productName = "Jos Morningho",
 			icon = "rbxassetid://132492458278010",
+			flag = "Portugal",
 			multiplier = 2,
 			price = "you forgot",
 		},
@@ -40,64 +41,57 @@ local function SubCardComp(props, hooks)
 
 	return Roact.createElement("Frame", {
 		LayoutOrder = props.order,
-		Position = UDim2.fromScale(0.022, 0.104),
+		Position = UDim2.fromScale(0.02, 0.1),
 		ClipsDescendants = true,
-		BackgroundColor3 = Color3.fromHex("ffffff"),
+		BackgroundColor3 = Color3.fromHex("fff67c"),
 		Size = styles.sizeAlpha:map(function(alpha)
-			return UDim2.fromScale(0.46 * alpha, 0.89 * alpha)
+			return UDim2.fromScale(0.46 * alpha, 0.895 * alpha)
 		end),
 		ZIndex = 2,
 	}, {
-		Effect = Roact.createElement("ImageLabel", {
-			ImageColor3 = Color3.fromHex("ffd737"),
-			Image = "rbxassetid://106335669168445",
-			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.283, 0.547),
+		NameText = Roact.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(0.928, 1.598),
-			ZIndex = 2,
-		}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
-
-		Sparkle = Roact.createElement("ImageLabel", {
-			Image = UI.Sparkle,
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.283, 0.547),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(1, 1),
-			ZIndex = 2,
-		}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
-
-		NameText = Text({
-			text = props.name,
-			anchorPoint = Vector2.new(1, 0),
-			position = UDim2.fromScale(0.97, 0.028),
-			color = Color3.fromHex("ffffff"),
-			index = 4,
-			size = UDim2.fromScale(0.554, 0.37),
-			stroke = 2,
-			strokeColor = Color3.fromRGB(0, 0, 0),
-			align = Enum.TextXAlignment.Right,
+			Font = Enum.Font.FredokaOne,
+			Position = UDim2.fromScale(0.5, 0.1),
+			Size = UDim2.fromScale(0.9, 0.15),
+			Text = props.name,
+			TextColor3 = Color3.fromHex("ffffff"),
+			TextScaled = true,
+			TextWrapped = true,
+			ZIndex = 3,
+		}, {
+			UIStroke = Roact.createElement("UIStroke", {
+				Color = Color3.fromHex("ffffff"),
+				Thickness = 2,
+			}, {
+				UIGradient = Roact.createElement("UIGradient", {
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromHex("ff6326")),
+						ColorSequenceKeypoint.new(1, Color3.fromHex("591b00")),
+					}),
+					Rotation = 90,
+				}),
+			}),
 		}),
 
 		Value = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(1, 0),
+			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.95, 0.45),
+			Position = UDim2.fromScale(0.7, 0.6),
 			BorderColor3 = Color3.fromHex("000000"),
-			ZIndex = 10,
+			ZIndex = 2,
 			BorderSizePixel = 0,
-			Size = UDim2.fromScale(0.3, 0.25),
+			Size = UDim2.fromScale(0.53, 0.22),
 		}, {
 			ValueText = Text({
-				size = UDim2.fromScale(0.5, 0.65),
+				size = UDim2.fromScale(0.45, 0.65),
 				position = UDim2.fromScale(0.761, 0.383),
 				text = "x" .. (props.multiplier or 1),
-				color = Color3.fromHex("ffffff"),
+				color = Color3.fromHex("ffd500"),
 				index = 3,
-				align = Enum.TextXAlignment.Right,
+				align = Enum.TextXAlignment.Center,
 				stroke = 2,
 				strokeColor = Color3.fromHex("313131"),
 			}),
@@ -119,48 +113,81 @@ local function SubCardComp(props, hooks)
 				VerticalAlignment = 2,
 				SortOrder = 2,
 				HorizontalAlignment = 2,
-				Padding = UDim.new(0.02, 0),
+				Padding = UDim.new(0.05, 0),
 				ItemLineAlignment = 2,
 				FillDirection = 0,
 			}),
 		}),
 
-		UIStroke = Roact.createElement("UIStroke", { Color = Color3.fromHex("ffffff"), Thickness = 3 }, {
+		UIStroke = Roact.createElement("UIStroke", { Color = Color3.fromHex("ffffff"), Thickness = 2 }, {
 			UIGradient = Roact.createElement("UIGradient", {
 				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("f698ff")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("992cbd")),
+					ColorSequenceKeypoint.new(0, Color3.fromHex("ff6326")),
+					ColorSequenceKeypoint.new(1, Color3.fromHex("591b00")),
 				}),
-				Rotation = -90,
+				Rotation = 90,
 			}),
 		}),
-		UIGradient = Roact.createElement("UIGradient", {
-			Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromHex("835aff")),
-				ColorSequenceKeypoint.new(1, Color3.fromHex("9c00ea")),
-			}),
-			Rotation = 90,
-		}),
-		UICorner = Roact.createElement("UICorner", {}),
-		Ratio = Roact.createElement("UIAspectRatioConstraint", { AspectRatio = 1.75 }),
+		UICorner = Roact.createElement("UICorner", { CornerRadius = UDim.new(0, 2) }),
+		Ratio = Roact.createElement("UIAspectRatioConstraint", { AspectRatio = 1.61 }),
 
-		Icon = Roact.createElement("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ScaleType = Enum.ScaleType.Fit,
-			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.259, 0.654),
+		Pic = Roact.createElement("Frame", {
+			AnchorPoint = Vector2.new(0, 0.5),
+			BackgroundColor3 = Color3.fromHex("ffffff"),
+			Position = UDim2.fromScale(0.05, 0.58),
+			Size = UDim2.fromScale(0.75, 0.75),
 			ZIndex = 2,
-			Image = props.icon,
-			Size = UDim2.fromScale(0.872, 1.311),
+		}, {
+			UIGradient = Roact.createElement("UIGradient", {
+				Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromHex("ffcc00")),
+					ColorSequenceKeypoint.new(1, Color3.fromHex("ff8239")),
+				}),
+				Rotation = 90,
+			}),
+			UIStroke = Roact.createElement("UIStroke", {
+				Color = Color3.fromHex("7d4d15"),
+				Thickness = 2,
+			}),
+			UICorner = Roact.createElement("UICorner", { CornerRadius = UDim.new(1, 0) }),
+			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+			Icon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = props.icon,
+				Position = UDim2.fromScale(0.5, 0.5),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(1, 1),
+				ZIndex = 2,
+			}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
+			Sparkle = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = UI.Sparkle,
+				Position = UDim2.fromScale(0.5, 0.5),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(1.3, 1.3),
+				ZIndex = 3,
+			}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
+		}),
+
+		Flag = Roact.createElement("ImageLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Image = UI[props.flag],
+			Position = UDim2.fromScale(0.87, 0.32),
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(0.3, 0.3),
+			ZIndex = 3,
 		}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
 
 		Buy = Roact.createElement("ImageButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.716, 0.844),
-			Size = UDim2.fromScale(0.509, 0.216),
-			ZIndex = 3,
+			Position = UDim2.fromScale(0.7, 0.849),
+			Size = UDim2.fromScale(0.53, 0.2),
+			ZIndex = 8,
 			ClipsDescendants = true,
-			BackgroundColor3 = Color3.fromHex("f89bff"),
+			BackgroundColor3 = Color3.fromHex("ffffff"),
 			[Roact.Event.MouseButton1Click] = function()
 				StoreController:BuyItem({ name = props.productName })
 			end,
@@ -177,14 +204,23 @@ local function SubCardComp(props, hooks)
 				api.start({ sizeAlpha = 1.05 })
 			end,
 		}, {
-			UICorner = Roact.createElement("UICorner", {}),
-			UIStroke = Roact.createElement("UIStroke", { Color = Color3.fromHex("e96eff"), Thickness = 2 }),
+			UICorner = Roact.createElement("UICorner", { CornerRadius = UDim.new(0, 2) }),
+			UIStroke = Roact.createElement("UIStroke", { Color = Color3.fromHex("fcffc4"), Thickness = 2 }),
+			UIGradient = Roact.createElement("UIGradient", {
+				Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromHex("3dff27")),
+					ColorSequenceKeypoint.new(1, Color3.fromHex("23a617")),
+				}),
+				Rotation = 90,
+			}),
 			PriceText = Text({
 				text = props.price,
-				color = Color3.fromHex("5e257a"),
-				index = 3,
-				size = UDim2.fromScale(0.85, 0.7),
+				color = Color3.fromHex("ffffff"),
+				index = 9,
+				size = UDim2.fromScale(0.85, 0.85),
 				position = UDim2.fromScale(0.5, 0.5),
+				stroke = 1.5,
+				strokeColor = Color3.fromHex("313131"),
 			}),
 		}),
 	})

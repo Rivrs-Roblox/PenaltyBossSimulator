@@ -18,6 +18,10 @@ local RoduxHooks = require(ReplicatedStorage.Packages.roduxhooks)
 -- Constants
 local FramesConstants = require(StarterPlayer.StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
 
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
+
 -- Frames
 local Frames = script.Parent.Frames
 local Item = require(Frames.Item)
@@ -107,85 +111,16 @@ function Trading(_, hooks)
         Visible = UIReducer.CurrentUI == FramesConstants.TradeList,
         ZIndex = 2,
     }, {
-        Popup = Roact.createElement("Frame", {
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            BackgroundColor3 = Color3.fromHex("ffffff"),
-            Position = UDim2.fromScale(0.5, 0.5),
-            BorderSizePixel = 0,
-            Size = UDim2.fromScale(0.7, 0.7),
-            ZIndex = 2,
+        Content = Blue_Background({
+            title = "Trading",
+            titleIcon = TITLE_ICON,
+            size = UDim2.fromScale(0.7, 0.7),
+            pos = UDim2.fromScale(0.5, 0.5),
+            ratio = 1.3,
+            condition = UIReducer.CurrentUI == FramesConstants.TradeList,
+            align = Enum.TextXAlignment.Left,
+            hooks = hooks,
         }, {
-            Ratio = Roact.createElement("UIAspectRatioConstraint", {
-                AspectRatio = 1.3,
-            }),
-
-            UICorner = Roact.createElement("UICorner", {}),
-
-            UIGradient = Roact.createElement("UIGradient", {
-                Color = ColorSequence.new({
-                    ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-                    ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-                }),
-                Rotation = 90,
-            }),
-
-            UIStroke = Roact.createElement("UIStroke", {
-                Color = Color3.fromHex("ffffff"),
-                Thickness = 5,
-            }, {
-                UIGradient = Roact.createElement("UIGradient", {
-                    Color = ColorSequence.new({
-                        ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-                        ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-                    }),
-                    Rotation = 90,
-                }),
-            }),
-
-            Close = Roact.createElement("ImageButton", {
-                AnchorPoint = Vector2.new(0.5, 0.5),
-                Position = UDim2.fromScale(0.94, 0.08),
-                Size = UDim2.fromScale(0.09, 0.09),
-                BorderSizePixel = 0,
-                BackgroundColor3 = Color3.fromHex("ffffff"),
-                ZIndex = 8,
-                AutoButtonColor = true,
-
-                [Roact.Event.MouseButton1Click] = function()
-                    UIController:HideFrame()
-                end,
-            }, {
-                UIGradient = Roact.createElement("UIGradient", {
-                    Color = ColorSequence.new({
-                        ColorSequenceKeypoint.new(0, Color3.fromHex("ff362f")),
-                        ColorSequenceKeypoint.new(1, Color3.fromHex("8d1414")),
-                    }),
-                    Rotation = 90,
-                }),
-
-                UICorner = Roact.createElement("UICorner", {
-                    CornerRadius = UDim.new(0, 6),
-                }),
-
-                UIStroke = Roact.createElement("UIStroke", {
-                    Color = Color3.fromHex("8f0000"),
-                    Thickness = 3,
-                }),
-
-                Icon = Roact.createElement("ImageLabel", {
-                    AnchorPoint = Vector2.new(0.5, 0.5),
-                    ScaleType = Enum.ScaleType.Fit,
-                    BackgroundTransparency = 1,
-                    Position = UDim2.fromScale(0.5, 0.5),
-                    Image = CLOSE_ICON,
-                    Size = UDim2.fromScale(0.5, 0.5),
-                    ZIndex = 9,
-                }),
-
-                Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-            }),
-
-            Title = TitleBar(),
 
             Scroll = Roact.createElement("ScrollingFrame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),

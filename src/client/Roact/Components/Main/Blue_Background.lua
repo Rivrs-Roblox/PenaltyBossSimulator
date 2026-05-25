@@ -80,29 +80,23 @@ return function(params: table, children)
 				anchorPoint = Vector2.new(0.5, 1),
 				position = UDim2.fromScale(0.549, 1),
 				color = Color3.fromHex("ffffff"),
+				strokeColor = Color3.fromHex('143758'),
+				stroke = 2,
 			}),
 		}),
 		Close = CloseButton(params.action, params.hooks, { pos = UDim2.fromScale(0.94, 0.08) }),
 		Ratio = AspectRatio({ ratio = params.ratio }),
-		UICorner = Roact.createElement("UICorner", {}),
+		UICorner = Roact.createElement("UICorner", { CornerRadius = UDim.new(0, 2) }),
 		UIGradient = Roact.createElement("UIGradient", {
 			Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-				ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
+				ColorSequenceKeypoint.new(0, Color3.fromHex("cee6e8")),
+				ColorSequenceKeypoint.new(1, Color3.fromHex("a0b2b4")),
 			}),
 			Rotation = 90,
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("ffffff"),
-			Thickness = 5,
-		}, {
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-				}),
-				Rotation = 90,
-			}),
+			Color = Color3.fromRGB(20, 55, 88),
+			Thickness = 2,
 		}),
 	})
 end

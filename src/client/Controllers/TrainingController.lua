@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
 local ContextActionService = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
+local Debris = game:GetService("Debris")
 
 -- Knit packages
 local Packages = ReplicatedStorage.Packages
@@ -34,6 +35,9 @@ local FormatNumber = require(Helpers.Numbers.FormatNumber)
 local AutoTrainingSignals = require(ReplicatedStorage.Shared.Signals.AutoTrainingSignals)
 local TrainingSignals = require(ReplicatedStorage.Shared.Signals.TrainingSignals)
 
+-- Data
+local TrainingAnimationData = require(ReplicatedStorage.Shared.Data.TrainingAnimationData)
+
 local trainingAreas = {}
 local activePrompt
 local currentTrainingArea
@@ -44,34 +48,20 @@ local humanoidJumpConnection
 local animationSpeed = 1
 local lastClickTime = 0
 
-local animationCache = {
-	[1] = Instance.new("Animation"),
-	[2] = Instance.new("Animation"),
-	[3] = Instance.new("Animation"),
-	[4] = Instance.new("Animation"),
-}
+local animationCache = {}
+local currentTrainingShotId
+local isTrainingProjectileActive = false
 
 local HOLD_DURATION = 0.5
 local COOLDOWN_TIME = 0.45
-local TRAINING_1_ANIMATION_ID = "rbxassetid://90962989306225"
-local TRAINING_2_ANIMATION_ID = "rbxassetid://90962989306225"
-local TRAINING_3_ANIMATION_ID = "rbxassetid://90962989306225"
-local TRAINING_4_ANIMATION_ID = "rbxassetid://90962989306225"
 local ANIMATION_SPEED_DECAY = 0.5
 local ANIMATION_SPEED_INCREASE = 0.25
 local BEAM_SPEED = 2
-
-animationCache[1].Name = "TrainingAnim1"
-animationCache[1].AnimationId = TRAINING_1_ANIMATION_ID
-
-animationCache[2].Name = "TrainingAnim2"
-animationCache[2].AnimationId = TRAINING_2_ANIMATION_ID
-
-animationCache[3].Name = "TrainingAnim3"
-animationCache[3].AnimationId = TRAINING_3_ANIMATION_ID
-
-animationCache[4].Name = "TrainingAnim4"
-animationCache[4].AnimationId = TRAINING_4_ANIMATION_ID
+local DISABLE_COLLISION_TRAINING_INDEXES = {
+	[3] = true,
+	[4] = true,
+	[5] = true,
+}
 
 -- TrainingController
 local TrainingController = Knit.CreateController({
@@ -82,14 +72,407 @@ local TrainingController = Knit.CreateController({
 
 --|| Local Functions ||--
 
-local function playTrainingAnimation(index: number)
+local function getTrainingAreaIndex(trainingArea): number
+	local index = trainingArea and trainingArea:GetAttribute("Index")
+	return tonumber(index) or TrainingAnimationData.Default.Index or 1
+end
+
+local function getTrainingAnimationData(index: number)
+	return TrainingAnimationData.Areas[index] or TrainingAnimationData.Default
+end
+
+local function getCurrentTrainingAnimationData()
+	return getTrainingAnimationData(getTrainingAreaIndex(currentTrainingArea))
+end
+
+local function getMaxAnimationSpeed(animData): number
+	return tonumber(animData and animData.MaxSpeedMultiplier)
+		or tonumber(TrainingAnimationData.Default.MaxSpeedMultiplier)
+		or 3
+end
+
+local function getPlaybackSpeed(animData, speedMultiplier: number): number
+	local baseSpeed = tonumber(animData and animData.Speed) or tonumber(TrainingAnimationData.Default.Speed) or 1
+
+	return math.max(0.01, baseSpeed * speedMultiplier)
+end
+
+local function getOrCreateAnimation(animationId: string, index: number)
+	if animationCache[animationId] then
+		return animationCache[animationId]
+	end
+
+	local anim = Instance.new("Animation")
+	anim.Name = `TrainingAnim{index}`
+	anim.AnimationId = animationId
+	animationCache[animationId] = anim
+
+	return anim
+end
+
+local function getCharacterFootball()
+	local character = player.Character
+	if not character then
+		return nil
+	end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	if not hrp then
+		return nil
+	end
+
+	return hrp:FindFirstChild("Football")
+end
+
+local function setBasePartVisible(part: BasePart, visible: boolean)
+	if part:GetAttribute("TrainingOriginalTransparency") == nil then
+		part:SetAttribute("TrainingOriginalTransparency", part.Transparency)
+	end
+
+	if visible then
+		local originalTransparency = part:GetAttribute("TrainingOriginalTransparency")
+		if typeof(originalTransparency) ~= "number" then
+			originalTransparency = 0
+		end
+
+		part.Transparency = originalTransparency
+	else
+		part.Transparency = 1
+	end
+end
+
+local function isBallVfx(descendant: Instance): boolean
+	return descendant:IsA("ParticleEmitter")
+		or descendant:IsA("Trail")
+		or descendant:IsA("Beam")
+		or descendant:IsA("Fire")
+		or descendant:IsA("Smoke")
+		or descendant:IsA("Sparkles")
+		or descendant:IsA("PointLight")
+		or descendant:IsA("SpotLight")
+		or descendant:IsA("SurfaceLight")
+		or descendant:IsA("Highlight")
+end
+
+local function disableBallVfx(root: Instance)
+	for _, descendant in ipairs(root:GetDescendants()) do
+		if isBallVfx(descendant) then
+			pcall(function()
+				descendant.Enabled = false
+			end)
+		end
+	end
+end
+
+local TARGET_IMPACT_VFX_NAMES = {
+	"TrainingImpactVFX",
+	"ImpactEffects",
+	"ExplodeEffects",
+	"SpecialEffects",
+	"HoldEffects",
+	"VFX",
+	"Effects",
+}
+
+local DEFAULT_IMPACT_EMIT_COUNT = 25
+local IMPACT_VFX_DURATION = 0.3
+local IMPACT_VFX_CLEANUP_DELAY = 2.5
+
+local function hasVfx(root: Instance): boolean
+	if isBallVfx(root) then
+		return true
+	end
+
+	for _, descendant in ipairs(root:GetDescendants()) do
+		if isBallVfx(descendant) then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function findTargetImpactVfxTemplate(target: Instance?)
+	if not target then
+		return nil
+	end
+
+	for _, effectName in ipairs(TARGET_IMPACT_VFX_NAMES) do
+		local effect = target:FindFirstChild(effectName)
+		if effect and hasVfx(effect) then
+			return effect
+		end
+	end
+
+	for _, child in ipairs(target:GetChildren()) do
+		if child:GetAttribute("TrainingImpactVFX") == true and hasVfx(child) then
+			return child
+		end
+	end
+
+	for _, child in ipairs(target:GetChildren()) do
+		if hasVfx(child) then
+			return child
+		end
+	end
+
+	return nil
+end
+
+local function prepareImpactBasePart(part: BasePart)
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanTouch = false
+	part.CanQuery = false
+	part.Massless = true
+end
+
+local function getSelfAndDescendants(root: Instance)
+	local objects = { root }
+
+	for _, descendant in ipairs(root:GetDescendants()) do
+		table.insert(objects, descendant)
+	end
+
+	return objects
+end
+
+local function weldPartToBase(part: BasePart, basePart: BasePart)
+	part.Anchored = false
+	part.CanCollide = false
+	part.CanTouch = false
+	part.CanQuery = false
+	part.Massless = true
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = part
+	weld.Part1 = basePart
+	weld.Parent = part
+end
+
+local function attachVfxTemplateToAnchor(template: Instance, anchor: BasePart, cf: CFrame)
+	local effectRoot: Instance = anchor
+
+	if isBallVfx(template) then
+		local attachment = anchor:FindFirstChild("TrainingVFXAttachment")
+		if not attachment then
+			attachment = Instance.new("Attachment")
+			attachment.Name = "TrainingVFXAttachment"
+			attachment.Parent = anchor
+		end
+
+		local clone = template:Clone()
+		if clone:IsA("ParticleEmitter") then
+			clone.Parent = attachment
+		else
+			clone.Parent = anchor
+		end
+		effectRoot = clone
+	elseif template:IsA("Attachment") then
+		local clone = template:Clone()
+		clone.Parent = anchor
+		effectRoot = clone
+	elseif template:IsA("Model") then
+		local clone = template:Clone()
+		clone:PivotTo(cf)
+		clone.Parent = workspace
+
+		for _, descendant in ipairs(clone:GetDescendants()) do
+			if descendant:IsA("BasePart") then
+				weldPartToBase(descendant, anchor)
+			end
+		end
+
+		effectRoot = clone
+	elseif template:IsA("BasePart") then
+		local clone = template:Clone()
+		clone.CFrame = cf
+		clone.Parent = workspace
+		weldPartToBase(clone, anchor)
+		effectRoot = clone
+	else
+		local attachment = Instance.new("Attachment")
+		attachment.Name = template.Name
+		attachment.Parent = anchor
+
+		for _, child in ipairs(template:GetChildren()) do
+			local childClone = child:Clone()
+
+			if childClone:IsA("ParticleEmitter") then
+				childClone.Parent = attachment
+			elseif childClone:IsA("Attachment") then
+				childClone.Parent = anchor
+			elseif childClone:IsA("Model") then
+				childClone:PivotTo(cf)
+				childClone.Parent = workspace
+
+				for _, descendant in ipairs(childClone:GetDescendants()) do
+					if descendant:IsA("BasePart") then
+						weldPartToBase(descendant, anchor)
+					end
+				end
+			elseif childClone:IsA("BasePart") then
+				childClone.CFrame = cf
+				childClone.Parent = workspace
+				weldPartToBase(childClone, anchor)
+			else
+				childClone.Parent = attachment
+			end
+		end
+	end
+
+	return effectRoot
+end
+
+local function triggerImpactVfx(root: Instance, duration: number, defaultEmitCount: number)
+	for _, descendant in ipairs(getSelfAndDescendants(root)) do
+		if descendant:IsA("ParticleEmitter") then
+			local emitCount = descendant:GetAttribute("EmitCount")
+			if typeof(emitCount) ~= "number" then
+				emitCount = defaultEmitCount
+			end
+
+			local emitDelay = descendant:GetAttribute("EmitDelay")
+			if typeof(emitDelay) == "number" and emitDelay > 0 then
+				task.delay(emitDelay, function()
+					if descendant and descendant.Parent then
+						descendant:Emit(emitCount)
+					end
+				end)
+			else
+				descendant:Emit(emitCount)
+			end
+
+			descendant.Enabled = true
+			task.delay(duration, function()
+				if descendant and descendant.Parent then
+					descendant.Enabled = false
+				end
+			end)
+		elseif descendant:IsA("Trail") or descendant:IsA("Beam") then
+			descendant.Enabled = true
+			task.delay(duration, function()
+				if descendant and descendant.Parent then
+					descendant.Enabled = false
+				end
+			end)
+		elseif descendant:IsA("Fire") or descendant:IsA("Smoke") or descendant:IsA("Sparkles") then
+			descendant.Enabled = true
+			task.delay(duration, function()
+				if descendant and descendant.Parent then
+					descendant.Enabled = false
+				end
+			end)
+		elseif descendant:IsA("PointLight") or descendant:IsA("SpotLight") or descendant:IsA("SurfaceLight") then
+			descendant.Enabled = true
+			task.delay(duration, function()
+				if descendant and descendant.Parent then
+					descendant.Enabled = false
+				end
+			end)
+		end
+	end
+end
+
+local function playTargetImpactVfx(target: Instance?, impactPosition: Vector3)
+	local template = findTargetImpactVfxTemplate(target)
+	if not template then
+		return
+	end
+
+	local duration = template:GetAttribute("Duration")
+	if typeof(duration) ~= "number" then
+		duration = IMPACT_VFX_DURATION
+	end
+
+	local cleanupDelay = template:GetAttribute("CleanupDelay")
+	if typeof(cleanupDelay) ~= "number" then
+		cleanupDelay = IMPACT_VFX_CLEANUP_DELAY
+	end
+
+	local emitCount = template:GetAttribute("EmitCount")
+	if typeof(emitCount) ~= "number" then
+		emitCount = DEFAULT_IMPACT_EMIT_COUNT
+	end
+
+	local anchor = Instance.new("Part")
+	anchor.Name = "TrainingImpactVFXAnchor"
+	anchor.Size = Vector3.new(0.2, 0.2, 0.2)
+	anchor.Transparency = 1
+	anchor.CFrame = CFrame.new(impactPosition)
+	prepareImpactBasePart(anchor)
+	anchor.Parent = workspace
+
+	local effectRoot = attachVfxTemplateToAnchor(template, anchor, CFrame.new(impactPosition))
+	triggerImpactVfx(effectRoot, duration, emitCount)
+
+	Debris:AddItem(anchor, cleanupDelay)
+
+	if effectRoot ~= anchor and (effectRoot:IsA("Model") or effectRoot:IsA("BasePart")) then
+		Debris:AddItem(effectRoot, cleanupDelay)
+	end
+end
+
+local function setCharacterBallVisual(visible: boolean)
+	local football = getCharacterFootball()
+	if not football then
+		return
+	end
+
+	-- VFX bola karakter sengaja selalu dimatikan.
+	disableBallVfx(football)
+
+	for _, descendant in ipairs(football:GetDescendants()) do
+		if descendant:IsA("BasePart") then
+			setBasePartVisible(descendant, visible)
+		end
+	end
+end
+
+local function isSameTrainingShot(shotInfo): boolean
+	if typeof(shotInfo) ~= "table" then
+		return true
+	end
+
+	if currentTrainingShotId == nil then
+		return true
+	end
+
+	return shotInfo.ShotId == currentTrainingShotId
+end
+
+local function playTrainingAnimation(shotInfo)
 	if trainingAnimationTrack then
 		trainingAnimationTrack:Stop()
 		trainingAnimationTrack:Destroy()
 		trainingAnimationTrack = nil
 	end
 
-	local anim = animationCache[index]
+	local index = getTrainingAreaIndex(currentTrainingArea)
+	local animData = getTrainingAnimationData(index)
+	local animationId = animData.Id
+	local playbackSpeed = getPlaybackSpeed(animData, animationSpeed)
+
+	if typeof(shotInfo) == "table" then
+		index = tonumber(shotInfo.TrainingIndex) or index
+		animationId = shotInfo.AnimationId or animationId
+		playbackSpeed = tonumber(shotInfo.PlaybackSpeed) or playbackSpeed
+		currentTrainingShotId = shotInfo.ShotId
+
+		if typeof(shotInfo.SpeedMultiplier) == "number" then
+			animationSpeed =
+				math.clamp(shotInfo.SpeedMultiplier, 1, getMaxAnimationSpeed(getTrainingAnimationData(index)))
+		end
+	else
+		currentTrainingShotId = nil
+	end
+
+	if not animationId or animationId == "" then
+		warn(`Training animation Id belum diatur untuk area index {index}`)
+		return
+	end
+
+	local anim = getOrCreateAnimation(animationId, index)
 	if not anim then
 		return
 	end
@@ -121,7 +504,7 @@ local function playTrainingAnimation(index: number)
 
 	trainingAnimationTrack = animator:LoadAnimation(anim)
 	trainingAnimationTrack.Priority = Enum.AnimationPriority.Action
-	trainingAnimationTrack:Play()
+	trainingAnimationTrack:Play(0, 1, playbackSpeed)
 end
 
 local function stopTrainingAnimation()
@@ -141,18 +524,10 @@ local function startTrainingAreaVisual(trainingArea)
 	if index == 1 then
 		--local beam = trainingArea.Parent:FindFirstChild("Beam")
 		--beam.TextureSpeed = BEAM_SPEED
-	elseif index == 3 then
+	elseif DISABLE_COLLISION_TRAINING_INDEXES[index] then
 		for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
 			if descendant:IsA("MeshPart") then
 				descendant.CanCollide = false
-			end
-		end
-	else
-		if index == 4 then
-			for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
-				if descendant:IsA("MeshPart") then
-					descendant.CanCollide = false
-				end
 			end
 		end
 	end
@@ -170,35 +545,26 @@ local function stopTrainingAreaVisual(trainingArea)
 	if index == 1 then
 		--local beam = trainingArea.Parent:FindFirstChild("Beam")
 		--beam.TextureSpeed = 0
-	elseif index == 3 then
+	elseif DISABLE_COLLISION_TRAINING_INDEXES[index] then
 		for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
 			if descendant:IsA("MeshPart") and not descendant:FindFirstAncestor("Boost") then
 				descendant.CanCollide = true
-			end
-		end
-	else
-		if index == 4 then
-			for _, descendant in ipairs(trainingArea.Parent:GetDescendants()) do
-				if descendant:IsA("MeshPart") and not descendant:FindFirstAncestor("Boost") then
-					descendant.CanCollide = true
-				end
 			end
 		end
 	end
 end
 
 local function increaseTrainingSpeed()
-	local index = currentTrainingArea:GetAttribute("Index")
-	local maxSpeed = if index == 1 then 3 else 6
+	if not currentTrainingArea then
+		return
+	end
+
+	local index = getTrainingAreaIndex(currentTrainingArea)
+	local animData = getTrainingAnimationData(index)
+	local maxSpeed = getMaxAnimationSpeed(animData)
 
 	animationSpeed += ANIMATION_SPEED_INCREASE
 	animationSpeed = math.clamp(animationSpeed, 1, maxSpeed)
-
-	if trainingAnimationTrack then
-		trainingAnimationTrack:AdjustSpeed(animationSpeed)
-	else
-		--playTrainingAnimation(index)
-	end
 
 	if index == 1 then
 		--local beam = currentTrainingArea.Parent:FindFirstChild("Beam")
@@ -207,15 +573,16 @@ local function increaseTrainingSpeed()
 end
 
 local function decreaseTrainingSpeed()
-	local index = currentTrainingArea:GetAttribute("Index")
-	animationSpeed -= ANIMATION_SPEED_DECAY
-	animationSpeed = math.clamp(animationSpeed, 1, 3)
-
-	if trainingAnimationTrack then
-		trainingAnimationTrack:AdjustSpeed(animationSpeed)
-	else
-		--playTrainingAnimation(index)
+	if not currentTrainingArea then
+		return
 	end
+
+	local index = getTrainingAreaIndex(currentTrainingArea)
+	local animData = getTrainingAnimationData(index)
+	local maxSpeed = getMaxAnimationSpeed(animData)
+
+	animationSpeed -= ANIMATION_SPEED_DECAY
+	animationSpeed = math.clamp(animationSpeed, 1, maxSpeed)
 
 	if index == 1 then
 		--local beam = currentTrainingArea.Parent:FindFirstChild("Beam")
@@ -232,7 +599,7 @@ local function requestTrainingBallShot()
 		return
 	end
 
-	TrainingService:ShootTrainingBall(currentTrainingArea)
+	TrainingService:ShootTrainingBall(currentTrainingArea, animationSpeed)
 end
 
 --|| Functions ||--
@@ -314,7 +681,13 @@ function TrainingController:StopTraining(trainingArea)
 		activePrompt = nil -- reset setelah dipakai
 	end
 
-	--stopTrainingAnimation()
+	stopTrainingAnimation()
+	currentTrainingShotId = nil
+
+	if not isTrainingProjectileActive then
+		setCharacterBallVisual(true)
+	end
+
 	stopTrainingAreaVisual(trainingArea)
 
 	if currentTrainingArea then
@@ -333,10 +706,9 @@ function TrainingController:ClickTraining()
 		if currentTrainingArea and not cooldown then
 			TrainingService:Training(currentTrainingArea)
 
+			increaseTrainingSpeed()
 			requestTrainingBallShot()
 			cooldown = true
-
-			increaseTrainingSpeed()
 
 			task.delay(COOLDOWN_TIME, function()
 				cooldown = false
@@ -369,14 +741,52 @@ function TrainingController:KnitStart()
 		end
 	end)
 
-	-- Animasi training mengikuti lifecycle bola dari BallService.
-	-- Logic paksa hadap dan validasi training sekarang ada di TrainingService.
-	BallService.BallWindupStarted:Connect(function()
-		playTrainingAnimation(1)
+	BallService.BallWindupStarted:Connect(function(shotInfo)
+		isTrainingProjectileActive = false
+		playTrainingAnimation(shotInfo)
+		setCharacterBallVisual(true)
 	end)
 
-	BallService.BallFinished:Connect(function()
+	BallService.BallShoot:Connect(function(shotInfo)
+		if not isSameTrainingShot(shotInfo) then
+			return
+		end
+
+		isTrainingProjectileActive = true
+		setCharacterBallVisual(false)
+	end)
+
+	BallService.BallImpact:Connect(function(target, impactPosition)
+		if typeof(impactPosition) ~= "Vector3" then
+			return
+		end
+
+		playTargetImpactVfx(target, impactPosition)
+	end)
+
+	BallService.BallFinished:Connect(function(shotInfo)
+		if not isSameTrainingShot(shotInfo) then
+			return
+		end
+
 		stopTrainingAnimation()
+		currentTrainingShotId = nil
+		isTrainingProjectileActive = false
+
+		local restoreDelay = 0
+		if typeof(shotInfo) == "table" and typeof(shotInfo.RestoreCharacterBallDelay) == "number" then
+			restoreDelay = math.max(0, shotInfo.RestoreCharacterBallDelay)
+		end
+
+		if restoreDelay > 0 then
+			task.delay(restoreDelay, function()
+				if currentTrainingShotId == nil and not isTrainingProjectileActive then
+					setCharacterBallVisual(true)
+				end
+			end)
+		else
+			setCharacterBallVisual(true)
+		end
 	end)
 
 	task.spawn(function()

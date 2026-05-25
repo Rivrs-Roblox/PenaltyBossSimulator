@@ -6,20 +6,15 @@
 
 -- Game Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local StarterPlayerScripts = game:GetService("StarterPlayer").StarterPlayerScripts
 
 -- Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Roact = require(ReplicatedStorage.Packages.roact)
-local RoactHooks = require(ReplicatedStorage.Packages.hooks)
-local RoactSpring = require(ReplicatedStorage.Packages.RoactSpring)
 
 -- UI
 local DataCacheController = Knit.GetController("DataCacheController")
 local Template = DataCacheController:GetFile("Template")
-local UI = DataCacheController:GetFile("Images")
 local MonetizationController = Knit.GetController("MonetizationController")
-local StoreController = Knit.GetController("StoreController")
 
 local CoachCard = require(script.Parent.CoachCard)
 
@@ -39,13 +34,14 @@ return function(props)
 			name = data.name,
 			productName = data.productName,
 			icon = coachData.Image,
+			flag = coachData.Flag,
 			multiplier = coachData.Multiplier,
 			price = `{Template.Messages.Robux_Icon} {MonetizationController:GetPrice(data.productName) or 339}`,
 		})
 	end
 
 	CoachCardsElements["List"] = Roact.createElement("UIListLayout", {
-		Padding = UDim.new(0.03, 0),
+		Padding = UDim.new(0.02, 0),
 		FillDirection = Enum.FillDirection.Horizontal,
 		HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		SortOrder = Enum.SortOrder.LayoutOrder,
@@ -54,7 +50,7 @@ return function(props)
 	return Roact.createElement("Frame", {
 		LayoutOrder = props.order,
 		BackgroundTransparency = 1,
-		Size = UDim2.fromScale(1, 0.66),
+		Size = UDim2.fromScale(1, 0.7),
 	}, {
 		Roact.createFragment(CoachCardsElements),
 	})
