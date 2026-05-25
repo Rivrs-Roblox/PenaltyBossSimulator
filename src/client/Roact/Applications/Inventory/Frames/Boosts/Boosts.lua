@@ -43,13 +43,14 @@ return function(hooks)
 			local BoostItem = Item(InventoryReducer, {
 				id = id,
 				icon = UI[Boost.Name],
-				name = Boost.Name
+				effect = Boost.Name
 					:gsub("Money1", Template.Economy.Money1)
 					:gsub("Money2", Template.Economy.Money2)
 					:gsub("_", " ")
 					:gsub("Boost", ""),
 				power = `x{Boost.Number}`,
 				bg_color = Items[Boost.Name].Color,
+				duration = Items[Boost.Name].Duration,
 				type = "Boost",
 			})
 

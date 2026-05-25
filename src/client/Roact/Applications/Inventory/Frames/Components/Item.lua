@@ -13,6 +13,10 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local Roact = require(ReplicatedStorage.Packages.roact)
 local Sound = require(ReplicatedStorage.Packages.Sound)
 
+-- Helpers
+local Helpers = ReplicatedStorage.Shared.Helpers
+local FormatDuration = require(Helpers.FormatDuration)
+
 -- Store
 local Store = require(StarterPlayer.StarterPlayerScripts.Client.Rodux.Store)
 local InventoryActions = require(StarterPlayer.StarterPlayerScripts.Client.Rodux.Actions.InventoryActions)
@@ -123,6 +127,7 @@ local function createTextLabel(params: table)
 			color = Color3.fromHex("ffffff"),
 			zIndex = 10,
 			stroke = 1.5,
+			anchorPoint = Vector2.new(0.5, 0.5),
 		},
 	})
 
@@ -130,7 +135,7 @@ local function createTextLabel(params: table)
 		TextWrapped = true,
 		TextColor3 = params.color,
 		Text = params.text,
-		AnchorPoint = Vector2.new(0.5, 0.5),
+		AnchorPoint = params.anchorPoint,
 		FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
 		BackgroundTransparency = 1,
 		Position = params.position,
@@ -138,6 +143,7 @@ local function createTextLabel(params: table)
 		ZIndex = params.zIndex,
 		TextScaled = true,
 		Size = params.size,
+		TextXAlignment = params.align or Enum.TextXAlignment.Center,
 	}, {
 		UIStroke = Roact.createElement("UIStroke", {
 			Thickness = params.stroke,
@@ -214,8 +220,8 @@ local function createPetItem(InventoryReducer, params: table)
 			CornerRadius = UDim.new(0, 6),
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = theme.stroke,
-			Thickness = 3,
+			Color = Color3.fromRGB(255, 255, 255),
+			Thickness = 2,
 		}),
 		Equipped = Roact.createElement("ImageLabel", {
 			Visible = params.equipped,
@@ -229,10 +235,57 @@ local function createPetItem(InventoryReducer, params: table)
 			ImageColor3 = Color3.fromHex("00fa00"),
 			Size = UDim2.fromScale(0.7, 0.7),
 		}),
-		PowerText = createTextLabel({
-			text = params.power,
-			position = UDim2.fromScale(0.5, 0.88),
-			size = UDim2.fromScale(0.85, 0.2),
+		Stats = Roact.createElement("Frame", {
+			AnchorPoint = Vector2.new(0.5, 1),
+			BackgroundTransparency = 1,
+			Position = UDim2.fromScale(0.5, 0.98),
+			BorderColor3 = Color3.fromHex("000000"),
+			BackgroundColor3 = Color3.fromHex("ffffff"),
+			BorderSizePixel = 0,
+			Size = UDim2.fromScale(0.9, 0.2),
+		}, {
+			UIPadding = Roact.createElement("UIPadding", {
+				PaddingLeft = UDim.new(0.1, 0),
+			}),
+			Icon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Image = "rbxassetid://71880595336974",
+				BackgroundTransparency = 1,
+				Position = UDim2.fromScale(0.5, 0.5),
+				ZIndex = 10,
+				LayoutOrder = 1,
+				BackgroundColor3 = Color3.fromHex("ffffff"),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(1.2, 1.2),
+			}, {
+				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+			}),
+			PowerText = Roact.createElement("TextLabel", {
+				LayoutOrder = 2,
+				TextWrapped = true,
+				TextColor3 = Color3.fromHex("ffffff"),
+				Text = params.power,
+				TextScaled = true,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
+				BackgroundTransparency = 1,
+				TextXAlignment = Enum.TextXAlignment.Left,
+				Position = UDim2.fromScale(0.5, 0.88),
+				ZIndex = 10,
+				TextSize = 14,
+				Size = UDim2.fromScale(0.6, 1),
+			}, {
+				UIStroke = Roact.createElement("UIStroke", {
+					Thickness = 1.5,
+				}),
+			}),
+			List = Roact.createElement("UIListLayout", {
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				HorizontalAlignment = Enum.HorizontalAlignment.Left,
+				Padding = UDim.new(0.05, 0),
+				FillDirection = Enum.FillDirection.Horizontal,
+			}),
 		}),
 	})
 end
@@ -244,8 +297,10 @@ return function(InventoryReducer, params: table)
 			deleting = false :: boolean,
 			icon = "" :: string,
 			name = "" :: string,
+			effect = "" :: string,
 			id = 0 :: number,
 			order = 0 :: number,
+			duration = 0 :: number,
 			power = "" :: string,
 			rarity = "Common" :: string,
 			type = "" :: string,
@@ -285,19 +340,36 @@ return function(InventoryReducer, params: table)
 			TooltipController:SetText(nil)
 		end,
 	}, {
+		EffectText = Text({
+			text = params.effect,
+			size = UDim2.fromScale(0.88, 0.25),
+			color = Color3.fromHex("ffd500"),
+			position = UDim2.fromScale(0.5, 0.88),
+			index = 10,
+			stroke = 1.5,
+		}),
 		NameText = Text({
 			text = params.name,
-			size = params.type == "Fruit" and UDim2.fromScale(0.88, 0.3) or UDim2.fromScale(0.88, 0.25),
+			size = UDim2.fromScale(0.88, 0.3),
 			color = Color3.fromHex("ffffff"),
-			position = params.type == "Fruit" and UDim2.fromScale(0.5, 0.12) or UDim2.fromScale(0.5, 0.88),
+			position = UDim2.fromScale(0.5, 0.5),
 			index = 10,
 			stroke = 1.5,
 		}),
 		ValueText = Text({
 			text = params.power,
-			size = params.type == "Fruit" and UDim2.fromScale(0.9, 0.3) or UDim2.fromScale(0.9, 0.25),
+			size = UDim2.fromScale(0.9, 0.25),
 			color = Color3.fromHex("ffffff"),
-			position = params.type == "Fruit" and UDim2.fromScale(0.5, 0.85) or UDim2.fromScale(0.5, 0.15),
+			position = UDim2.fromScale(0.5, 0.15),
+			index = 10,
+			stroke = 1.5,
+			align = Enum.TextXAlignment.Right,
+		}),
+		DurationText = Text({
+			text = math.floor(params.duration / 60) .. " Min",
+			size = UDim2.fromScale(0.4, 0.2),
+			color = Color3.fromHex("60ff88"),
+			position = UDim2.fromScale(0.25, 0.1),
 			index = 10,
 			stroke = 1.5,
 			align = Enum.TextXAlignment.Right,
@@ -317,8 +389,8 @@ return function(InventoryReducer, params: table)
 			CornerRadius = UDim.new(0, 6),
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = params.type == "Fruit" and Color3.fromHex("29a7e1") or Color3.fromHex("e6e6e6"),
-			Thickness = 3,
+			Color = Color3.fromRGB(255, 255, 255),
+			Thickness = 2,
 		}),
 		Icon = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),

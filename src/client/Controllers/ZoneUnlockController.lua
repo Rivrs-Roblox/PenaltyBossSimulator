@@ -30,6 +30,7 @@ local zoneGuiTemplate = ReplicatedStorage.ZoneGui
 local inputConnection -- Simpan koneksi di variabel global
 
 local zoneGates
+local zoneGuis = {}
 
 -- ZoneUnlockController
 local ZoneUnlockController = Knit.CreateController({
@@ -77,14 +78,16 @@ function ZoneUnlockController:UpdateGate()
 		zoneGui.Adornee = zoneGate.Parent.Lock.Area
 		zoneGui.Parent = Players.LocalPlayer.PlayerGui
 
-		for _, teleporter in Template.Areas do
-			if teleporter.Id == zoneName then
-				local priceText = zoneGui.Requirement.ScoreText
-				priceText.Text = FormatNumber(teleporter.Price)
+		zoneGuis[zoneName] = zoneGui
 
-				local unlockButton = zoneGui.EnterButton
+		for _, area in Template.Areas do
+			if area.Id == zoneName then
+				local priceText = zoneGui.Center.Requirement.Center.ScoreText
+				priceText.Text = FormatNumber(area.Price)
+
+				local unlockButton = zoneGui.Center.EnterButton
 				unlockButton.Activated:Connect(function()
-					UIController:BuyArea(teleporter)
+					UIController:BuyArea(area)
 				end)
 
 				break
@@ -117,13 +120,25 @@ local function unlockZone(zoneId)
 			end
 		end
 	end)
+
+	local zoneGui = zoneGuis[zoneId]
+	if zoneGui then
+		zoneGui.Center.EnterButton.Visible = true
+		zoneGui.AlwaysOnTop = true
+	end
 end
 
-local function disableUnlockZone()
+local function disableUnlockZone(zoneId)
 	-- Periksa apakah ada koneksi event, lalu putuskan
 	if inputConnection then
 		inputConnection:Disconnect()
 		inputConnection = nil -- Kosongkan variabel untuk mencegah pemutusan ulang
+	end
+
+	local zoneGui = zoneGuis[zoneId]
+	if zoneGui then
+		zoneGui.Center.EnterButton.Visible = false
+		zoneGui.AlwaysOnTop = false
 	end
 end
 

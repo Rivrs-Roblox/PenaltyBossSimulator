@@ -24,6 +24,10 @@ local Wheel = require(Frames.Wheel)
 -- Constants
 local FramesConstants = require(StarterPlayer.StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
 
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
+
 -- Controllers
 local DataCacheController = Knit.GetController("DataCacheController")
 local UIController = Knit.GetController("UIController")
@@ -131,55 +135,22 @@ function Spins(_, hooks)
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(1, 1),
 	}, {
-		Popup = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0.5, 0.5),
-
-			-- Ukuran induk disamakan dengan TimeRewards.
-			Size = UDim2.fromScale(0.7, 0.7),
-
-			Visible = UIReducer.CurrentUI == FramesConstants.Spins,
-			ZIndex = 2,
+		Content = Blue_Background({
+			title = "Spin Wheels",
+			titleIcon = UI.Rewards or UI.Spin_Wheel or "",
+			size = UDim2.fromScale(0.7, 0.7),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1.6,
+			condition = UIReducer.CurrentUI == FramesConstants.Spins,
+			align = Enum.TextXAlignment.Left,
+			hooks = hooks,
 		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {
-				AspectRatio = 1.6,
-			}),
-
-			UICorner = Roact.createElement("UICorner", {
-				CornerRadius = UDim.new(0, 10),
-			}),
-
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Title = Title(),
-			Close = CloseButton(),
 
 			Container = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 1),
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.98),
-				Size = UDim2.fromScale(0.95, 0.81),
+				Position = UDim2.fromScale(0.5, 0.96),
+				Size = UDim2.fromScale(0.95, 0.8),
 				ZIndex = 4,
 			}, {
 				List = Roact.createElement("UIListLayout", {

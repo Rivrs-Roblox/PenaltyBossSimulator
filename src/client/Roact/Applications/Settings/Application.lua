@@ -17,10 +17,13 @@ local RoduxHooks = require(ReplicatedStorage.Packages.roduxhooks)
 -- Controllers
 local SettingsController = Knit.GetController("SettingsController")
 local SoundController = Knit.GetController("SoundController")
-local UIController = Knit.GetController("UIController")
 
 -- Constants
 local FramesConstants = require(StarterPlayer.StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
+
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
 
 -- Frames
 local Frames = script.Parent.Frames
@@ -28,7 +31,6 @@ local VolumeSlider = require(Frames.Slider)
 local Item = require(Frames.Item)
 
 local SETTINGS_ICON = "rbxassetid://125225286754597"
-local CLOSE_ICON = "rbxassetid://120045489184571"
 local SOUND_ICON = "rbxassetid://126045313881885"
 local TRADE_ICON = "rbxassetid://129162351030527"
 
@@ -115,116 +117,16 @@ function Settings(_, hooks)
 		BackgroundColor3 = Color3.fromHex("000000"),
 		ZIndex = 2,
 	}, {
-		Popup = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.6, 0.6),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			ZIndex = 2,
+		Content = Blue_Background({
+			title = "Settings",
+			titleIcon = SETTINGS_ICON,
+			size = UDim2.fromScale(0.6, 0.6),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1,
+			condition = isOpen,
+			align = Enum.TextXAlignment.Left,
+			hooks = hooks,
 		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-
-			UICorner = Roact.createElement("UICorner", {}),
-
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Title = Roact.createElement("Frame", {
-				AnchorPoint = Vector2.new(0, 0.5),
-				Position = UDim2.fromScale(0.04, 0.08),
-				Size = UDim2.fromScale(0.55, 0.09),
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				ZIndex = 5,
-			}, {
-				UIListLayout = Roact.createElement("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					Padding = UDim.new(0.02, 0),
-				}),
-
-				Icon = Roact.createElement("ImageLabel", {
-					LayoutOrder = 1,
-					Size = UDim2.fromScale(1.2, 1.2),
-					BackgroundTransparency = 1,
-					Image = SETTINGS_ICON,
-					ScaleType = Enum.ScaleType.Fit,
-					ZIndex = 5,
-				}, {
-					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-				}),
-
-				TitleText = Roact.createElement("TextLabel", {
-					LayoutOrder = 2,
-					Size = UDim2.fromScale(0.8, 1),
-					BackgroundTransparency = 1,
-					Text = "Settings",
-					TextColor3 = Color3.fromHex("fafafa"),
-					TextScaled = true,
-					TextWrapped = true,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-					ZIndex = 5,
-				}),
-			}),
-
-			Close = Roact.createElement("ImageButton", {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.93, 0.08),
-				Size = UDim2.fromScale(0.09, 0.09),
-				BackgroundColor3 = Color3.fromHex("ffffff"),
-				BorderSizePixel = 0,
-				AutoButtonColor = true,
-				ZIndex = 5,
-				[Roact.Event.MouseButton1Click] = function()
-					UIController:HideFrame()
-				end,
-			}, {
-				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-				UICorner = Roact.createElement("UICorner", {
-					CornerRadius = UDim.new(0, 6),
-				}),
-				UIStroke = Roact.createElement("UIStroke", {
-					Color = Color3.fromHex("8f0000"),
-					Thickness = 3,
-				}),
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("ff362f")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("8d1414")),
-					}),
-					Rotation = 90,
-				}),
-				Icon = Roact.createElement("ImageLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.fromScale(0.5, 0.5),
-					Size = UDim2.fromScale(0.5, 0.5),
-					BackgroundTransparency = 1,
-					Image = CLOSE_ICON,
-					ScaleType = Enum.ScaleType.Fit,
-					ZIndex = 6,
-				}),
-			}),
 
 			Center = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),

@@ -25,6 +25,7 @@ local GetTableLength = require(Helpers.GetTableLength)
 local Components = StarterPlayerScripts.Client.Roact.Components
 local Text = require(Components.Text)
 local AspectRatio = require(Components.AspectRatio)
+local Blue_Background = require(Components.Main.Blue_Background)
 
 -- Constants
 local FramesConstants = require(StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
@@ -231,40 +232,19 @@ function Friends(_, hooks)
 		Visible = UIReducer.CurrentUI == FramesConstants.Friends,
 		ZIndex = 1,
 	}, {
-		Content = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.7, 0.7),
-			ZIndex = 2,
+		Content = Blue_Background({
+			title = "Invite Friends",
+			titleIcon = "rbxassetid://102801816134630",
+			size = UDim2.fromScale(0.7, 0.7),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1.6,
+			condition = UIReducer.CurrentUI == FramesConstants.Friends,
+			align = Enum.TextXAlignment.Left,
+			hooks = hooks,
+			action = function()
+				UIController:HideFrame()
+			end,
 		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {
-				AspectRatio = 1.6,
-			}),
-			UICorner = Roact.createElement("UICorner", {}),
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Close = CloseButton(),
-			Title = Title(),
 			Stars = StarsDisplay(FriendsReducer.Stars),
 			Rewards = Rewards(hooks),
 

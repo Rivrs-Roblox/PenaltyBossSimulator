@@ -58,6 +58,7 @@ return function(params: table, hooks)
 			VIP = false :: boolean,
 			Reward = false :: boolean,
 			StarterPack = false :: boolean,
+			flag = "Portugal" :: string,
 
 			multiplier = 1 :: number,
 			order = 0 :: number,
@@ -99,62 +100,63 @@ return function(params: table, hooks)
 		else ButtonText
 
 	local gradientColors
-	local effectColor
+	local strokeColor
+	local strokeGradient
+	local frameColor
 	if params.VIP then
 		gradientColors = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromHex("ffe66b")),
-			ColorSequenceKeypoint.new(1, Color3.fromHex("ff491c")),
+			ColorSequenceKeypoint.new(0, Color3.fromHex("ffcc00")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("ff8239")),
 		})
-		effectColor = Color3.fromHex("ffe66b")
+		strokeColor = Color3.fromRGB(125, 77, 21)
+		strokeGradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("ff5100")),
+			ColorSequenceKeypoint.new(0.5, Color3.fromHex("fdff6c")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("ff5100")),
+		})
+		frameColor = Color3.fromRGB(238, 177, 23)
 	elseif params.Reward or params.StarterPack or params.RejoinReward then
 		gradientColors = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromHex("b9a1ff")),
-			ColorSequenceKeypoint.new(1, Color3.fromHex("8e3dff")),
+			ColorSequenceKeypoint.new(0, Color3.fromHex("ad87ff")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("501ac6")),
 		})
-		effectColor = Color3.fromRGB(202, 148, 243)
+		strokeColor = Color3.fromRGB(72, 15, 129)
+		strokeGradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromHex("64328f")),
+			ColorSequenceKeypoint.new(0.5, Color3.fromHex("dfa7ff")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("64328f")),
+		})
+		frameColor = Color3.fromRGB(123, 3, 144)
 	else
 		gradientColors = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromHex("3aa0ff")),
-			ColorSequenceKeypoint.new(1, Color3.fromHex("2d63df")),
+			ColorSequenceKeypoint.new(0, Color3.fromHex("6cbfff")),
+			ColorSequenceKeypoint.new(1, Color3.fromHex("2e43ff")),
 		})
-		effectColor = Color3.fromHex("3aa0ff")
+		strokeColor = Color3.fromRGB(48, 67, 129)
+		frameColor = Color3.fromRGB(0, 0, 0)
 	end
 
 	return Roact.createElement("Frame", {
 		LayoutOrder = params.order,
-		BackgroundColor3 = Color3.fromHex("ffffff"),
+		BackgroundColor3 = frameColor,
 		Position = UDim2.fromScale(0.02, 0.1),
 		Size = UDim2.fromScale(0.96, 0.96),
+		BackgroundTransparency = 0.7,
 		ZIndex = 2,
 	}, {
-		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("ffffff"),
-			Thickness = 3,
+		Stroke = Roact.createElement("UIStroke", {
+			Color = strokeGradient and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(88, 88, 88),
+			Thickness = 2,
 		}, {
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = gradientColors,
-				Rotation = -90,
+			Gradient = strokeGradient and Roact.createElement("UIGradient", {
+				Color = strokeGradient,
+				Rotation = -32,
 			}),
 		}),
-		UIGradient = Roact.createElement("UIGradient", {
-			Color = gradientColors,
-			Rotation = 90,
-		}),
 
-		Effect = Roact.createElement("ImageLabel", {
-			ImageColor3 = effectColor,
-			Image = "rbxassetid://106335669168445",
-			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.5, 0.4),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ScaleType = 3,
-			Size = UDim2.fromScale(1, 1),
-			ZIndex = 2,
-		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+		UICorner = Roact.createElement("UICorner", {
+			CornerRadius = UDim.new(0, 2),
 		}),
-		UICorner = Roact.createElement("UICorner", {}),
 		NameText = Roact.createElement("TextLabel", {
 			TextWrapped = true,
 			TextColor3 = Color3.fromHex("ffffff"),
@@ -162,33 +164,82 @@ return function(params: table, hooks)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.5, 0.7),
+			Position = UDim2.fromScale(0.5, 0.1),
 			TextSize = 14,
 			ZIndex = 3,
 			TextScaled = true,
-			Size = UDim2.fromScale(0.9, 0.12),
+			Size = UDim2.fromScale(0.9, 0.15),
 		}, {
 			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("833f20"),
+				Color = Color3.fromRGB(43, 43, 43),
 				Thickness = 2,
 			}),
 		}),
+		Pic = Roact.createElement("Frame", {
+			AnchorPoint = Vector2.new(0, 0.5),
+			BackgroundTransparency = 0,
+			BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+			Position = UDim2.fromScale(0, 0.55),
+			Size = UDim2.fromScale(0.8, 0.8),
+			ClipsDescendants = true,
+			ZIndex = 2,
+		}, {
+			AspectRatio = Roact.createElement("UIAspectRatioConstraint", {
+				AspectRatio = 1,
+			}),
+			UICorner = Roact.createElement("UICorner", {
+				CornerRadius = UDim.new(1, 0),
+			}),
+			Gradient = Roact.createElement("UIGradient", {
+				Color = gradientColors,
+				Rotation = 90,
+			}),
+			Stroke = Roact.createElement("UIStroke", {
+				Color = strokeColor,
+				Thickness = 2,
+			}),
+
+			Icon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				ScaleType = 3,
+				BackgroundTransparency = 1,
+				Position = UDim2.fromScale(0.5, 0.5),
+				BackgroundColor3 = Color3.fromHex("ffffff"),
+				ZIndex = 2,
+				Image = params.image,
+				ImageColor3 = params.color or Color3.fromRGB(255, 255, 255),
+				Size = UDim2.fromScale(1, 1),
+			}, {
+				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+			}),
+
+			Sparkle = Roact.createElement("ImageLabel", {
+				Image = UI.Sparkle,
+				BackgroundTransparency = 1,
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(1.3, 1.3),
+				ZIndex = 3,
+			}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
+		}),
+
 		Value = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(1, 0),
+			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(1, -0.053),
+			Position = UDim2.fromScale(0.7, 0.6),
 			BorderColor3 = Color3.fromHex("000000"),
 			ZIndex = 10,
 			BorderSizePixel = 0,
-			Size = UDim2.fromScale(0.9, 0.213),
+			Size = UDim2.fromScale(0.53, 0.22),
 		}, {
 			ValueText = Text({
 				size = UDim2.fromScale(0.5, 0.65),
 				position = UDim2.fromScale(0.761, 0.383),
 				text = "x" .. (params.multiplier or 1),
 				color = Color3.fromHex("ffd500"),
-				index = 3,
+				index = 10,
 				align = Enum.TextXAlignment.Right,
 				stroke = 2,
 				strokeColor = Color3.fromHex("313131"),
@@ -217,21 +268,20 @@ return function(params: table, hooks)
 			}),
 		}),
 		Ratio = Roact.createElement("UIAspectRatioConstraint", {
-			AspectRatio = 0.85,
+			AspectRatio = 1.3,
 		}),
-		Icon = Roact.createElement("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			ScaleType = 3,
+		Flag = Roact.createElement("ImageLabel", {
+			Image = UI[params.flag],
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.5, 0.4),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			ZIndex = 2,
-			Image = params.image,
-			ImageColor3 = params.color or Color3.fromRGB(255, 255, 255),
-			Size = UDim2.fromScale(0.9, 0.9),
+			Position = UDim2.fromScale(0.849, 0.35),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(0.3, 0.3),
+			ZIndex = 3,
 		}, {
 			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
 		}),
+
 		PremiumBadge = params.VIP and Roact.createElement("ImageLabel", {
 			Image = UI.Premium,
 			BackgroundTransparency = 1,
@@ -244,8 +294,8 @@ return function(params: table, hooks)
 		}),
 		Buy = Roact.createElement("ImageButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.88),
-			Size = Size(styles, { X = 0.8, Y = 0.18 }),
+			Position = UDim2.fromScale(0.7, 0.849),
+			Size = Size(styles, { X = 0.53, Y = 0.2 }),
 			ZIndex = 8,
 			ClipsDescendants = true,
 			BackgroundColor3 = ButtonColor,
@@ -290,7 +340,9 @@ return function(params: table, hooks)
 				api.start({ sizeAlpha = 1 })
 			end,
 		}, {
-			UICorner = Roact.createElement("UICorner", {}),
+			UICorner = Roact.createElement("UICorner", {
+				CornerRadius = UDim.new(0, 2),
+			}),
 			UIStroke = Roact.createElement("UIStroke", {
 				Color = Color3.fromHex("ffffff"),
 				Thickness = 2,

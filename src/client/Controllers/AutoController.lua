@@ -54,48 +54,25 @@ function AutoController:AutoTrain()
 end
 
 function AutoController:AutoWin()
-	if self.BlockAutoWin or TrainingController.IsTraining then
-		NotificationController:Notify({
-			tag = "Auto",
-			text = "You can't auto win while training." :: string,
-			type = "ERROR",
-		})
-
-		return
-	end
-
 	if self.IsAutoWinning == true then
-		NotificationController:Notify({ tag = "Auto", text = "Auto win is already running." :: string, type = "ERROR" })
+		Store:dispatch(AutoActions.setAutoWinning(false))
+		self.IsAutoWinning = false
+		self.BlockAutoTrain = false
+	else
+		if self.BlockAutoWin or TrainingController.IsTraining then
+			NotificationController:Notify({
+				tag = "Auto",
+				text = "You can't auto win while training." :: string,
+				type = "ERROR",
+			})
 
-		return
+			return
+		end
+
+		Store:dispatch(AutoActions.setAutoWinning(true))
+		self.IsAutoWinning = true
+		self.BlockAutoTrain = true
 	end
-
-	local success = FightController:AutoWin()
-	if not success then
-		NotificationController:Notify({
-			tag = "Auto",
-			text = "You can't auto win right now." :: string,
-			type = "ERROR",
-		})
-
-		return
-	end
-
-	Store:dispatch(AutoActions.setAutoWinning(true))
-	self.IsAutoWinning = true
-	self.BlockAutoTrain = true
-end
-
-function AutoController:StopAutoWin()
-	if self.IsAutoWinning == false then
-		return
-	end
-
-	Store:dispatch(AutoActions.setAutoWinning(false))
-	self.IsAutoWinning = false
-	self.BlockAutoTrain = false
-
-	FightController:StopAutoWin()
 end
 
 --|| Knit Lifecycle ||--

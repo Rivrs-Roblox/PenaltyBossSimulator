@@ -21,7 +21,7 @@ local function Panel(props)
 		},
 	})
 
-	local bgColor = props.isActive and Color3.fromHex("ff6734") or Color3.fromHex("3b65a3")
+	local bgColor = props.isActive and Color3.fromRGB(226, 62, 62) or Color3.fromHex("3b65a3")
 
 	return Roact.createElement("ImageButton", {
 		LayoutOrder = props.order,

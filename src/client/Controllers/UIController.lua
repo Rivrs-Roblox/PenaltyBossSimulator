@@ -60,7 +60,7 @@ end
 
 --|| Functions ||--
 function UIController:RemoveHUD(params: {})
-	setmetatable(params, { __index = { ignoreTopFrame = true } })
+	setmetatable(params, { __index = { ignoreTopFrame = true, ignoreBottomFrame = true } })
 	local Info = TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut, 0, false, 0)
 
 	task.delay(0.2, function()
@@ -89,7 +89,9 @@ function UIController:RemoveHUD(params: {})
 
 	LeftTween:Play()
 	RightTween:Play()
-	BottomFrame:Play()
+	if params.ignoreBottomFrame == false then
+		BottomFrame:Play()
+	end
 	if params.ignoreTopFrame == false then
 		TopFrame:Play()
 	end
@@ -125,9 +127,9 @@ function UIController:ShowHUD()
 	if not FightController.IsFighting then
 		LeftTween:Play()
 		RightTween:Play()
-		BottomFrame:Play()
 	end
 
+	BottomFrame:Play()
 	TopFrame:Play()
 end
 

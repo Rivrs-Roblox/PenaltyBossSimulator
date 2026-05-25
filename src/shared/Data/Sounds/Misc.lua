@@ -51,13 +51,24 @@ return table.freeze({
 	MISC_Shoot_Training = {
 		Id = 123923739063618,
 		Looped = false,
+		Volume = 0.6,
+		Category = "Misc", -- Optional, will be determined from name if not provided
+		SoundType = "3D",
+		Spammable = true,
+		RollOffEnabled = true,
+		RollOffMinDistance = 5,
+		RollOffMaxDistance = 70,
+	},
+	MISC_Training_Goal = {
+		Id = 135611407828513,
+		Looped = false,
 		Volume = 0.4,
 		Category = "Misc", -- Optional, will be determined from name if not provided
 		SoundType = "3D",
-		--Spammable = true,
+		Spammable = true,
 		RollOffEnabled = true,
-		RollOffMinDistance = 5,
-		RollOffMaxDistance = 50,
+		RollOffMinDistance = 3,
+		RollOffMaxDistance = 71,
 	},
 	MISC_Goal = {
 		Id = 117342461539440,

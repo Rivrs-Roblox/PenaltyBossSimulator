@@ -67,6 +67,7 @@ function Characters(_, hooks)
 			StarterPack = Character.StarterPack,
 			order = Character.Order,
 			RejoinReward = Character.RejoinReward,
+			flag = Character.Flag,
 		}, hooks)
 	end
 
@@ -153,14 +154,14 @@ function Characters(_, hooks)
 					ScrollBarThickness = 0,
 					ClipsDescendants = true,
 					BorderSizePixel = 0,
-					CanvasSize = UDim2.fromScale(0, 4),
+					CanvasSize = UDim2.fromScale(0, 4.8),
 				}, {
 					Padding = Roact.createElement("UIPadding", {
 						PaddingTop = UDim.new(0.005, 0),
 					}),
 					Grid = Grid({
-						cellPadding = UDim2.fromScale(0.02, 0.045),
-						cellSize = UDim2.fromScale(0.23, 0.5),
+						cellPadding = UDim2.fromScale(0.02, 0.04),
+						cellSize = UDim2.fromScale(0.3, 0.45),
 						fillDirection = Enum.FillDirection.Horizontal,
 						horizontalAlignment = Enum.HorizontalAlignment.Center,
 						verticalAlignment = Enum.VerticalAlignment.Top,

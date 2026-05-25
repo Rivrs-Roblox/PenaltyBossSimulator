@@ -35,6 +35,10 @@ local COLORS = {
 	Free = {
 		accent = Color3.fromHex("35ff42"),
 		accentHex = "35ff42",
+		panelBackground = Color3.fromHex("ffffff"),
+		panelTransparency = 0,
+		panelStroke = Color3.fromHex("6f6f6f"),
+		titleStroke = Color3.fromHex("6f6f6f"),
 		spinGradient = {
 			ColorSequenceKeypoint.new(0, Color3.fromHex("42c747")),
 			ColorSequenceKeypoint.new(1, Color3.fromHex("118311")),
@@ -55,6 +59,10 @@ local COLORS = {
 	Premium = {
 		-- accent = Color3.fromHex("ffa200"),
 		-- accentHex = "ffa200",
+		-- panelBackground = Color3.fromHex("293199"),
+		-- panelTransparency = 0,
+		-- panelStroke = Color3.fromHex("0b1834"),
+		-- titleStroke = Color3.fromHex("0b1834"),
 		-- spinGradient = {
 		-- 	ColorSequenceKeypoint.new(0, Color3.fromHex("ffcf43")),
 		-- 	ColorSequenceKeypoint.new(1, Color3.fromHex("c86c05")),
@@ -72,6 +80,10 @@ local COLORS = {
 		-- buyStroke = Color3.fromHex("ff8c75"),
 		accent = Color3.fromHex("ffa200"),
 		accentHex = "ffa200",
+		panelBackground = Color3.fromHex("293199"),
+		panelTransparency = 0,
+		panelStroke = Color3.fromHex("0b1834"),
+		titleStroke = Color3.fromHex("0b1834"),
 		spinGradient = {
 			ColorSequenceKeypoint.new(0, Color3.fromHex("42c747")),
 			ColorSequenceKeypoint.new(1, Color3.fromHex("118311")),
@@ -88,6 +100,11 @@ local COLORS = {
 		},
 		buyStroke = Color3.fromHex("2ad1ff"),
 	},
+}
+
+local WHEEL_IMAGES = {
+	Free = "rbxassetid://102953243363760",
+	Premium = "rbxassetid://79973265588366",
 }
 
 local PRODUCTS = {
@@ -142,7 +159,7 @@ local function SpinButton(params)
 		}),
 
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 
 		UIStroke = Roact.createElement("UIStroke", {
@@ -472,56 +489,78 @@ return function(params: table)
 	local nextFreeSpinRemaining = math.clamp(FREE_SPIN_INTERVAL - (now - lastFreeSpin), 0, FREE_SPIN_INTERVAL)
 	local plural = spinAmount > 1 and "s" or ""
 
-	local wheelImage = UI[`{wheelType}_Wheel`] or ""
+	local wheelImage = WHEEL_IMAGES[wheelType] or UI[`{wheelType}_Wheel`] or ""
 	local triangleImage = UI.Wheel_Triangle or ""
 
 	return Roact.createElement("Frame", {
 		Name = wheelType,
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 0.8,
+		BackgroundColor3 = style.panelBackground,
+		BackgroundTransparency = style.panelTransparency,
+		ClipsDescendants = wheelType == "Premium",
 		LayoutOrder = params.order,
 		Size = UDim2.fromScale(0.48, 1),
 		ZIndex = 4,
 	}, {
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 15),
+			CornerRadius = UDim.new(0, 2),
 		}),
 
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("6f6f6f"),
+			Color = style.panelStroke,
 			Thickness = 2,
 		}),
 
-		List = Roact.createElement("UIListLayout", {
-			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			Padding = UDim.new(0.02, 2.6),
-			SortOrder = Enum.SortOrder.LayoutOrder,
-		}),
+		Effect = wheelType == "Premium" and Roact.createElement("ImageLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Image = "rbxassetid://106335669168445",
+			ImageTransparency = 0.8,
+			Position = UDim2.fromScale(0.5, 0.4),
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(2, 2),
+			ZIndex = 5,
+		}, {
+			Ratio = Roact.createElement("UIAspectRatioConstraint"),
+		}) or nil,
+
+		Sparkle = wheelType == "Premium" and Roact.createElement("ImageLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Image = UI.Sparkle or "rbxassetid://106466414055348",
+			Position = UDim2.fromScale(0.5, 0.4),
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(1.2, 1.2),
+			ZIndex = 6,
+		}, {
+			Ratio = Roact.createElement("UIAspectRatioConstraint"),
+		}) or nil,
 
 		TitleText = Roact.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-			LayoutOrder = 1,
+			Position = UDim2.fromScale(0.5, 0.04),
 			RichText = true,
-			Size = UDim2.fromScale(0.73, 0.08),
+			Size = UDim2.fromScale(0.9, 0.08),
 			Text = `<font color="#{style.accentHex}">{string.upper(wheelType)}</font> WHEEL`,
 			TextColor3 = Color3.fromHex("ffffff"),
 			TextScaled = true,
 			TextWrapped = true,
-			ZIndex = 5,
+			ZIndex = 6,
 		}, {
 			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("191919"),
-				Thickness = 0,
+				Color = style.titleStroke,
+				Thickness = 2,
 			}),
 		}),
 
 		WheelHolder = Roact.createElement("Frame", {
 			BackgroundTransparency = 1,
-			LayoutOrder = 2,
-			Size = UDim2.fromScale(0.78, 0.78),
-			ZIndex = 5,
+			Position = UDim2.fromScale(0.5, 0.46),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Size = UDim2.fromScale(0.8, 0.8),
+			ZIndex = 6,
 		}, {
 			Ratio = Roact.createElement("UIAspectRatioConstraint"),
 
@@ -533,7 +572,7 @@ return function(params: table)
 				Position = UDim2.fromScale(0.5, 0.5),
 				ScaleType = Enum.ScaleType.Fit,
 				Size = UDim2.fromScale(1.05, 1.05),
-				ZIndex = 5,
+				ZIndex = 6,
 			}, buildRewards(wheelType)),
 
 			Land = Roact.createElement("ImageLabel", {
@@ -599,8 +638,7 @@ return function(params: table)
 		Buttons = Roact.createElement("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			LayoutOrder = 3,
-			Position = UDim2.fromScale(0.5, 0.95),
+			Position = UDim2.fromScale(0.5, 0.89),
 			Size = UDim2.fromScale(0.9, 0.08),
 			ZIndex = 20,
 		}, {
@@ -650,8 +688,7 @@ return function(params: table)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-			LayoutOrder = 4,
-			Position = UDim2.fromScale(0.5, 0.9),
+			Position = UDim2.fromScale(0.5, 0.97),
 			Size = UDim2.fromScale(0.8, 0.05),
 			Text = `+1 Spin in {FormatDuration(nextFreeSpinRemaining)}`,
 			TextColor3 = Color3.fromHex("ffffff"),
@@ -661,8 +698,8 @@ return function(params: table)
 			ZIndex = 5,
 		}, {
 			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("191919"),
-				Thickness = 0,
+				Color = style.titleStroke,
+				Thickness = 2,
 			}),
 		}),
 	})

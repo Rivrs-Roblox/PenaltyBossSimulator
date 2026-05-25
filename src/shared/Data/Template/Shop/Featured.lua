@@ -39,6 +39,7 @@ return table.freeze({
 			product1 = "x1 Ball Egg",
 			product3 = "x3 Ball Egg",
 			product8 = "x8 Ball Egg",
+			theme = "Purple",
 		},
 		[2] = {
 			name = "Monster Egg",
@@ -50,6 +51,7 @@ return table.freeze({
 			product1 = "x1 Monster Egg",
 			product3 = "x3 Monster Egg",
 			product8 = "x8 Monster Egg",
+			theme = "Gold",
 		},
 	},
 })

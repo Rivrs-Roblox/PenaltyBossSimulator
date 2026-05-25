@@ -30,6 +30,7 @@ return function(props)
 				product1 = data.product1,
 				product3 = data.product3,
 				product8 = data.product8,
+				theme = data.theme,
 			})
 		end
 	end

@@ -19,7 +19,7 @@ local Sound = require(ReplicatedStorage.Packages.Sound)
 local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
 local Text = require(Components.Text)
 local AspectRatio = require(Components.AspectRatio)
-local CloseButton = require(Components.CloseButton)
+local Blue_Background = require(Components.Main.Blue_Background)
 
 -- Frames
 local Frames = script.Parent.Frames
@@ -33,12 +33,13 @@ local DataCacheController = Knit.GetController("DataCacheController")
 local MonetizationController = Knit.GetController("MonetizationController")
 local StoreController = Knit.GetController("StoreController")
 local RebirthController = Knit.GetController("RebirthController")
-local UIController = Knit.GetController("UIController")
 
 -- UI
-local UI = DataCacheController:GetFile("Images")
 local Template = DataCacheController:GetFile("Template")
 local RebirthTable = DataCacheController:GetFile("RebirthTable")
+
+local REBIRTH_ICON = "rbxassetid://106303260347906"
+local PROGRESS_ICON = "rbxassetid://112781848763017"
 
 local function getRebirthRequirement(rebirth: number)
 	if rebirth < #RebirthTable then
@@ -102,10 +103,10 @@ local function BlueButton(params: {})
 			Rotation = 90,
 		}),
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("5776ff"),
+			Color = Color3.fromHex("334695"),
 			Thickness = 2,
 		}),
 		ButtonText = Text({
@@ -156,10 +157,10 @@ local function RebirthButton(params: {})
 		end,
 	}, {
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("4782da"),
+			Color = Color3.fromHex("334695"),
 			Thickness = 2,
 		}),
 		UIGradient = Roact.createElement("UIGradient", {
@@ -194,46 +195,87 @@ local function CustomProgressBar(params: {})
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 0.8,
-		BackgroundColor3 = Color3.fromHex("ffffff"),
+		BackgroundTransparency = 0.75,
+		BackgroundColor3 = Color3.fromHex("000000"),
 		Size = UDim2.fromScale(0.793, 1),
 		LayoutOrder = params.layoutOrder,
 		ZIndex = 3,
 	}, {
 		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
+			CornerRadius = UDim.new(0, 2),
 		}),
 		Stroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("939393"),
+			Color = Color3.fromHex("7c7c7c"),
 			Thickness = 2,
 		}),
-		Bar = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0, 0.5),
-			Size = UDim2.fromScale(percentage, 1),
-			ZIndex = 3,
+
+		TitleText = Text({
+			text = "Rebirthing cost wins",
+			color = Color3.fromHex("ffffff"),
+			position = UDim2.fromScale(0.623, 0.25),
+			size = UDim2.fromScale(0.705, 0.3),
+			anchorPoint = Vector2.new(0.5, 0.5),
+			align = Enum.TextXAlignment.Left,
+			stroke = 2,
+			strokeColor = Color3.fromHex("535353"),
+			index = 4,
+		}),
+
+		Icon = Roact.createElement("ImageLabel", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundTransparency = 1,
+			Image = PROGRESS_ICON,
+			Position = UDim2.fromScale(0.122, 0.4),
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(0.204, 1.26),
+			ZIndex = 4,
+		}, {
+			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+		}),
+
+		ProgressBar = Roact.createElement("Frame", {
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			BackgroundColor3 = Color3.fromHex("340908"),
+			BackgroundTransparency = 0.5,
+			Position = UDim2.fromScale(0.623, 0.7),
+			Size = UDim2.fromScale(0.705, 0.4),
+			ZIndex = 4,
 		}, {
 			UICorner = Roact.createElement("UICorner", {
-				CornerRadius = UDim.new(0, 6),
+				CornerRadius = UDim.new(0, 2),
 			}),
-			Gradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("e98533")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("e94343")),
+			Stroke = Roact.createElement("UIStroke", {
+				Color = Color3.fromHex("934141"),
+				Thickness = 2,
+			}),
+			Bar = Roact.createElement("Frame", {
+				AnchorPoint = Vector2.new(0, 0.5),
+				BackgroundColor3 = Color3.fromHex("ffffff"),
+				BorderSizePixel = 0,
+				Position = UDim2.fromScale(0, 0.5),
+				Size = UDim2.fromScale(percentage, 1),
+				ZIndex = 4,
+			}, {
+				UICorner = Roact.createElement("UICorner", {
+					CornerRadius = UDim.new(0, 2),
 				}),
-				Rotation = 90,
+				Gradient = Roact.createElement("UIGradient", {
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromHex("e98533")),
+						ColorSequenceKeypoint.new(1, Color3.fromHex("e94343")),
+					}),
+					Rotation = 90,
+				}),
 			}),
-		}),
-		ProgressText = Text({
-			text = getProgressText(params.current, params.total),
-			color = Color3.fromHex("ffffff"),
-			position = UDim2.fromScale(0.5, 0.5),
-			size = UDim2.fromScale(0.8, 0.5),
-			stroke = 0,
-			strokeColor = Color3.fromHex("15284c"),
-			index = 5,
+			ProgressText = Text({
+				text = getProgressText(params.current, params.total),
+				color = Color3.fromHex("ffd900"),
+				position = UDim2.fromScale(0.5, 0.5),
+				size = UDim2.fromScale(0.8, 0.7),
+				stroke = 2,
+				strokeColor = Color3.fromHex("934141"),
+				index = 5,
+			}),
 		}),
 	})
 end
@@ -259,80 +301,16 @@ function Rebirth(_, hooks)
 		BackgroundTransparency = 1,
 		Visible = UIReducer.CurrentUI == FramesConstants.Rebirth,
 	}, {
-		Popup = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.7, 0.7),
-			ZIndex = 2,
+		Content = Blue_Background({
+			title = "Rebirth",
+			titleIcon = REBIRTH_ICON,
+			size = UDim2.fromScale(0.7, 0.7),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1.3,
+			condition = UIReducer.CurrentUI == FramesConstants.Rebirth,
+			align = Enum.TextXAlignment.Left,
+			hooks = hooks,
 		}, {
-			UICorner = Roact.createElement("UICorner", {}),
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {
-				AspectRatio = 1.3,
-			}),
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Close = CloseButton(function()
-				UIController:HideFrame()
-			end, hooks, {
-				pos = UDim2.fromScale(0.94, 0.08),
-			}),
-
-			Title = Roact.createElement("Frame", {
-				AnchorPoint = Vector2.new(0, 0.5),
-				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.04, 0.08),
-				Size = UDim2.fromScale(0.55, 0.09),
-				ZIndex = 4,
-			}, {
-				UIListLayout = Roact.createElement("UIListLayout", {
-					VerticalAlignment = Enum.VerticalAlignment.Center,
-					FillDirection = Enum.FillDirection.Horizontal,
-					Padding = UDim.new(0.02, 0),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-				}),
-				Icon = Roact.createElement("ImageLabel", {
-					BackgroundTransparency = 1,
-					Image = UI.Rebirth,
-					ScaleType = Enum.ScaleType.Fit,
-					Size = UDim2.fromScale(0.16, 1.2),
-					LayoutOrder = 1,
-					ZIndex = 5,
-				}, {
-					Ratio = AspectRatio({ ratio = 1 }),
-				}),
-				TitleText = Text({
-					text = "Rebirth",
-					color = Color3.fromHex("fafafa"),
-					position = UDim2.fromScale(0, 0.5),
-					size = UDim2.fromScale(0.8, 1),
-					anchorPoint = Vector2.new(0, 0.5),
-					align = Enum.TextXAlignment.Left,
-					stroke = 1.5,
-					strokeColor = Color3.fromHex("15284c"),
-					index = 5,
-					order = 2,
-				}),
-			}),
 
 			Top = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
@@ -371,15 +349,16 @@ function Rebirth(_, hooks)
 				color = Color3.fromHex("fafafa"),
 				position = UDim2.fromScale(0.5, 0.21),
 				size = UDim2.fromScale(0.9, 0.08),
-				stroke = 0,
+				stroke = 2,
+				strokeColor = Color3.fromHex("143758"),
 				index = 5,
 			}),
 
 			Center = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.63),
-				Size = UDim2.fromScale(0.9, 0.547),
+				Position = UDim2.fromScale(0.5, 0.52),
+				Size = UDim2.fromScale(0.9, 0.52),
 				ZIndex = 3,
 			}, {
 				UIListLayout = Roact.createElement("UIListLayout", {
@@ -387,6 +366,55 @@ function Rebirth(_, hooks)
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					HorizontalAlignment = Enum.HorizontalAlignment.Center,
 					Padding = UDim.new(0.04, 0),
+				}),
+				Panel = Roact.createElement("Frame", {
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundTransparency = 1,
+					LayoutOrder = 0,
+					Size = UDim2.fromScale(1, 0.15),
+					ZIndex = 3,
+				}, {
+					UIListLayout = Roact.createElement("UIListLayout", {
+						FillDirection = Enum.FillDirection.Horizontal,
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						Padding = UDim.new(0.2, 0),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
+					}),
+					Current = Roact.createElement("Frame", {
+						BackgroundColor3 = Color3.fromHex("6087c5"),
+						BorderSizePixel = 0,
+						LayoutOrder = 1,
+						Size = UDim2.fromScale(0.25, 1),
+						ZIndex = 4,
+					}, {
+						UICorner = Roact.createElement("UICorner", {
+							CornerRadius = UDim.new(0, 2),
+						}),
+						TitleText = Text({
+							text = "Current",
+							color = Color3.fromHex("ffffff"),
+							size = UDim2.fromScale(0.8, 0.6),
+							index = 5,
+						}),
+					}),
+					Next = Roact.createElement("Frame", {
+						BackgroundColor3 = Color3.fromHex("2e933a"),
+						BorderSizePixel = 0,
+						LayoutOrder = 2,
+						Size = UDim2.fromScale(0.4, 1),
+						ZIndex = 4,
+					}, {
+						UICorner = Roact.createElement("UICorner", {
+							CornerRadius = UDim.new(0, 2),
+						}),
+						TitleText = Text({
+							text = "Next (After Rebirth)",
+							color = Color3.fromHex("ffffff"),
+							size = UDim2.fromScale(0.8, 0.6),
+							index = 5,
+						}),
+					}),
 				}),
 				RebirthRow = Row({
 					name = "Rebirth",
@@ -414,12 +442,12 @@ function Rebirth(_, hooks)
 			Bottom = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.91),
-				Size = UDim2.fromScale(0.9, 0.1),
+				Position = UDim2.fromScale(0.5, 0.88),
+				Size = UDim2.fromScale(0.9, 0.15),
 				ZIndex = 3,
 			}, {
 				UIListLayout = Roact.createElement("UIListLayout", {
-					VerticalAlignment = Enum.VerticalAlignment.Center,
+					VerticalAlignment = Enum.VerticalAlignment.Top,
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					HorizontalAlignment = Enum.HorizontalAlignment.Center,
 					Padding = UDim.new(0.02, 0),
@@ -430,6 +458,7 @@ function Rebirth(_, hooks)
 					total = rebirthRequirement,
 					layoutOrder = 1,
 				}),
+
 				RebirthButton = RebirthButton({
 					text = "Rebirth",
 					layoutOrder = 3,

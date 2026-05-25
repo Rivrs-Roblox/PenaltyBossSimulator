@@ -7,6 +7,7 @@ return table.freeze({
 		Multiplier = 600,
 		VIP = true,
 		Order = 2,
+		Flag = "Portugal",
 	},
 	[2] = {
 		Name = "Saar Alex Ferguyon",
@@ -16,6 +17,7 @@ return table.freeze({
 		Multiplier = 1000,
 		VIP = true,
 		Order = 3,
+		Flag = "Scotland",
 	},
 
 	[3] = {
@@ -26,6 +28,7 @@ return table.freeze({
 		Multiplier = 15,
 		Chest = true,
 		Order = 4,
+		Flag = "Italy",
 	},
 
 	[4] = {
@@ -36,6 +39,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 3,
 		Order = 5,
+		Flag = "Roblox_Flag",
 	},
 	[5] = {
 		Name = "Jailman",
@@ -45,6 +49,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 5,
 		Order = 6,
+		Flag = "England",
 	},
 	[6] = {
 		Name = "John Soccer",
@@ -54,6 +59,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 10,
 		Order = 7,
+		Flag = "USA",
 	},
 	[7] = {
 		Name = "Rian Masonn",
@@ -63,6 +69,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 25,
 		Order = 8,
+		Flag = "England",
 	},
 	[8] = {
 		Name = "Gery Oneillo",
@@ -72,6 +79,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 50,
 		Order = 9,
+		Flag = "England",
 	},
 	[9] = {
 		Name = "Thomas Slebew",
@@ -81,6 +89,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 75,
 		Order = 10,
+		Flag = "UK",
 	},
 
 	[10] = {
@@ -91,6 +100,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 100,
 		Order = 11,
+		Flag = "Spain",
 	},
 	[11] = {
 		Name = "Pincent Kompani",
@@ -100,6 +110,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 125,
 		Order = 12,
+		Flag = "Belgium",
 	},
 	[12] = {
 		Name = "Frankcesco Fariolii",
@@ -109,6 +120,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 150,
 		Order = 13,
+		Flag = "Italy",
 	},
 	[13] = {
 		Name = "Roberto De Zerbee",
@@ -118,6 +130,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 180,
 		Order = 14,
+		Flag = "Italy",
 	},
 
 	[14] = {
@@ -128,6 +141,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 200,
 		Order = 15,
+		Flag = "USA",
 	},
 	[15] = {
 		Name = "Edan Terzicch",
@@ -137,6 +151,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 250,
 		Order = 16,
+		Flag = "Germany",
 	},
 	[16] = {
 		Name = "Xabi Alanssa",
@@ -146,6 +161,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 275,
 		Order = 17,
+		Flag = "Spain",
 	},
 	[17] = {
 		Name = "Theigo Mottaa",
@@ -155,6 +171,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 300,
 		Order = 18,
+		Flag = "Italy",
 	},
 	[18] = {
 		Name = "Zeus",
@@ -164,6 +181,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 325,
 		Order = 19,
+		Flag = "Greece",
 	},
 	[19] = {
 		Name = "Pep Guardilo",
@@ -173,6 +191,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 360,
 		Order = 20,
+		Flag = "Spain",
 	},
 	[20] = {
 		Name = "Jorgen Kloop",
@@ -182,6 +201,7 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 400,
 		Order = 21,
+		Flag = "Germany",
 	},
 	[21] = {
 		Name = "Diego Maradono",
@@ -191,5 +211,6 @@ return table.freeze({
 		Currency = "Money2",
 		Multiplier = 500,
 		Order = 22,
+		Flag = "Argentina",
 	},
 })
