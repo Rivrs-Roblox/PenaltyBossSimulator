@@ -202,13 +202,17 @@ function TutorialController:UpdateUIHighlight()
 					UIHighlighter.Stop(characterTargetCard)
 					UIHighlighter.Highlight(charactersButton)
 				elseif currentUI == "Characters" then
-					if scrollCharacter then
-						scrollCharacter.CanvasPosition = Vector2.new(0, 150)
+					local targetCard = characterTargetCard or scrollCharacter:FindFirstChild("2")
+					if scrollCharacter and targetCard then
+						local relativeY = targetCard.AbsolutePosition.Y
+							- scrollCharacter.AbsolutePosition.Y
+							+ scrollCharacter.CanvasPosition.Y
+						scrollCharacter.CanvasPosition = Vector2.new(0, math.max(0, relativeY - 20))
 					end
 
 					UIHighlighter.Stop(coachesButton)
 					UIHighlighter.Stop(charactersButton)
-					UIHighlighter.Highlight(characterTargetCard)
+					UIHighlighter.Highlight(targetCard)
 				end
 
 				task.wait(0.1) -- Jeda loop agar tidak terjadi script exhaustion
