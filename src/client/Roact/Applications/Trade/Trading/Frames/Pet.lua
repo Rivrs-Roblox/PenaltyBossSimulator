@@ -22,6 +22,7 @@ local TradeController = Knit.GetController("TradeController")
 
 -- UI
 local Colors = DataCacheController:GetFile("Colors")
+local UI = DataCacheController:GetFile("Images")
 
 local SELECTED_ICON = "rbxassetid://93840956317609"
 
@@ -80,6 +81,22 @@ local function getPetTheme(params: table)
         gradientBottom = Color3.fromHex("2f3444"),
         stroke = topColor,
     }
+end
+
+local function getPowerTextSize(text: string)
+    local length = string.len(text or "")
+
+    if length <= 4 then
+		return 22
+	elseif length <= 6 then
+		return 16
+	elseif length <= 8 then
+		return 14
+	elseif length <= 10 then
+		return 9
+	end
+
+	return 8
 end
 
 return function(params: table)
@@ -169,19 +186,50 @@ return function(params: table)
             TextStrokeColor3 = Color3.fromHex("000000"),
         }),
 
-        PowerText = Roact.createElement("TextLabel", {
-            TextWrapped = true,
-            TextColor3 = Color3.fromHex("ffffff"),
-            Text = params.power,
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
+        Stats = Roact.createElement("Frame", {
+            AnchorPoint = Vector2.new(0.5, 1),
             BackgroundTransparency = 1,
-            Position = UDim2.fromScale(0.5, 0.88),
+            Position = UDim2.fromScale(0.5, 0.9),
+            BorderColor3 = Color3.fromHex("000000"),
+            BackgroundColor3 = Color3.fromHex("ffffff"),
+            BorderSizePixel = 0,
+            Size = UDim2.fromScale(0.9, 0.2),
             ZIndex = 10,
-            TextScaled = true,
-            Size = UDim2.fromScale(0.85, 0.2),
-            TextStrokeTransparency = 0,
-            TextStrokeColor3 = Color3.fromHex("000000"),
+        }, {
+            Icon = Roact.createElement("ImageLabel", {
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                Image = UI.Money2,
+                BackgroundTransparency = 1,
+                Position = UDim2.fromScale(0.14, 0.5),
+                ZIndex = 13,
+                LayoutOrder = 1,
+                BackgroundColor3 = Color3.fromHex("ffffff"),
+                ScaleType = Enum.ScaleType.Fit,
+                Size = UDim2.fromScale(0.42, 2.025),
+            }, {
+                Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+            }),
+            PowerText = Roact.createElement("TextLabel", {
+                LayoutOrder = 2,
+                TextWrapped = false,
+                TextColor3 = Color3.fromHex("ffffff"),
+                Text = params.power,
+                TextScaled = true,
+                AnchorPoint = Vector2.new(0, 0.5),
+                FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                Position = UDim2.fromScale(0.34, 0.5),
+                ZIndex = 14,
+                Size = UDim2.fromScale(0.62, 1.25),
+                TextStrokeTransparency = 0,
+                TextStrokeColor3 = Color3.fromHex("000000"),
+            }, {
+                UITextSizeConstraint = Roact.createElement("UITextSizeConstraint", {
+                    MaxTextSize = getPowerTextSize(params.power),
+                    MinTextSize = 1,
+                }),
+            }),
         }),
 
         Equipped = Roact.createElement("ImageLabel", {

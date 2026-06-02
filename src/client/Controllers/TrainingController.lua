@@ -5,6 +5,8 @@ local CollectionService = game:GetService("CollectionService")
 local ContextActionService = game:GetService("ContextActionService")
 local UserInputService = game:GetService("UserInputService")
 local Debris = game:GetService("Debris")
+local ContentProvider = game:GetService("ContentProvider")
+local TweenService = game:GetService("TweenService")
 
 -- Knit packages
 local Packages = ReplicatedStorage.Packages
@@ -47,8 +49,13 @@ local hideConnections = {}
 local humanoidJumpConnection
 local animationSpeed = 1
 local lastClickTime = 0
+local trainingStartRequestId = 0
+local pendingTrainingArea
+local localTrainingAreas = {}
 
 local animationCache = {}
+local preloadedTrainingAnimations = {}
+local goalPulseCache = setmetatable({}, { __mode = "k" })
 local currentTrainingShotId
 local isTrainingProjectileActive = false
 
@@ -57,6 +64,8 @@ local COOLDOWN_TIME = 0.45
 local ANIMATION_SPEED_DECAY = 0.5
 local ANIMATION_SPEED_INCREASE = 0.25
 local BEAM_SPEED = 2
+local TRAINING_START_RETRY_ATTEMPTS = 5
+local TRAINING_START_RETRY_INTERVAL = 0.12
 local DISABLE_COLLISION_TRAINING_INDEXES = {
 	[3] = true,
 	[4] = true,
@@ -108,6 +117,24 @@ local function getOrCreateAnimation(animationId: string, index: number)
 	animationCache[animationId] = anim
 
 	return anim
+end
+
+local function preloadTrainingAnimation(index: number)
+	local animData = getTrainingAnimationData(index)
+	local animationId = animData.Id or TrainingAnimationData.Default.Id
+
+	if not animationId or animationId == "" or preloadedTrainingAnimations[animationId] then
+		return
+	end
+
+	local anim = getOrCreateAnimation(animationId, index)
+	local success = pcall(function()
+		ContentProvider:PreloadAsync({ anim })
+	end)
+
+	if success then
+		preloadedTrainingAnimations[animationId] = true
+	end
 end
 
 local function getCharacterFootball()
@@ -177,6 +204,15 @@ local TARGET_IMPACT_VFX_NAMES = {
 local DEFAULT_IMPACT_EMIT_COUNT = 25
 local IMPACT_VFX_DURATION = 0.3
 local IMPACT_VFX_CLEANUP_DELAY = 2.5
+local GOAL_PULSE_CONFIG = {
+	ScaleMultiplier = 1.25,
+	GrowTime = 0.15,
+	ShrinkTime = 0.14,
+	GrowEasingStyle = Enum.EasingStyle.Back,
+	GrowEasingDirection = Enum.EasingDirection.Out,
+	ShrinkEasingStyle = Enum.EasingStyle.Quad,
+	ShrinkEasingDirection = Enum.EasingDirection.In,
+}
 
 local function hasVfx(root: Instance): boolean
 	if isBallVfx(root) then
@@ -374,6 +410,127 @@ local function triggerImpactVfx(root: Instance, duration: number, defaultEmitCou
 	end
 end
 
+local function findGoalModelFromTrainingArea(trainingArea: Instance?): Model?
+	if not trainingArea then
+		return nil
+	end
+
+	local trainingAreaParent = trainingArea and trainingArea.Parent
+	if not trainingAreaParent then
+		return nil
+	end
+
+	local assets = trainingAreaParent:FindFirstChild("Assets")
+
+	local goal = assets:FindFirstChild("Goal")
+	if goal and goal:IsA("Model") then
+		return goal
+	end
+
+	return nil
+end
+
+local function cleanupGoalPulse(pulse, skipDestroyingConnection: boolean?)
+	if not pulse then
+		return
+	end
+
+	pulse.GrowTween:Cancel()
+	pulse.ShrinkTween:Cancel()
+	pulse.ChangedConnection:Disconnect()
+	pulse.GrowCompletedConnection:Disconnect()
+	pulse.ShrinkCompletedConnection:Disconnect()
+
+	if not skipDestroyingConnection and pulse.DestroyingConnection then
+		pulse.DestroyingConnection:Disconnect()
+	end
+
+	if pulse.ScaleValue and pulse.ScaleValue.Parent then
+		pulse.ScaleValue:Destroy()
+	end
+end
+
+local function getOrCreateGoalPulse(goal: Model)
+	local cached = goalPulseCache[goal]
+	if cached then
+		return cached
+	end
+
+	local scaleValue = Instance.new("NumberValue")
+	scaleValue.Name = "TrainingGoalPulseScale"
+	scaleValue.Value = goal:GetScale()
+	scaleValue.Parent = goal
+
+	local originalScale = scaleValue.Value
+	local pulseScale = originalScale * GOAL_PULSE_CONFIG.ScaleMultiplier
+	local growTween = TweenService:Create(scaleValue, TweenInfo.new(
+		GOAL_PULSE_CONFIG.GrowTime,
+		GOAL_PULSE_CONFIG.GrowEasingStyle,
+		GOAL_PULSE_CONFIG.GrowEasingDirection
+	), {
+		Value = pulseScale,
+	})
+	local shrinkTween = TweenService:Create(scaleValue, TweenInfo.new(
+		GOAL_PULSE_CONFIG.ShrinkTime,
+		GOAL_PULSE_CONFIG.ShrinkEasingStyle,
+		GOAL_PULSE_CONFIG.ShrinkEasingDirection
+	), {
+		Value = originalScale,
+	})
+
+	local changedConnection = scaleValue.Changed:Connect(function(value: number)
+		if goal and goal.Parent then
+			goal:ScaleTo(value)
+		end
+	end)
+
+	local growCompletedConnection = growTween.Completed:Connect(function(playbackState)
+		if playbackState == Enum.PlaybackState.Completed and goal and goal.Parent then
+			shrinkTween:Play()
+		end
+	end)
+
+	local shrinkCompletedConnection = shrinkTween.Completed:Connect(function(playbackState)
+		if playbackState == Enum.PlaybackState.Completed and goal and goal.Parent then
+			scaleValue.Value = originalScale
+		end
+	end)
+
+	cached = {
+		ScaleValue = scaleValue,
+		OriginalScale = originalScale,
+		GrowTween = growTween,
+		ShrinkTween = shrinkTween,
+		ChangedConnection = changedConnection,
+		GrowCompletedConnection = growCompletedConnection,
+		ShrinkCompletedConnection = shrinkCompletedConnection,
+	}
+
+	cached.DestroyingConnection = goal.Destroying:Once(function()
+		local pulse = goalPulseCache[goal]
+		if pulse == cached then
+			cleanupGoalPulse(pulse, true)
+			goalPulseCache[goal] = nil
+		end
+	end)
+
+	goalPulseCache[goal] = cached
+	return cached
+end
+
+local function playTrainingGoalPulse(trainingArea: Instance?)
+	local goal = findGoalModelFromTrainingArea(trainingArea)
+	if not goal then
+		return
+	end
+
+	local pulse = getOrCreateGoalPulse(goal)
+	pulse.GrowTween:Cancel()
+	pulse.ShrinkTween:Cancel()
+	pulse.ScaleValue.Value = pulse.OriginalScale
+	pulse.GrowTween:Play()
+end
+
 local function playTargetImpactVfx(target: Instance?, impactPosition: Vector3)
 	local template = findTargetImpactVfxTemplate(target)
 	if not template then
@@ -519,8 +676,6 @@ local function startTrainingAreaVisual(trainingArea)
 	print("StartAreaVisual")
 	local index = trainingArea:GetAttribute("Index")
 
-	TrainingService:StartTraining(trainingArea)
-
 	if index == 1 then
 		--local beam = trainingArea.Parent:FindFirstChild("Beam")
 		--beam.TextureSpeed = BEAM_SPEED
@@ -609,32 +764,9 @@ function TrainingController:StartTraining(trainingArea, isTransport)
 		return
 	end
 
-	currentTrainingArea = trainingArea
-
-	-- disableMovement()
-	-- hideOtherPlayers()
-
-	self.IsTraining = true
-
-	-- Deteksi lompat (lebih aman untuk mobile)
-	local character = player.Character
-	local humanoid = character and character:FindFirstChild("Humanoid")
-	if humanoid then
-		humanoidJumpConnection = humanoid.Jumping:Connect(function(isJumping)
-			if isJumping and self.IsTraining then
-				TrainingSignals.TrainingStopped:Fire(trainingArea)
-				self:StopTraining(trainingArea)
-
-				if AutoController.IsAutoTraining then
-					AutoController:AutoTrain()
-				end
-			end
-		end)
-	end
-
-	if activePrompt then
-		activePrompt.Enabled = false
-	end
+	trainingStartRequestId += 1
+	local requestId = trainingStartRequestId
+	pendingTrainingArea = trainingArea
 
 	local pivot = trainingArea:FindFirstChild("Pivot")
 	local character = player.Character
@@ -647,26 +779,107 @@ function TrainingController:StartTraining(trainingArea, isTransport)
 		end
 	end
 
-	local index = trainingArea:GetAttribute("Index")
-	--playTrainingAnimation(index)
-	startTrainingAreaVisual(trainingArea)
+	local function canRetryStart()
+		return requestId == trainingStartRequestId
+			and pendingTrainingArea == trainingArea
+			and (isTransport or localTrainingAreas[trainingArea] == true)
+	end
 
-	-- Mulai loop training
-	task.spawn(function()
-		while self.IsTraining do
-			TrainingService:Training(trainingArea)
+	local function activateTraining()
+		pendingTrainingArea = nil
+		currentTrainingArea = trainingArea
 
-			requestTrainingBallShot()
-			task.wait(1.5)
+		-- disableMovement()
+		-- hideOtherPlayers()
+
+		self.IsTraining = true
+
+		-- Deteksi lompat (lebih aman untuk mobile)
+		local currentCharacter = player.Character
+		local humanoid = currentCharacter and currentCharacter:FindFirstChild("Humanoid")
+		if humanoid then
+			if humanoidJumpConnection then
+				humanoidJumpConnection:Disconnect()
+			end
+
+			humanoidJumpConnection = humanoid.Jumping:Connect(function(isJumping)
+				if isJumping and self.IsTraining then
+					TrainingSignals.TrainingStopped:Fire(trainingArea)
+					self:StopTraining(trainingArea)
+
+					if AutoController.IsAutoTraining then
+						AutoController:AutoTrain()
+					end
+				end
+			end)
 		end
-	end)
 
-	TrainingSignals.TrainingStarted:Fire(trainingArea)
+		if activePrompt then
+			activePrompt.Enabled = false
+		end
+
+		--playTrainingAnimation(index)
+		startTrainingAreaVisual(trainingArea)
+
+		-- Mulai loop training
+		task.spawn(function()
+			preloadTrainingAnimation(getTrainingAreaIndex(trainingArea))
+
+			while self.IsTraining and currentTrainingArea == trainingArea do
+				TrainingService:Training(trainingArea)
+				requestTrainingBallShot()
+				task.wait(1.5)
+			end
+		end)
+
+		TrainingSignals.TrainingStarted:Fire(trainingArea)
+	end
+
+	local function requestStart(attempt: number)
+		TrainingService:StartTraining(trainingArea):andThen(function(result)
+			if requestId ~= trainingStartRequestId then
+				return
+			end
+
+			local canStart = result == true or (typeof(result) == "table" and result.Success == true)
+			if canStart then
+				activateTraining()
+				return
+			end
+
+			local reason = typeof(result) == "table" and result.Reason or nil
+			if reason == "Outside" and attempt < TRAINING_START_RETRY_ATTEMPTS and canRetryStart() then
+				task.delay(TRAINING_START_RETRY_INTERVAL, function()
+					if canRetryStart() then
+						requestStart(attempt + 1)
+					end
+				end)
+				return
+			end
+
+			pendingTrainingArea = nil
+			if isTransport then
+				self.IsAutoTrain = false
+			end
+		end)
+	end
+
+	requestStart(1)
 end
 
 function TrainingController:StopTraining(trainingArea)
 	--enableMovement()
 	-- showOtherPlayers()
+
+	if trainingArea ~= nil and currentTrainingArea ~= nil and currentTrainingArea ~= trainingArea then
+		TrainingService:StopTraining(trainingArea)
+		return
+	end
+
+	if trainingArea == nil or pendingTrainingArea == nil or pendingTrainingArea == trainingArea then
+		trainingStartRequestId += 1
+		pendingTrainingArea = nil
+	end
 
 	TrainingSignals.TrainingStopped:Fire(trainingArea)
 	self.IsTraining = false
@@ -761,7 +974,8 @@ function TrainingController:KnitStart()
 			return
 		end
 
-		playTargetImpactVfx(target, impactPosition)
+		playTrainingGoalPulse(currentTrainingArea)
+		-- playTargetImpactVfx(target, impactPosition)
 	end)
 
 	BallService.BallFinished:Connect(function(shotInfo)
@@ -800,13 +1014,9 @@ function TrainingController:KnitStart()
 					return
 				end
 
-				TrainingService:CheckAvailability(trainingArea):andThen(function(value)
-					if value then
-						self:StartTraining(trainingArea)
-
-						self.IsAutoTrain = false
-					end
-				end)
+				localTrainingAreas[trainingArea] = true
+				self.IsAutoTrain = false
+				self:StartTraining(trainingArea)
 			end)
 
 			--  KELUAR ZONE
@@ -814,12 +1024,13 @@ function TrainingController:KnitStart()
 				if plr ~= player then
 					return
 				end
+				localTrainingAreas[trainingArea] = nil
 				TrainingSignals.TrainingStopped:Fire(trainingArea)
 
 				if AutoController.IsAutoTraining and not self.IsAutoTrain then
 					AutoController:AutoTrain()
 				end
-				self:StopTraining(currentTrainingArea)
+				self:StopTraining(trainingArea)
 			end)
 			table.insert(trainingAreas, trainingArea)
 		end

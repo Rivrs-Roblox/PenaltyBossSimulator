@@ -83,6 +83,8 @@ function UpdateLog(_, hooks)
 				position = UDim2.fromScale(0.5, 0.175),
 				index = 101,
 				size = UDim2.fromScale(0.25, 0.05),
+				stroke = 1.5,
+				strokeColor = Color3.fromRGB(25, 25, 25),
 			}),
 
 			ScrollingFrame = Roact.createElement("ScrollingFrame", {

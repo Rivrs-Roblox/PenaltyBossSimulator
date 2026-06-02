@@ -34,17 +34,20 @@ return function(params: table, children)
 			pos = UDim2.fromScale(0.5, 0.5),
 			ratio = 1.2,
 			align = Enum.TextXAlignment.Center,
+			zIndex = 1,
 			action = function()
 				UIController:HideFrame()
 			end,
 		},
 	})
 
+	local zIndex = params.zIndex
+
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = Color3.fromHex("ffffff"),
 		Position = params.pos,
-		ZIndex = 1,
+		ZIndex = zIndex,
 		Size = params.size,
 		Visible = params.condition,
 	}, {
@@ -66,13 +69,13 @@ return function(params: table, children)
 				ScaleType = 3,
 				BackgroundTransparency = 1,
 				Position = UDim2.fromScale(0.5, 0.37),
-				ZIndex = 2,
+				ZIndex = zIndex + 1,
 				LayoutOrder = 1,
 				Image = params.titleIcon,
 				Size = UDim2.fromScale(1.2, 1.2),
 			}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
 			Text = Text({
-				index = 2,
+				index = zIndex + 1,
 				order = 2,
 				text = params.title,
 				align = Enum.TextXAlignment.Left,
@@ -84,7 +87,10 @@ return function(params: table, children)
 				stroke = 2,
 			}),
 		}),
-		Close = CloseButton(params.action, params.hooks, { pos = UDim2.fromScale(0.94, 0.08) }),
+		Close = CloseButton(params.action, params.hooks, {
+			pos = UDim2.fromScale(0.94, 0.08),
+			zIndex = zIndex + 2,
+		}),
 		Ratio = AspectRatio({ ratio = params.ratio }),
 		UICorner = Roact.createElement("UICorner", { CornerRadius = UDim.new(0, 2) }),
 		UIGradient = Roact.createElement("UIGradient", {

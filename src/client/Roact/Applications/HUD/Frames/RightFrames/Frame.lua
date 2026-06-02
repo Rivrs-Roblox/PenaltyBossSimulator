@@ -52,6 +52,7 @@ function RightFrame(_, hooks)
 	local StarterPacksReducer = RoduxHooks.useSelector(hooks, function(state)
 		return state.StarterPacksReducer
 	end)
+	local currentPack = StarterPacks[StarterPacksReducer.BoughtStarterPacks] or StarterPacks[0]
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -75,8 +76,8 @@ function RightFrame(_, hooks)
 			}),
 			StarterPack = Roact.createElement(CTA, {
 				upperText = "LIMITED!",
-				bottomText = "",
-				image = StarterPacks[StarterPacksReducer.BoughtStarterPacks].ShopIcon,
+				bottomText = currentPack.Name,
+				image = currentPack.ShopIcon,
 				frame = FramesConstants.Store,
 				link = function()
 					Sound:PlaySound("UI_Open")

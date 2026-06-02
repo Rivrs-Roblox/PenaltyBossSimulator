@@ -10,6 +10,7 @@ local Sound = require(Packages.Sound)
 --// CONFIG
 local DEFAULT_BALL_LIFETIME = 2
 local DEFAULT_CURVE_HEIGHT = 12
+local DEFAULT_HORIZONTAL_CURVE = 5
 local DEFAULT_SHOOT_COOLDOWN = 1.15
 local DEFAULT_WINDUP_TIME = 0.3
 local CHARACTER_BALL_RESTORE_DELAY = 0.12
@@ -854,6 +855,7 @@ function BallService:ShootBall(player: Player, target, shotConfig)
 	projectileLifetime = math.max(0.05, projectileLifetime)
 
 	local curveHeight = tonumber(shotConfig.CurveHeight) or DEFAULT_CURVE_HEIGHT
+	local horizontalCurve = tonumber(shotConfig.HorizontalCurve) or DEFAULT_HORIZONTAL_CURVE
 
 	self.ShotCounters[player] = (self.ShotCounters[player] or 0) + 1
 	local shotId = self.ShotCounters[player]
@@ -941,7 +943,14 @@ function BallService:ShootBall(player: Player, target, shotConfig)
 
 		local start = getObjectPosition(ball)
 		local midPoint = (start + targetPosition) / 2
-		midPoint += Vector3.new(math.random(-5, 5), curveHeight, math.random(-5, 5))
+		local horizontalDirection = Vector3.new(targetPosition.X - start.X, 0, targetPosition.Z - start.Z)
+		local horizontalOffset = Vector3.zero
+
+		if horizontalDirection.Magnitude > 0.001 then
+			horizontalOffset = Vector3.yAxis:Cross(horizontalDirection.Unit) * horizontalCurve
+		end
+
+		midPoint += horizontalOffset + Vector3.yAxis * curveHeight
 
 		local elapsed = 0
 		local finished = false
@@ -1024,7 +1033,7 @@ function BallService:ShootBall(player: Player, target, shotConfig)
 
 			if not impactPlayed and elapsed >= projectileLifetime * 0.75 then
 				impactPlayed = true
-				Sound:PlaySound("MISC_Training_Goal", target)
+				-- Sound:PlaySound("MISC_Training_Goal", target)
 				fireBallImpactToClients(self, target, targetPosition, clientShotInfo)
 			end
 

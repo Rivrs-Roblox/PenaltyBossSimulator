@@ -15,6 +15,14 @@ local UIActions = {
         return { value = value }
     end),
 
+    setStoreTargetSection = Rodux.makeActionCreator("setStoreTargetSection", function(value)
+        return { value = value }
+    end),
+
+    resetStoreTargetSection = Rodux.makeActionCreator("resetStoreTargetSection", function()
+        return {}
+    end),
+
     resetCurrentUI = Rodux.makeActionCreator("resetCurrentUI", function(value)
         return { value = value }
     end),

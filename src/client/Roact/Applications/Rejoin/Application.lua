@@ -40,7 +40,7 @@ local Template = DataCacheController:GetFile("Template")
 local player = Players.LocalPlayer
 
 -- Helper: quest progress bar row matching converted Rejoin.lua style
-local function QuestBar(progressScale: number, labelText: string, order: number)
+local function QuestBar(progressScale: number, labelText: string, order: number, isClaimed: boolean?)
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 0.8,
@@ -83,6 +83,18 @@ local function QuestBar(progressScale: number, labelText: string, order: number)
 				Rotation = 90,
 			}),
 		}),
+		ClaimedOverlay = Roact.createElement("Frame", {
+			BackgroundColor3 = Color3.fromHex("000000"),
+			BackgroundTransparency = 0.45,
+			BorderSizePixel = 0,
+			Size = UDim2.fromScale(1, 1),
+			Visible = isClaimed == true,
+			ZIndex = 4,
+		}, {
+			UICorner = Roact.createElement("UICorner", {
+				CornerRadius = UDim.new(0, 6),
+			}),
+		}),
 	})
 end
 
@@ -99,28 +111,50 @@ function Rejoin(_, hooks)
 	end)
 
 	local requiredTime = Template.RejoinReward.RequiredTime
+	local currentTime, setCurrentTime = hooks.useState(os.time())
+	local verifyRequested, setVerifyRequested = hooks.useState(false)
+	local firstConnection = RejoinReducer.FirstConnection or currentTime
+	local timeSinceJoin = currentTime - firstConnection
+	local isClaimed = RejoinReducer.ClaimedRejoinReward == true
+	local isRejoinReady = timeSinceJoin >= requiredTime
+
+	hooks.useEffect(function()
+		local running = true
+
+		task.spawn(function()
+			while running do
+				task.wait(1)
+				setCurrentTime(os.time())
+			end
+		end)
+
+		return function()
+			running = false
+		end
+	end, {})
 
 	hooks.useEffect(function()
 		if
 			RejoinReducer.FirstConnection
-			and (os.time() - RejoinReducer.FirstConnection > requiredTime)
+			and isRejoinReady
 			and PlayerReducer.Verified == false
+			and verifyRequested == false
 		then
+			setVerifyRequested(true)
 			task.spawn(function()
 				CodesController:Verify("Verify")
 			end)
 		end
-	end, { RejoinReducer.FirstConnection, PlayerReducer.Verified, requiredTime })
+	end, { RejoinReducer.FirstConnection, PlayerReducer.Verified, requiredTime, isRejoinReady, verifyRequested })
 
-	local firstConnection = RejoinReducer.FirstConnection or os.time()
-	local timeSinceJoin = os.time() - firstConnection
-	local rejoinProgress = math.clamp(timeSinceJoin / requiredTime, 0, 1)
-	local followProgress = if player:IsInGroup(Template.Config.Group) then 1 else 0
-	local claimCount = if timeSinceJoin > requiredTime
+	local rejoinProgress = if isClaimed then 1 else math.clamp(timeSinceJoin / requiredTime, 0, 1)
+	local followProgress = if isClaimed or player:IsInGroup(Template.Config.Group) then 1 else 0
+	local claimCount = if isRejoinReady
 			and PlayerReducer.Verified
-			and not RejoinReducer.ClaimedRejoinReward
+			and not isClaimed
 		then 1
 		else 0
+	local infoText = if isClaimed then "REWARD CLAIMED!" else "WILL BE GONE FOREVER SOON!"
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -277,12 +311,18 @@ function Rejoin(_, hooks)
 					order = 1,
 				}),
 
-				Rejoin = QuestBar(rejoinProgress, `Rejoin 1 day in a row ({math.floor(rejoinProgress * 100)}%)`, 2),
+				Rejoin = QuestBar(
+					rejoinProgress,
+					`Rejoin 1 day in a row ({math.floor(rejoinProgress * 100)}%)`,
+					2,
+					isClaimed
+				),
 
 				Follow = QuestBar(
 					followProgress,
 					`Follow {Template.RejoinReward and Template.RejoinReward.Follow or "@RivrsGames"} (Roblox) ({followProgress * 100}%)`,
-					3
+					3,
+					isClaimed
 				),
 
 				-- Claim row
@@ -298,7 +338,7 @@ function Rejoin(_, hooks)
 						SortOrder = Enum.SortOrder.LayoutOrder,
 					}),
 					InfoText = Text({
-						text = "WILL BE GONE FOREVER SOON!",
+						text = infoText,
 						color = Color3.fromHex("fafafa"),
 						size = UDim2.fromScale(0.75, 0.6),
 						align = Enum.TextXAlignment.Left,
@@ -311,6 +351,7 @@ function Rejoin(_, hooks)
 						AnchorPoint = Vector2.new(0.5, 0.5),
 						BorderSizePixel = 0,
 						BackgroundColor3 = Color3.fromHex("ffffff"),
+						Visible = not isClaimed,
 						[Roact.Event.MouseButton1Click] = function()
 							UIController:HideFrame()
 							RejoinController:Claim()

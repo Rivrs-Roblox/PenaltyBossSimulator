@@ -34,6 +34,31 @@ local DataCacheController = Knit.GetController("DataCacheController")
 local Template = DataCacheController:GetFile("Template")
 local UI = DataCacheController:GetFile("Images")
 
+local function isRegularPurchasableCharacter(characterData: table): boolean
+	return not characterData.VIP
+		and not characterData.Reward
+		and not characterData.StarterPack
+		and not characterData.RejoinReward
+end
+
+local function getPreviousRegularCharacterId(id: number): number?
+	local previousId = nil
+
+	for characterId, characterData in pairs(Template.Characters) do
+		if
+			type(characterId) == "number"
+			and characterId < id
+			and isRegularPurchasableCharacter(characterData)
+		then
+			if previousId == nil or characterId > previousId then
+				previousId = characterId
+			end
+		end
+	end
+
+	return previousId
+end
+
 function Characters(_, hooks)
 	local UIReducer = RoduxHooks.useSelector(hooks, function(state)
 		return state.UIReducer
@@ -53,6 +78,14 @@ function Characters(_, hooks)
 	local Characters = {}
 	for index, Character in pairs(Template.Characters) do
 		local possessed = table.find(CharacterReducer.Characters, index) ~= nil
+		local previousCharacterId = if isRegularPurchasableCharacter(Character)
+			then getPreviousRegularCharacterId(index)
+			else nil
+		local previousCharacter = previousCharacterId and Template.Characters[previousCharacterId] or nil
+		local locked = not possessed
+			and previousCharacterId ~= nil
+			and table.find(CharacterReducer.Characters, previousCharacterId) == nil
+
 		Characters[index] = CharacterCard({
 			id = index,
 			name = Character.Name,
@@ -61,6 +94,8 @@ function Characters(_, hooks)
 			image = if Character.Image == "" then nil else Character.Image,
 			possessed = possessed,
 			equipped = CharacterReducer.CurrentCharacter == index,
+			locked = locked,
+			previousName = previousCharacter and (previousCharacter.DisplayName or previousCharacter.Name) or nil,
 			multiplier = Character.Multiplier,
 			VIP = Character.VIP,
 			Reward = Character.Reward,

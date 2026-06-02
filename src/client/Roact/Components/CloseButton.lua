@@ -26,8 +26,12 @@ local Corner = require(script.Parent.Corner)
 local Stroke = require(script.Parent.Stroke)
 
 return function(action, hooks, params)
+	params = params or {}
 	setmetatable(params, {
-		pos = UDim2.fromScale(0.931, -0.041),
+		__index = {
+			pos = UDim2.fromScale(0.931, -0.041),
+			zIndex = 100,
+		},
 	})
 
 	local styles, api = RoactSpring.useSpring(hooks, function()
@@ -41,7 +45,7 @@ return function(action, hooks, params)
 		Position = params.pos,
 		BackgroundColor3 = Color3.fromHex("ffffff"),
 		Size = Size(styles, { X = 0.09, Y = 0.09 }),
-		ZIndex = 100,
+		ZIndex = params.zIndex,
 		[Roact.Event.MouseButton1Click] = function()
 			Sound:PlaySound("UI_Close")
 			action()
@@ -83,7 +87,7 @@ return function(action, hooks, params)
 			BackgroundTransparency = 1,
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
-			ZIndex = 101,
+			ZIndex = params.zIndex + 1,
 			Image = "rbxassetid://120045489184571",
 			Size = UDim2.fromScale(0.5, 0.5),
 		}),

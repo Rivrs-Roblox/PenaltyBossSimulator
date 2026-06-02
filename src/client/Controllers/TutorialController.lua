@@ -27,6 +27,7 @@ local DataService
 local CoachesService
 local CharactersService
 local PetsService
+local FightService
 
 local Helpers = ReplicatedStorage.Shared.Helpers
 local FormatNumber = require(Helpers.Numbers.FormatNumber)
@@ -48,6 +49,7 @@ local blockTutorial = false
 local isAdvancing = false
 
 local _winsCache = 0
+local _allBossBeaten = false
 
 -- Consts
 local ARROW_SPAWN_RATE = 0.25 -- in sec
@@ -100,8 +102,11 @@ local TUTORIAL_STEPS = {
 	[5] = {
 		Text = "Gain 50 Wins by defeating the goalies!",
 		ArrowTarget = function()
-			local PenaltyZone =
-				workspace.Area01:FindFirstChild("PenaltyZone"):WaitForChild("PenaltyGate"):WaitForChild("Pivot", 10)
+			local PenaltyZone = workspace.Area01
+				:FindFirstChild("PenaltyZone")
+				:WaitForChild("Enemies")
+				:WaitForChild("MiniBoss 1")
+				:WaitForChild("Pivot", 10)
 			return PenaltyZone
 		end,
 		Target = 50,
@@ -131,7 +136,7 @@ local TUTORIAL_STEPS = {
 		end,
 		Target = 0,
 		Condition = function()
-			return _winsCache >= 1_000 -- price of area2
+			return _winsCache >= 1_000 and _allBossBeaten
 		end,
 	},
 }
@@ -202,13 +207,17 @@ function TutorialController:UpdateUIHighlight()
 					UIHighlighter.Stop(characterTargetCard)
 					UIHighlighter.Highlight(charactersButton)
 				elseif currentUI == "Characters" then
-					if scrollCharacter then
-						scrollCharacter.CanvasPosition = Vector2.new(0, 150)
+					local targetCard = characterTargetCard or scrollCharacter:FindFirstChild("2")
+					if scrollCharacter and targetCard then
+						local relativeY = targetCard.AbsolutePosition.Y
+							- scrollCharacter.AbsolutePosition.Y
+							+ scrollCharacter.CanvasPosition.Y
+						scrollCharacter.CanvasPosition = Vector2.new(0, math.max(0, relativeY - 20))
 					end
 
 					UIHighlighter.Stop(coachesButton)
 					UIHighlighter.Stop(charactersButton)
-					UIHighlighter.Highlight(characterTargetCard)
+					UIHighlighter.Highlight(targetCard)
 				end
 
 				task.wait(0.1) -- Jeda loop agar tidak terjadi script exhaustion
@@ -242,6 +251,10 @@ function TutorialController:CreateTutorialFrame(visible: true)
 	TutorialGUI.IgnoreGuiInset = true
 	TutorialGUI.ResetOnSpawn = false
 	trove:Add(TutorialGUI)
+
+	if FightController and FightController.IsFighting then
+		TutorialGUI.Enabled = false
+	end
 
 	local GUIFolder = ReplicatedStorage.Assets.GUIs
 	TutorialFrame = GUIFolder:FindFirstChild("TutorialFrame")
@@ -554,6 +567,7 @@ function TutorialController:KnitInit()
 	CoachesService = Knit.GetService("CoachesService")
 	CharactersService = Knit.GetService("CharactersService")
 	PetsService = Knit.GetService("PetsService")
+	FightService = Knit.GetService("FightService")
 end
 
 function TutorialController:KnitStart()
@@ -605,10 +619,39 @@ function TutorialController:KnitStart()
 				end
 			end)
 
+			FightService.FightStarted:Connect(function()
+				if TutorialGUI then
+					TutorialGUI.Enabled = false
+				end
+			end)
+
+			FightService.FightEnded:Connect(function()
+				if TutorialGUI and currentTutorialStep <= #TUTORIAL_STEPS then
+					if currentTutorialStep ~= 3 and currentTutorialStep ~= 6 then
+						TutorialGUI.Enabled = true
+					end
+				end
+			end)
+
 			CoachesService.CoachBought:Connect(function(coachId)
 				if currentTutorialStep == 3 then
 					self:TutorialNextStep(false)
 				end
+			end)
+
+			-- Check boss progress for Area01 efficiently
+			local function checkBosses(bossProgress)
+				if bossProgress and bossProgress["Area01"] and bossProgress["Area01"] >= 5 then
+					_allBossBeaten = true
+				else
+					_allBossBeaten = false
+				end
+			end
+
+			checkBosses(data.BossProgress)
+
+			DataService.BossProgressUpdated:Connect(function(updatedProgress)
+				checkBosses(updatedProgress)
 			end)
 
 			_winsCache = data.Wins

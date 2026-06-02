@@ -36,6 +36,7 @@ local BoostService = Knit.GetService("BoostService")
 local PetsService = Knit.GetService("PetsService")
 
 -- UI
+local UI = DataCacheController:GetFile("Images")
 local Colors = DataCacheController:GetFile("Colors")
 
 local PET_THEMES = {
@@ -118,6 +119,22 @@ local function getPetTheme(params)
 	}
 end
 
+local function getPowerTextSize(text: string)
+	local length = string.len(text or "")
+
+	if length <= 4 then
+		return 22
+	elseif length <= 6 then
+		return 16
+	elseif length <= 8 then
+		return 14
+	elseif length <= 10 then
+		return 9
+	end
+
+	return 8
+end
+
 local function createTextLabel(params: table)
 	setmetatable(params, {
 		__index = {
@@ -153,34 +170,41 @@ end
 
 local function createPetItem(InventoryReducer, params: table)
 	local theme = getPetTheme(params)
+	local function handlePetAction()
+		Sound:PlaySound("UI_Click")
 
-	return Roact.createElement("ImageButton", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		ScaleType = Enum.ScaleType.Fit,
+		local petId = tostring(params.id)
+		if InventoryReducer.DeletingPets == true then
+			if params.deleting == true then
+				Store:dispatch(InventoryActions.removeDeletedPet(petId))
+			else
+				Store:dispatch(InventoryActions.addDeletedPet(petId))
+			end
+
+			return
+		end
+
+		if params.equipped == true then
+			callPetPromise(PetsService:UnequipPet({ id = petId, name = params.name }))
+		else
+			callPetPromise(PetsService:EquipPet({ id = petId, name = params.name }))
+		end
+	end
+
+	return Roact.createElement("Frame", {
 		LayoutOrder = params.order,
 		BackgroundColor3 = Color3.fromHex("fcfaff"),
+		BorderSizePixel = 0,
 		ZIndex = 2,
-		[Roact.Event.MouseButton1Click] = function()
-			Sound:PlaySound("UI_Click")
-
-			local petId = tostring(params.id)
-			if InventoryReducer.DeletingPets == true then
-				if params.deleting == true then
-					Store:dispatch(InventoryActions.removeDeletedPet(petId))
-				else
-					Store:dispatch(InventoryActions.addDeletedPet(petId))
-				end
-
-				return
-			end
-
-			if params.equipped == true then
-				callPetPromise(PetsService:UnequipPet({ id = petId, name = params.name }))
-			else
-				callPetPromise(PetsService:EquipPet({ id = petId, name = params.name }))
-			end
-		end,
 	}, {
+		TouchTarget = Roact.createElement("ImageButton", {
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ImageTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			ZIndex = 50,
+			[Roact.Event.MouseButton1Click] = handlePetAction,
+		}),
 		Deleting = Roact.createElement("ImageLabel", {
 			Visible = params.deleting,
 			ScaleType = Enum.ScaleType.Fit,
@@ -191,7 +215,7 @@ local function createPetItem(InventoryReducer, params: table)
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			ZIndex = 12,
 			ImageColor3 = Color3.fromHex("ff0000"),
-			Size = UDim2.fromScale(0.7, 0.7),
+			Size = UDim2.fromScale(0.65, 0.65),
 		}),
 		NameText = createTextLabel({
 			text = params.name,
@@ -229,62 +253,55 @@ local function createPetItem(InventoryReducer, params: table)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Image = "rbxassetid://93840956317609",
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.75, 0.8),
+			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			ZIndex = 11,
 			ImageColor3 = Color3.fromHex("00fa00"),
-			Size = UDim2.fromScale(0.7, 0.7),
+			Size = UDim2.fromScale(0.65, 0.65),
 		}),
 		Stats = Roact.createElement("Frame", {
 			AnchorPoint = Vector2.new(0.5, 1),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.5, 0.98),
+			Position = UDim2.fromScale(0.5, 0.9),
 			BorderColor3 = Color3.fromHex("000000"),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			BorderSizePixel = 0,
 			Size = UDim2.fromScale(0.9, 0.2),
 		}, {
-			UIPadding = Roact.createElement("UIPadding", {
-				PaddingLeft = UDim.new(0.1, 0),
-			}),
 			Icon = Roact.createElement("ImageLabel", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				Image = "rbxassetid://71880595336974",
+				Image = UI.Money2,
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.5),
-				ZIndex = 10,
+				Position = UDim2.fromScale(0.14, 0.5),
+				ZIndex = 13,
 				LayoutOrder = 1,
 				BackgroundColor3 = Color3.fromHex("ffffff"),
 				ScaleType = Enum.ScaleType.Fit,
-				Size = UDim2.fromScale(1.2, 1.2),
+				Size = UDim2.fromScale(0.42, 2.025),
 			}, {
 				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
 			}),
 			PowerText = Roact.createElement("TextLabel", {
 				LayoutOrder = 2,
-				TextWrapped = true,
+				TextWrapped = false,
 				TextColor3 = Color3.fromHex("ffffff"),
 				Text = params.power,
 				TextScaled = true,
-				AnchorPoint = Vector2.new(0.5, 0.5),
+				AnchorPoint = Vector2.new(0, 0.5),
 				FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
 				BackgroundTransparency = 1,
 				TextXAlignment = Enum.TextXAlignment.Left,
-				Position = UDim2.fromScale(0.5, 0.88),
-				ZIndex = 10,
-				TextSize = 14,
-				Size = UDim2.fromScale(0.6, 1),
+				Position = UDim2.fromScale(0.34, 0.5),
+				ZIndex = 14,
+				Size = UDim2.fromScale(0.62, 1.25),
 			}, {
 				UIStroke = Roact.createElement("UIStroke", {
 					Thickness = 1.5,
 				}),
-			}),
-			List = Roact.createElement("UIListLayout", {
-				VerticalAlignment = Enum.VerticalAlignment.Center,
-				SortOrder = Enum.SortOrder.LayoutOrder,
-				HorizontalAlignment = Enum.HorizontalAlignment.Left,
-				Padding = UDim.new(0.05, 0),
-				FillDirection = Enum.FillDirection.Horizontal,
+				UITextSizeConstraint = Roact.createElement("UITextSizeConstraint", {
+					MaxTextSize = getPowerTextSize(params.power),
+					MinTextSize = 1,
+				}),
 			}),
 		}),
 	})
@@ -313,33 +330,41 @@ return function(InventoryReducer, params: table)
 		return createPetItem(InventoryReducer, params)
 	end
 
-	return Roact.createElement("ImageButton", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		ScaleType = Enum.ScaleType.Fit,
+	local function handleItemAction()
+		Sound:PlaySound("UI_Click")
+
+		TooltipController:SetText(nil)
+
+		if params.type == "Fruit" then
+			FruitService:Consume(params.id)
+		elseif params.type == "Boost" then
+			BoostService:Consume(params.id)
+		end
+	end
+
+	return Roact.createElement("Frame", {
 		LayoutOrder = params.order,
 		BackgroundColor3 = Color3.fromHex("fcfaff"),
+		BorderSizePixel = 0,
 		ZIndex = 2,
-		[Roact.Event.MouseButton1Click] = function()
-			Sound:PlaySound("UI_Click")
-
-			TooltipController:SetText(nil)
-
-			if params.type == "Fruit" then
-				FruitService:Consume(params.id)
-			elseif params.type == "Boost" then
-				BoostService:Consume(params.id)
-			end
-		end,
-		[Roact.Event.MouseEnter] = function()
-			if params.hover ~= nil then
-				TooltipController:SetSize(UDim2.fromScale(0.15, 0.06))
-				TooltipController:SetText(`{params.hover}`)
-			end
-		end,
-		[Roact.Event.MouseLeave] = function()
-			TooltipController:SetText(nil)
-		end,
 	}, {
+		TouchTarget = Roact.createElement("ImageButton", {
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ImageTransparency = 1,
+			Size = UDim2.fromScale(1, 1),
+			ZIndex = 50,
+			[Roact.Event.MouseButton1Click] = handleItemAction,
+			[Roact.Event.MouseEnter] = function()
+				if params.hover ~= nil then
+					TooltipController:SetSize(UDim2.fromScale(0.15, 0.06))
+					TooltipController:SetText(`{params.hover}`)
+				end
+			end,
+			[Roact.Event.MouseLeave] = function()
+				TooltipController:SetText(nil)
+			end,
+		}),
 		EffectText = Text({
 			text = params.effect,
 			size = UDim2.fromScale(0.88, 0.25),

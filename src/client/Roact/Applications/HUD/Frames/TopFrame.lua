@@ -61,11 +61,11 @@ function TopFrame(_, hooks)
 			mainText = playerReducer.Money2,
 			bottomText = Template.Economy.Money2,
 			order = 3,
-			numScrollAdjust = 0,
+			storeSection = "Boosts",
 		}),
 		Wins = Roact.createElement(
 			TopLargeDisplay,
-			{ image = UI.Wins, mainText = playerReducer.Wins, bottomText = "Wins", order = 4, numScrollAdjust = 8.27 }
+			{ image = UI.Wins, mainText = playerReducer.Wins, bottomText = "Wins", order = 4, storeSection = "Wins" }
 		),
 	})
 end

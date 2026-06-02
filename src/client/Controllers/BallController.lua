@@ -19,6 +19,7 @@ local BALL_SPEED = 46
 local GOALIE_REACT_DISTANCE = 12
 local RESULT_SHOW_DISTANCE = 3
 local BALL_SPIN_SPEED = 38
+local BIG_HIP_THRESHOLD = 3.5
 
 local player = Players.LocalPlayer
 
@@ -207,7 +208,7 @@ function BallController:StopBallMovement()
 	end
 end
 
-function BallController:MoveBallTo(targetPos: Vector3, goalieAreaPos: Vector3, callbacks: {}?, shootDirection: string?)
+function BallController:MoveBallTo(targetPos: Vector3, callbacks: {}?, shootDirection: string?)
 	self:StopBallMovement()
 
 	local ball = self._ballModel
@@ -241,7 +242,7 @@ function BallController:MoveBallTo(targetPos: Vector3, goalieAreaPos: Vector3, c
 		local direction = (targetPos - currentPos)
 		local distanceToTarget = direction.Magnitude
 
-		local distanceToGoalie = goalieAreaPos and math.abs(goalieAreaPos.Z - currentPos.Z) or math.huge
+		local distanceToGoalie = math.abs(GoalieController:GetGoaliePosition().Z - currentPos.Z) or math.huge
 
 		if not goalieReacted and distanceToGoalie <= GOALIE_REACT_DISTANCE then
 			goalieReacted = true
@@ -294,7 +295,6 @@ function BallController:AnimateBallKick(
 	pointerPosition: number,
 	result: string,
 	goalPos: Vector3,
-	goalieAreaPos: Vector3,
 	isSpecialKick: boolean,
 	callbacks: {}?
 )
@@ -303,12 +303,9 @@ function BallController:AnimateBallKick(
 		return
 	end
 
-	local goalieModel = GoalieController:GetGoalieModel()
-	if not goalieModel or not goalieModel.PrimaryPart then
-		return
-	end
+	local goaliePos = GoalieController:GetGoaliePosition()
+	local goalieHipHeight = GoalieController:GetGoalieHipHeight()
 
-	local goaliePos = goalieModel.PrimaryPart.Position
 	local ballPos = ball:GetPivot().Position
 	local forwardDir = (goalPos - ballPos).Unit
 	local rightDir = forwardDir:Cross(Vector3.new(0, 1, 0)).Unit
@@ -316,9 +313,9 @@ function BallController:AnimateBallKick(
 	local shootDirection = if pointerPosition < 0.5 then "Left" else "Right"
 
 	if result == "Goal" then
-		local horizontalOffset = if shootDirection == "Left" then -12 else 12
+		local horizontalOffset = (pointerPosition - 0.5) * 50
 		local randomVerticalOffset = Vector3.new(0, math.random(-4, 4), 0)
-		local targetPos = goalPos + rightDir * horizontalOffset + forwardDir * 2 + randomVerticalOffset
+		local targetPos = goalPos + rightDir * horizontalOffset + forwardDir * 1.2 + randomVerticalOffset
 
 		local wrappedCallbacks = {
 			onGoalieReact = callbacks and callbacks.onGoalieReact,
@@ -337,7 +334,7 @@ function BallController:AnimateBallKick(
 			end,
 		}
 
-		self:MoveBallTo(targetPos, goalieAreaPos, wrappedCallbacks, shootDirection)
+		self:MoveBallTo(targetPos, wrappedCallbacks, shootDirection)
 	elseif result == "GoalBlast" then
 		local targetPos = goaliePos + Vector3.new(0, 0, 5)
 
@@ -376,35 +373,76 @@ function BallController:AnimateBallKick(
 					end
 
 					self._ballSpeed = BALL_SPEED
-					self:ReleaseBallPhysics()
 				end)
 			end,
-			onArrived = callbacks and callbacks.onArrived,
-		}
-
-		self:MoveBallTo(targetPos, goalieAreaPos, wrappedCallbacks, shootDirection)
-	elseif result == "GoalCorner" then
-		local cornerOffset = if pointerPosition < 0.5 then -13 else 13
-		local targetPos = goalPos + rightDir * cornerOffset + Vector3.new(0, 4, 0)
-
-		local wrappedCallbacks = {
-			onGoalieReact = callbacks and callbacks.onGoalieReact,
-			onResult = callbacks and callbacks.onResult,
 			onArrived = function()
 				if callbacks and callbacks.onArrived then
 					callbacks.onArrived()
 				end
 
-				Sound:PlaySound("MISC_Goal")
-				if isSpecialKick then
-					self:SetEnabledBallEffect(false, "SpecialEffects")
-					self:PlayExplosionEffect()
-				end
 				self:ReleaseBallPhysics()
 			end,
 		}
 
-		self:MoveBallTo(targetPos, goalieAreaPos, wrappedCallbacks, shootDirection)
+		self:MoveBallTo(targetPos, wrappedCallbacks, shootDirection)
+	elseif result == "GoalCorner" then
+		local cornerOffset = if pointerPosition < 0.5 then -25 else 25
+		local targetPos = goalPos + rightDir * cornerOffset + Vector3.new(0, 5, 0)
+
+		local wrappedCallbacks = {
+			onGoalieReact = callbacks and callbacks.onGoalieReact,
+			onResult = callbacks and callbacks.onResult,
+			onArrived = function()
+				if not (goalieHipHeight >= BIG_HIP_THRESHOLD) then
+					if callbacks and callbacks.onArrived then
+						callbacks.onArrived()
+					end
+
+					Sound:PlaySound("MISC_Goal")
+					if isSpecialKick then
+						self:SetEnabledBallEffect(false, "SpecialEffects")
+						self:PlayExplosionEffect()
+					end
+					self:ReleaseBallPhysics()
+				else
+					self:ReleaseBallPhysics()
+				end
+			end,
+			onBallHitGoalie = function()
+				if goalieHipHeight >= BIG_HIP_THRESHOLD then
+					self._ballSpeed = 0
+					GoalieController:PauseGoalieAnimation()
+
+					local delay = 1
+					if isSpecialKick then
+						Sound:PlaySound("MISC_Goalie_Hold")
+						CameraController:PlayShakePreset("GoalieDefendSpecial")
+						self:SetEnabledBallEffect(false, "SpecialEffects")
+						delay = 2.5
+					else
+						CameraController:PlayShakePreset("GoalieDefend")
+					end
+
+					self:SetEnabledBallEffect(true, "HoldEffects")
+
+					task.delay(delay, function()
+						Sound:PlaySound("MISC_Goal")
+
+						self:SetEnabledBallEffect(false, "HoldEffects")
+						GoalieController:ResumeGoalieAnimation()
+						if isSpecialKick then
+							self:PlayExplosionEffect()
+						else
+							GoalieController:RagdollGoalie(forwardDir)
+						end
+
+						self._ballSpeed = BALL_SPEED
+					end)
+				end
+			end,
+		}
+
+		self:MoveBallTo(targetPos, wrappedCallbacks, shootDirection)
 	elseif result == "Saved" then
 		local savedGoalieModel = GoalieController:GetGoalieModel()
 		if not savedGoalieModel or not savedGoalieModel.PrimaryPart then
@@ -416,7 +454,7 @@ function BallController:AnimateBallKick(
 		if pointerPosition >= 0.4 and pointerPosition <= 0.6 then
 			goalieTargetPos = goaliePos
 		else
-			local horizontalOffset = (pointerPosition - 0.5) * 26
+			local horizontalOffset = (pointerPosition - 0.5) * 54
 			local extraOffset = if pointerPosition < 0.5 then -4 else 4
 			goalieTargetPos = goaliePos + leftDir * (horizontalOffset + extraOffset)
 		end
@@ -435,9 +473,9 @@ function BallController:AnimateBallKick(
 			end,
 		}
 
-		self:MoveBallTo(targetPos, goalieAreaPos, wrappedCallbacks, shootDirection)
+		self:MoveBallTo(targetPos, wrappedCallbacks, shootDirection)
 	elseif result == "Missed" then
-		local wideOffset = if pointerPosition < 0.5 then -22 else 22
+		local wideOffset = if pointerPosition < 0.5 then -46 else 46
 		local targetPos = goalPos + rightDir * wideOffset + Vector3.new(0, 3, 0) + forwardDir * 8
 
 		local wrappedCallbacks = {
@@ -452,7 +490,7 @@ function BallController:AnimateBallKick(
 			end,
 		}
 
-		self:MoveBallTo(targetPos, goalieAreaPos, wrappedCallbacks, shootDirection)
+		self:MoveBallTo(targetPos, wrappedCallbacks, shootDirection)
 	end
 end
 

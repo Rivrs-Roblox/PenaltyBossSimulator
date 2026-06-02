@@ -1,7 +1,7 @@
 return table.freeze({
 	[0] = {
 		Name = "Starter Pack",
-		ShopIcon = "rbxassetid://134327076029173",
+		ShopIcon = "rbxassetid://128826415303883",
 		CharacterIcon = "rbxassetid://113294469610000",
 		PetIcon = "rbxassetid://85957203801624",
 		PriceIcon = "rbxassetid://111603154886540",
@@ -16,7 +16,7 @@ return table.freeze({
 	},
 	[1] = {
 		Name = "Pro Pack",
-		ShopIcon = "rbxassetid://93283655336820",
+		ShopIcon = "rbxassetid://118659448589445",
 		PetIcon = "rbxassetid://138368343435838",
 		PriceIcon = "rbxassetid://125050514939698",
 		ValueIcons = "rbxassetid://127037306495881",
@@ -29,7 +29,7 @@ return table.freeze({
 	},
 	[2] = {
 		Name = "Master Pack",
-		ShopIcon = "rbxassetid://123689572336843",
+		ShopIcon = "rbxassetid://72795019978069",
 		PetIcon = "rbxassetid://84745341764382",
 		PriceIcon = "rbxassetid://94238762527973",
 		ValueIcons = "rbxassetid://84149120148344",

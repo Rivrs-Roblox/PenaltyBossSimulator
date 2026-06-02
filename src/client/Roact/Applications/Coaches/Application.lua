@@ -34,6 +34,27 @@ local DataCacheController = Knit.GetController("DataCacheController")
 local UI = DataCacheController:GetFile("Images")
 local Template = DataCacheController:GetFile("Template")
 
+local function isRegularPurchasableCoach(coachData: table): boolean
+	return not coachData.VIP
+		and not coachData.Reward
+		and not coachData.StarterPack
+		and not coachData.Chest
+end
+
+local function getPreviousRegularCoachId(id: number): number?
+	local previousId = nil
+
+	for coachId, coachData in pairs(Template.Coaches) do
+		if type(coachId) == "number" and coachId < id and isRegularPurchasableCoach(coachData) then
+			if previousId == nil or coachId > previousId then
+				previousId = coachId
+			end
+		end
+	end
+
+	return previousId
+end
+
 function Coaches(_, hooks)
 	local UIReducer = RoduxHooks.useSelector(hooks, function(state)
 		return state.UIReducer
@@ -51,14 +72,23 @@ function Coaches(_, hooks)
 
 	local Coaches = {}
 	for index, coachData in pairs(Template.Coaches) do
+		local possessed = table.find(coachState.Coaches, index) ~= nil
+		local previousCoachId = if isRegularPurchasableCoach(coachData) then getPreviousRegularCoachId(index) else nil
+		local previousCoach = previousCoachId and Template.Coaches[previousCoachId] or nil
+		local locked = not possessed
+			and previousCoachId ~= nil
+			and table.find(coachState.Coaches, previousCoachId) == nil
+
 		Coaches[index] = CoachCard({
 			id = index,
 			name = coachData.Name,
 			displayName = coachData.DisplayName,
 			price = coachData.Price,
 			image = coachData.Image,
-			possessed = table.find(coachState.Coaches, index) ~= nil,
+			possessed = possessed,
 			equipped = coachState.CurrentCoach == index,
+			locked = locked,
+			previousName = previousCoach and (previousCoach.DisplayName or previousCoach.Name) or nil,
 			multiplier = coachData.Multiplier,
 			VIP = coachData.VIP,
 			Chest = coachData.Chest,

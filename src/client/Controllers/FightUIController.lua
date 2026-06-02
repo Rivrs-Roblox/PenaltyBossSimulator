@@ -8,11 +8,12 @@ local Packages = ReplicatedStorage.Packages
 local Knit = require(Packages.Knit)
 local Sound = require(Packages.Sound)
 local DamageIndicator = require(StarterPlayer.StarterPlayerScripts.Client.Modules.DamageIndicator)
+local AimVisuals = require(StarterPlayer.StarterPlayerScripts.Client.Modules.AimVisuals)
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local POINTER_SPEED = 1.5 -- Kecepatan pointer (full left to right per second)
+local InputController
 
 local FightUIController = Knit.CreateController({
 	Name = "FightUIController",
@@ -22,30 +23,35 @@ local FightUIController = Knit.CreateController({
 	_dynamicBarGui = nil,
 
 	-- Variables For DynamicBarGui
-	_pointer = nil,
-	_pointerConnection = nil,
-	_pointerPosition = 0.5,
-	_pointerDirection = 1,
+	_powerBar = nil,
+	_powerPointer = nil,
 
 	_damageIndicator = nil,
+
+	-- 3D Aiming Properties
+	_aimVisuals = nil,
 
 	-- Intro Effect 3D
 	_introEffectModel = nil,
 	_introEffectConnection = nil,
 })
 
--- #region Local Functions
-local function localTestFunction()
-	print("Local Test Function called")
-end
--- #endregion Local Functions
-
 -- #region Functions
 function FightUIController:SetupGui()
 	self._bossIntroGui = playerGui:WaitForChild("BossIntroGui")
 	self._fightHud = playerGui:WaitForChild("FightHud")
 	self._dynamicBarGui = playerGui:WaitForChild("DynamicBarGui")
-	self._pointer = self._dynamicBarGui:WaitForChild("DynamicBar"):WaitForChild("Pointer")
+
+	self._powerBar = self._dynamicBarGui:WaitForChild("DynamicBar")
+	self._powerPointer = self._powerBar:WaitForChild("Pointer")
+
+	self._countdownFrame = self._powerBar:WaitForChild("CountdownFrame")
+	if self._countdownFrame then
+		self._countdown = self._countdownFrame:WaitForChild("Countdown")
+		if self._countdown then
+			self._originalCountdownSize = self._countdown.Size
+		end
+	end
 end
 
 function FightUIController:DamageIndicator(ballModel: Model, text: string, color: Color3)
@@ -61,83 +67,146 @@ function FightUIController:DamageIndicator(ballModel: Model, text: string, color
 	self._damageIndicator:Create(text, viewportPoint, self._fightHud, color)
 end
 
-function FightUIController:ShowDynamicBar()
-	-- Safety: Clean up existing connection if any
-	if self._pointerConnection then
-		self._pointerConnection:Disconnect()
-		self._pointerConnection = nil
+function FightUIController:Cleanup3DAiming()
+	if self._aimVisuals then
+		self._aimVisuals:Cleanup()
 	end
-
-	if not self._pointer or not self._dynamicBarGui then
-		warn("[FightUIController] UI not setup for ShowDynamicBar")
-		return
-	end
-
-	-- Reset pointer ke tengah
-	self._pointerPosition = 0.5
-	self._pointerDirection = 1
-
-	-- Update pointer visual position
-	self._pointer.Position = UDim2.new(self._pointerPosition, 0, 0.5, 0)
-
-	-- Show GUI
-	self._dynamicBarGui.Enabled = true
-
-	-- Mulai animasi pointer
-	self._pointerConnection = RunService.RenderStepped:Connect(function(dt)
-		-- Update posisi pointer
-		self._pointerPosition += self._pointerDirection * POINTER_SPEED * dt
-
-		-- Bounce di ujung
-		if self._pointerPosition >= 1 then
-			self._pointerPosition = 1
-			self._pointerDirection = -1
-		elseif self._pointerPosition <= 0 then
-			self._pointerPosition = 0
-			self._pointerDirection = 1
-		end
-
-		-- Update visual (pointer posisi di dalam DynamicBar)
-		self._pointer.Position = UDim2.new(self._pointerPosition, 0, 0.5, 0)
-	end)
 end
 
-function FightUIController:StopPointer()
-	if self._pointerConnection then
-		self._pointerConnection:Disconnect()
-		self._pointerConnection = nil
+function FightUIController:ShowFightUI(goalPos: Vector3, goalZone: Instance?)
+	self:Cleanup3DAiming()
+
+	if not self._powerBar then
+		self:SetupGui()
 	end
 
-	local savedPosition = self._pointerPosition
+	-- Make both 3D Aim and 2D Power Bar visible at the same time
+	self._powerBar.Visible = true
+	self._dynamicBarGui.Enabled = true
 
-	-- Flash pointer untuk feedback visual
-	if self._pointer then
-		local originalColor = self._pointer.BackgroundColor3
-		TweenService:Create(self._pointer, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
-			BackgroundColor3 = Color3.fromRGB(255, 255, 0),
-		}):Play()
+	-- Restore countdownFrame parent back to the power bar
+	if self._countdownFrame then
+		self._countdownFrame.Parent = self._powerBar
+	end
 
-		task.delay(0.3, function()
-			if self._pointer then
-				TweenService:Create(self._pointer, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
-					BackgroundColor3 = originalColor,
-				}):Play()
+	-- Fade in GoalZone parts if provided
+	self._currentGoalZone = goalZone
+	if self._currentGoalZone then
+		for _, part in ipairs(self._currentGoalZone:GetChildren()) do
+			if part:IsA("BasePart") then
+				part.Transparency = 1.0
+				local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+				TweenService:Create(part, tweenInfo, { Transparency = 0.5 }):Play()
 			end
-		end)
+		end
 	end
 
-	return savedPosition
+	-- Active pointer is the power pointer (moves automatically, colored orange/red)
+	self._powerPointer.Position = UDim2.new(0.5, 0, 0.5, 0)
+	self._powerPointer.Visible = true
+
+	-- Start the 3D Aiming visuals
+	if self._aimVisuals then
+		self._aimVisuals:Show(goalPos, player.Character)
+	end
+
+	-- Start capturing inputs in InputController
+	InputController:StartCapture(self._aimVisuals, self._powerPointer)
+end
+
+function FightUIController:LockFight()
+	local savedDirection, savedPower = InputController:StopCapture()
+
+	-- Lock 3D aim visuals
+	if self._aimVisuals then
+		self._aimVisuals:Lock()
+	end
+
+	-- Slow fadeout of 3D aiming visuals after 1 second
+	task.delay(1, function()
+		self:Cleanup3DAiming()
+	end)
+
+	savedDirection = savedDirection or 0.5
+	savedPower = savedPower or 0.5
+
+	return savedDirection, savedPower
 end
 
 function FightUIController:HideDynamicBar()
-	-- Stop pointer animation
-	if self._pointerConnection then
-		self._pointerConnection:Disconnect()
-		self._pointerConnection = nil
+	InputController:StopCapture()
+
+	self:Cleanup3DAiming()
+
+	-- Fade out GoalZone parts if active
+	if self._currentGoalZone then
+		for _, part in ipairs(self._currentGoalZone:GetChildren()) do
+			if part:IsA("BasePart") then
+				local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+				TweenService:Create(part, tweenInfo, { Transparency = 1.0 }):Play()
+			end
+		end
+		self._currentGoalZone = nil
 	end
 
-	-- Hide GUI
+	-- Make sure the countdownFrame is returned back to the powerBar when cleaning up
+	if self._countdownFrame and self._countdownFrame.Parent ~= self._powerBar then
+		self._countdownFrame.Parent = self._powerBar
+	end
+
 	self._dynamicBarGui.Enabled = false
+
+	if self._countdownTween then
+		self._countdownTween:Cancel()
+		self._countdownTween:Destroy()
+		self._countdownTween = nil
+	end
+
+	if self._countdownFrame then
+		self._countdownFrame.Visible = false
+	end
+end
+
+function FightUIController:UpdateCountdown(value: number)
+	if not self._countdown or not self._countdownFrame then
+		return
+	end
+
+	self._countdown.Text = "Auto kick in " .. tostring(value) .. "s"
+
+	-- Cancel and destroy any active countdown tween to prevent memory leak and visual overlap
+	if self._countdownTween then
+		self._countdownTween:Cancel()
+		self._countdownTween:Destroy()
+		self._countdownTween = nil
+	end
+
+	if value > 0 then
+		self._countdownFrame.Visible = true
+
+		-- Pop scale micro-animation: scale from 1.6x down to 1.0x original size
+		if self._originalCountdownSize then
+			local orig = self._originalCountdownSize
+			self._countdown.Size =
+				UDim2.new(orig.X.Scale * 1.6, orig.X.Offset * 1.6, orig.Y.Scale * 1.6, orig.Y.Offset * 1.6)
+
+			self._countdownTween = TweenService:Create(
+				self._countdown,
+				TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+				{
+					Size = orig,
+				}
+			)
+			self._countdownTween:Play()
+		end
+	else
+		self._countdownFrame.Visible = false
+
+		-- Reset size back to original immediately if hidden
+		if self._originalCountdownSize then
+			self._countdown.Size = self._originalCountdownSize
+		end
+	end
 end
 
 function FightUIController:PlayDamageEffectScreen()
@@ -406,6 +475,7 @@ end
 
 -- #region Knit Lifecycle
 function FightUIController:KnitInit()
+	InputController = Knit.GetController("InputController")
 	print("FightUIController Initialized")
 end
 
@@ -419,6 +489,7 @@ function FightUIController:KnitStart()
 	end)
 
 	self._damageIndicator = DamageIndicator.new()
+	self._aimVisuals = AimVisuals.new()
 
 	print("FightUIController Started")
 end

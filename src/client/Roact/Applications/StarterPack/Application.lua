@@ -51,7 +51,7 @@ local function createRewardItem(layoutOrder, icon, value)
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 		LayoutOrder = layoutOrder,
-		Size = UDim2.fromScale(0.3, 1),
+		Size = UDim2.fromScale(0.28, 1),
 		ZIndex = 102,
 	}, {
 		Icon = Roact.createElement("ImageLabel", {
@@ -83,6 +83,11 @@ local function createRewardItem(layoutOrder, icon, value)
 	})
 end
 
+local function getPackReward(pack, index)
+	local reward = pack.Rewards[index]
+	return reward.Id, reward.Amount
+end
+
 -- StarterPack
 function StarterPack(_, hooks)
 	local StarterPacks = Template.Shop.StarterPacks
@@ -103,6 +108,15 @@ function StarterPack(_, hooks)
 	local hasPetReward = currentPack.PetIcon ~= nil and currentPack.PetIcon ~= ""
 	local hasDualMainReward = hasCharacterReward and hasPetReward
 	local mainIcon = currentPack.PetIcon or currentPack.CharacterIcon or ""
+	local moneyRewardId, moneyRewardAmount = getPackReward(currentPack, 1)
+	local winsRewardId, winsRewardAmount = getPackReward(currentPack, 2)
+	local rebirthRewardId, rebirthRewardAmount = getPackReward(currentPack, 3)
+	local mainRewardsSize = if hasDualMainReward then UDim2.fromScale(0.58, 0.9) else UDim2.fromScale(0.46, 0.92)
+	local singleRewardPosition = UDim2.fromScale(0.5, 0.5)
+	local singleRewardSize = UDim2.fromScale(0.66, 0.92)
+	local singleMultiplierPosition = UDim2.fromScale(0.5, 0.86)
+	local opTextPosition = if hasDualMainReward then UDim2.fromScale(0.5, 0.2) else UDim2.fromScale(0.5, 0.14)
+	local opTextSize = if hasDualMainReward then UDim2.fromScale(0.7, 0.22) else UDim2.fromScale(0.62, 0.18)
 
 	local styles, api = RoactSpring.useSpring(hooks, function()
 		return {
@@ -187,16 +201,6 @@ function StarterPack(_, hooks)
 					}),
 				}),
 
-				Effect = Roact.createElement("ImageLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					Image = "rbxassetid://106335669168445",
-					Position = UDim2.fromScale(0.17, 0.498),
-					Size = UDim2.fromScale(0.731, 1.501),
-					ZIndex = 100,
-				}, {
-					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-				}),
 			}),
 
 			TitleText = Roact.createElement("TextLabel", {
@@ -269,127 +273,147 @@ function StarterPack(_, hooks)
 				}),
 			}),
 
-			Items = Roact.createElement("Frame", {
+			RewardsContent = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
-				LayoutOrder = 6,
-				Position = UDim2.fromScale(0.66, 0.42),
-				Size = UDim2.fromScale(0.45, 0.22),
+				Position = UDim2.fromScale(0.46, 0.48),
+				Size = UDim2.fromScale(0.82, 0.58),
 				ZIndex = 102,
 			}, {
-				UIListLayout = Roact.createElement("UIListLayout", {
-					FillDirection = Enum.FillDirection.Horizontal,
-					HorizontalAlignment = Enum.HorizontalAlignment.Left,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					VerticalAlignment = Enum.VerticalAlignment.Center,
+				MainRewards = Roact.createElement("Frame", {
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundTransparency = 1,
+					Position = UDim2.fromScale(0.34, 0.48),
+					Size = mainRewardsSize,
+					ZIndex = 103,
+				}, {
+					Effect = Roact.createElement("ImageLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Image = "rbxassetid://106335669168445",
+						Position = UDim2.fromScale(0.5, 0.5),
+						Size = UDim2.fromScale(1.15, 1.65),
+						ZIndex = 101,
+					}, {
+						Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+					}),
+
+					CharacterItem = hasCharacterReward and Roact.createElement("ImageLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Image = currentPack.CharacterIcon,
+						Position = hasDualMainReward and UDim2.fromScale(0.34, 0.5) or singleRewardPosition,
+						ScaleType = Enum.ScaleType.Fit,
+						Size = hasDualMainReward and UDim2.fromScale(0.42, 0.9) or singleRewardSize,
+						ZIndex = 103,
+					}, {
+						Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+
+						MultiplierText = Roact.createElement("TextLabel", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundTransparency = 1,
+							Font = Enum.Font.FredokaOne,
+							Position = hasDualMainReward and UDim2.fromScale(0.5, 0.9) or singleMultiplierPosition,
+							Size = UDim2.fromScale(0.65, 0.12),
+							Text = currentPack.CharacterMultiplier or currentPack.Multiplier or "",
+							TextColor3 = Color3.fromHex("ffffff"),
+							TextScaled = true,
+							TextWrapped = true,
+							ZIndex = 105,
+						}, {
+							UIStroke = createTextStroke(1.5),
+						}),
+					}) or nil,
+
+					PetItem = hasPetReward and Roact.createElement("ImageLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Image = currentPack.PetIcon,
+						Position = hasDualMainReward and UDim2.fromScale(0.66, 0.5) or singleRewardPosition,
+						ScaleType = Enum.ScaleType.Fit,
+						Size = hasDualMainReward and UDim2.fromScale(0.42, 0.9) or singleRewardSize,
+						ZIndex = 103,
+					}, {
+						Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+
+						MultiplierText = Roact.createElement("TextLabel", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundTransparency = 1,
+							Font = Enum.Font.FredokaOne,
+							Position = hasDualMainReward and UDim2.fromScale(0.5, 0.9) or singleMultiplierPosition,
+							Size = UDim2.fromScale(0.65, 0.12),
+							Text = currentPack.PetMultiplier or currentPack.Multiplier or "",
+							TextColor3 = Color3.fromHex("ffffff"),
+							TextScaled = true,
+							TextWrapped = true,
+							ZIndex = 105,
+						}, {
+							UIStroke = createTextStroke(1.5),
+						}),
+					}) or nil,
+
+					FallbackItem = (not hasCharacterReward and not hasPetReward) and Roact.createElement("ImageLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Image = mainIcon,
+						Position = singleRewardPosition,
+						ScaleType = Enum.ScaleType.Fit,
+						Size = UDim2.fromScale(0.74, 1),
+						ZIndex = 103,
+					}, {
+						Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+					}) or nil,
+
+					OPText = Roact.createElement("TextLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						FontFace = Font.fromName("LuckiestGuy", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
+						Position = opTextPosition,
+						Rotation = 20,
+						Size = opTextSize,
+						Text = if hasDualMainReward
+							then "OP Pet + Character!"
+							elseif hasPetReward then "OP Pet!"
+							elseif hasCharacterReward then "OP Character!"
+							else "OP",
+						TextColor3 = Color3.fromHex("ffffff"),
+						TextScaled = true,
+						TextWrapped = true,
+						ZIndex = 105,
+					}, {
+						Gradient = Roact.createElement("UIGradient", {
+							Color = ColorSequence.new({
+								ColorSequenceKeypoint.new(0, Color3.fromHex("ffe100")),
+								ColorSequenceKeypoint.new(1, Color3.fromHex("ff3333")),
+							}),
+							Rotation = 90,
+						}),
+
+						UIStroke = createTextStroke(2, Color3.fromHex("ffffff"), {
+							Gradient = strokeGradient(Color3.fromHex("ff5015"), Color3.fromHex("000000"), 107),
+						}),
+					}),
 				}),
 
-				Reward1 = createRewardItem(1, UI.Money2, currentPack.Rewards[1].Amount),
-				Reward2 = createRewardItem(2, UI.Wins, currentPack.Rewards[2].Amount),
-				Reward3 = createRewardItem(3, UI.Rebirths, currentPack.Rewards[3].Amount),
-			}),
-
-			MainRewards = Roact.createElement("Frame", {
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.22, 0.4),
-				Size = UDim2.fromScale(0.5, 0.874),
-				ZIndex = 103,
-			}, {
-				CharacterItem = hasCharacterReward and Roact.createElement("ImageLabel", {
+				Items = Roact.createElement("Frame", {
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					BackgroundTransparency = 1,
-					Image = currentPack.CharacterIcon,
-					Position = hasDualMainReward and UDim2.fromScale(0.32, 0.5) or UDim2.fromScale(0.5, 0.5),
-					ScaleType = Enum.ScaleType.Fit,
-					Size = hasDualMainReward and UDim2.fromScale(0.5, 0.9) or UDim2.fromScale(0.86, 1),
-					ZIndex = 103,
+					LayoutOrder = 6,
+					Position = UDim2.fromScale(0.76, 0.52),
+					Size = UDim2.fromScale(0.42, 0.38),
+					ZIndex = 102,
 				}, {
-					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-
-					MultiplierText = Roact.createElement("TextLabel", {
-						AnchorPoint = Vector2.new(0.5, 0.5),
-						BackgroundTransparency = 1,
-						Font = Enum.Font.FredokaOne,
-						Position = UDim2.fromScale(0.5, 0.9),
-						Size = UDim2.fromScale(0.65, 0.12),
-						Text = currentPack.CharacterMultiplier or currentPack.Multiplier or "",
-						TextColor3 = Color3.fromHex("ffffff"),
-						TextScaled = true,
-						TextWrapped = true,
-						ZIndex = 105,
-					}, {
-						UIStroke = createTextStroke(1.5),
-					}),
-				}) or nil,
-
-				PetItem = hasPetReward and Roact.createElement("ImageLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					Image = currentPack.PetIcon,
-					Position = hasDualMainReward and UDim2.fromScale(0.68, 0.5) or UDim2.fromScale(0.5, 0.5),
-					ScaleType = Enum.ScaleType.Fit,
-					Size = hasDualMainReward and UDim2.fromScale(0.5, 0.9) or UDim2.fromScale(0.86, 1),
-					ZIndex = 103,
-				}, {
-					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-
-					MultiplierText = Roact.createElement("TextLabel", {
-						AnchorPoint = Vector2.new(0.5, 0.5),
-						BackgroundTransparency = 1,
-						Font = Enum.Font.FredokaOne,
-						Position = UDim2.fromScale(0.5, 0.9),
-						Size = UDim2.fromScale(0.65, 0.12),
-						Text = currentPack.PetMultiplier or currentPack.Multiplier or "",
-						TextColor3 = Color3.fromHex("ffffff"),
-						TextScaled = true,
-						TextWrapped = true,
-						ZIndex = 105,
-					}, {
-						UIStroke = createTextStroke(1.5),
-					}),
-				}) or nil,
-
-				FallbackItem = (not hasCharacterReward and not hasPetReward) and Roact.createElement("ImageLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					Image = mainIcon,
-					Position = UDim2.fromScale(0.5, 0.5),
-					ScaleType = Enum.ScaleType.Fit,
-					Size = UDim2.fromScale(0.86, 1),
-					ZIndex = 103,
-				}, {
-					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
-				}) or nil,
-
-				OPText = Roact.createElement("TextLabel", {
-					AnchorPoint = Vector2.new(0.5, 0.5),
-					BackgroundTransparency = 1,
-					FontFace = Font.fromName("LuckiestGuy", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-					Position = UDim2.fromScale(0.5, 0.25),
-					Rotation = 20,
-					Size = UDim2.fromScale(0.7, 0.22),
-					Text = if hasDualMainReward
-						then "OP Pet + Character!"
-						elseif hasPetReward then "OP Pet!"
-						elseif hasCharacterReward then "OP Character!"
-						else "OP",
-					TextColor3 = Color3.fromHex("ffffff"),
-					TextScaled = true,
-					TextWrapped = true,
-					ZIndex = 105,
-				}, {
-					Gradient = Roact.createElement("UIGradient", {
-						Color = ColorSequence.new({
-							ColorSequenceKeypoint.new(0, Color3.fromHex("ffe100")),
-							ColorSequenceKeypoint.new(1, Color3.fromHex("ff3333")),
-						}),
-						Rotation = 90,
+					UIListLayout = Roact.createElement("UIListLayout", {
+						FillDirection = Enum.FillDirection.Horizontal,
+						HorizontalAlignment = Enum.HorizontalAlignment.Center,
+						Padding = UDim.new(0.03, 0),
+						SortOrder = Enum.SortOrder.LayoutOrder,
+						VerticalAlignment = Enum.VerticalAlignment.Center,
 					}),
 
-					UIStroke = createTextStroke(2, Color3.fromHex("ffffff"), {
-						Gradient = strokeGradient(Color3.fromHex("ff5015"), Color3.fromHex("000000"), 107),
-					}),
+					Reward1 = createRewardItem(1, UI[moneyRewardId], moneyRewardAmount),
+					Reward2 = createRewardItem(2, UI[winsRewardId], winsRewardAmount),
+					Reward3 = createRewardItem(3, UI[rebirthRewardId], rebirthRewardAmount),
 				}),
 			}),
 

@@ -32,8 +32,8 @@ local function formatValue(value)
 end
 
 local ICON_MAP = {
-	Rebirth = "rbxassetid://106303260347906",
-	Money2 = "Money2_NoStroke",
+	Rebirth = "rbxassetid://113418726949889",
+	Money2 = "Money2",
 }
 
 local function getIcon(name: string)

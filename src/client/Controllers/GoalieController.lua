@@ -38,11 +38,24 @@ local GoalieController = Knit.CreateController({
 })
 
 --#region Local Functions
-local function getEnemyKey(wave: number): string
-	if wave >= 5 then
-		return "Boss"
+local function getGoalieDataForWave(areaData: {}, bossIndex: number, wave: number): {}?
+	bossIndex = tonumber(bossIndex) or 1
+	wave = tonumber(wave) or 1
+
+	local bossKey = "Boss " .. bossIndex
+	local bossData = areaData[bossKey]
+	if not bossData then
+		-- Backwards compatibility fallbacks
+		if bossIndex == 5 and areaData["Boss"] then
+			bossData = areaData["Boss"]
+		elseif areaData["MiniBoss " .. bossIndex] then
+			bossData = areaData["MiniBoss " .. bossIndex]
+		end
 	end
-	return "MiniBoss " .. wave
+	if not bossData then
+		return nil
+	end
+	return bossData
 end
 
 local function getAnimator(model: Instance): Animator?
@@ -67,9 +80,27 @@ function GoalieController:GetGoalieModel()
 	return self._goalieModel
 end
 
-function GoalieController:SpawnGoalie(wave, area, goalieArea)
+function GoalieController:GetGoaliePosition()
+	if not self._goalieModel or not self._goalieModel.PrimaryPart then
+		return Vector3.zero
+	end
+	return self._goalieModel.PrimaryPart.Position
+end
+
+function GoalieController:GetGoalieHipHeight()
+	local humanoid = self._goalieModel:FindFirstChildOfClass("Humanoid")
+	if humanoid then
+		return humanoid.HipHeight
+	end
+	return 2.4
+end
+
+function GoalieController:SpawnGoalie(wave, area, goalieArea, bossIndex)
 	-- Cleanup existing goalie
 	self:CleanupGoalie()
+
+	bossIndex = tonumber(bossIndex) or 1
+	wave = tonumber(wave) or 1
 
 	-- Clone goalie dari ReplicatedStorage
 	local areaFolder = goalieFolder:FindFirstChild(area)
@@ -78,9 +109,22 @@ function GoalieController:SpawnGoalie(wave, area, goalieArea)
 		return
 	end
 
-	local goalieTemplate = areaFolder:FindFirstChild("Boss" .. wave)
+	local goalieTemplate = areaFolder:FindFirstChild("Boss" .. bossIndex)
+
+	-- Backwards compatibility: Fallback to old Boss template name if new one doesn't exist
 	if not goalieTemplate then
-		warn("[GoalieController] No template for Boss:", "Boss" .. wave)
+		goalieTemplate = areaFolder:FindFirstChild("Boss") or areaFolder:FindFirstChild("MiniBoss " .. bossIndex)
+	end
+
+	if not goalieTemplate then
+		warn(
+			"[GoalieController] No template for Goalie (Wave "
+				.. wave
+				.. ", BossIndex "
+				.. bossIndex
+				.. ") in area: "
+				.. area
+		)
 		return
 	end
 
@@ -94,17 +138,17 @@ function GoalieController:SpawnGoalie(wave, area, goalieArea)
 	goalie.Parent = workspace
 
 	-- Ambil data goalie dari template
-	local goalieKey = getEnemyKey(wave)
 	local areaData = self.Template.Enemies[area]
-
 	if not areaData then
 		warn("[GoalieController] No enemy data for area:", area)
 		return
 	end
 
-	local goalieData = areaData[goalieKey]
+	local goalieData = getGoalieDataForWave(areaData, bossIndex, wave)
 	if not goalieData then
-		warn("[GoalieController] No goalie data for:", goalieKey)
+		warn(
+			"[GoalieController] No goalie data for area: " .. area .. ", BossIndex: " .. bossIndex .. ", Wave: " .. wave
+		)
 		return
 	end
 
@@ -154,6 +198,18 @@ function GoalieController:CleanupGoalie()
 end
 
 --|| Goalie Animation Functions ||--
+
+function GoalieController:PauseGoalieAnimation()
+	if self._goalieAnimTrack then
+		self._goalieAnimTrack:AdjustSpeed(0)
+	end
+end
+
+function GoalieController:ResumeGoalieAnimation()
+	if self._goalieAnimTrack then
+		self._goalieAnimTrack:AdjustSpeed(1)
+	end
+end
 
 function GoalieController:StopGoalieAnimation()
 	if self._goalieAnimTrack then
@@ -230,7 +286,7 @@ function GoalieController:PlayGoalieDefendAnimation(pointerPosition: number, res
 		return
 	end
 
-	local horizontalOffset = (pointerPosition - 0.5) * 26
+	local horizontalOffset = (pointerPosition - 0.5) * (50 - self:GetGoalieHipHeight())
 	local leftDir = goalie.PrimaryPart.CFrame.RightVector * -1
 
 	-- Tentukan arah tendangan dari posisi pointer
@@ -246,7 +302,7 @@ function GoalieController:PlayGoalieDefendAnimation(pointerPosition: number, res
 		-- animName = if isLeft then "Defend Left" else "Defend Right"
 		-- leftDir = -leftDir
 		animName = if isLeft then "Defend Right" else "Defend Left"
-		leftDir = leftDir * 0.7
+		leftDir = leftDir * 0.5
 	else
 		-- Saved / Missed / GoalCorner: defend ke arah bola
 		animName = if isLeft then "Defend Right" else "Defend Left"

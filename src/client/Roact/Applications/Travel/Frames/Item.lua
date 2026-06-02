@@ -52,7 +52,7 @@ return function(params: {})
 		ZIndex = 2,
 	}, {
 		Ratio = Roact.createElement("UIAspectRatioConstraint", {
-			AspectRatio = 5.5,
+			AspectRatio = 4,
 		}),
 		UICorner = Roact.createElement("UICorner", {}),
 		UIStroke = Roact.createElement("UIStroke", {
@@ -128,10 +128,10 @@ return function(params: {})
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Image = "rbxassetid://127153933329087",
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.064, 0.5),
+			Position = UDim2.fromScale(0.07, 0.5),
 			ZIndex = 3,
 			BackgroundColor3 = Color3.fromHex("ffffff"),
-			Size = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.4, 0.4),
 		}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
 
 		-- Area name
@@ -139,7 +139,7 @@ return function(params: {})
 			text = params.name,
 			color = Color3.fromHex("eaeaea"),
 			position = UDim2.fromScale(0.135, 0.5),
-			size = UDim2.fromScale(0.5, 0.35),
+			size = UDim2.fromScale(0.5, 0.3),
 			align = Enum.TextXAlignment.Left,
 			index = 5,
 			stroke = 2,
@@ -152,7 +152,7 @@ return function(params: {})
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.85, 0.5),
 			ZIndex = 5,
-			Size = UDim2.fromScale(0.25, 0.4),
+			Size = UDim2.fromScale(0.25, 0.3),
 			BackgroundColor3 = Color3.fromHex("ffffff"),
 			Visible = params.unlocked,
 			[Roact.Event.MouseButton1Click] = function()
@@ -185,7 +185,7 @@ return function(params: {})
 		Buy = Roact.createElement("ImageButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.85, 0.5),
-			Size = UDim2.fromScale(0.25, 0.4),
+			Size = UDim2.fromScale(0.25, 0.3),
 			ZIndex = 5,
 			Visible = not params.unlocked,
 			BackgroundColor3 = Color3.fromHex("ffffff"),
@@ -253,10 +253,10 @@ return function(params: {})
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Image = "rbxassetid://75544138657538",
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.064, 0.5),
+				Position = UDim2.fromScale(0.07, 0.5),
 				ZIndex = 5,
 				BackgroundColor3 = Color3.fromHex("ffffff"),
-				Size = UDim2.fromScale(0.6, 0.6),
+				Size = UDim2.fromScale(0.4, 0.4),
 			}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) }),
 		}),
 	})

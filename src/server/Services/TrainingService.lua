@@ -29,7 +29,8 @@ local PlayersInTraining = {}
 local FACE_DURATION = 1
 local FACE_RESPONSIVENESS = 50
 local FACE_MAX_TORQUE = 400000
-local VIP_TRAINING_INDEX = 5
+local VIP_TRAINING_INDEX = 6
+local TRAINING_AREA_POSITION_PADDING = 3
 
 local TrainingService = Knit.CreateService({
 	Name = "TrainingService",
@@ -40,15 +41,15 @@ local TrainingService = Knit.CreateService({
 
 --|| Client Functions ||--
 function TrainingService.Client:Training(player: Player, trainingArea)
-	self.Server:Training(player, trainingArea)
+	return self.Server:Training(player, trainingArea)
 end
 
 function TrainingService.Client:StartTraining(player: Player, trainingArea)
-	self.Server:StartTraining(player, trainingArea)
+	return self.Server:StartTraining(player, trainingArea)
 end
 
 function TrainingService.Client:StopTraining(player: Player, trainingArea)
-	self.Server:StopTraining(player, trainingArea)
+	return self.Server:StopTraining(player, trainingArea)
 end
 
 function TrainingService.Client:GetMostEffectiveArea(player: Player)
@@ -79,8 +80,116 @@ local function getTargetPosition(target)
 	return nil
 end
 
+local function getPlayerRoot(player: Player): BasePart?
+	local character = player.Character
+	if not character then
+		return nil
+	end
+
+	return character:FindFirstChild("HumanoidRootPart")
+end
+
+local function getTrainingZoneInstance(trainingArea): Instance?
+	if typeof(trainingArea) ~= "Instance" then
+		return nil
+	end
+
+	local zone = trainingArea:FindFirstChild("Zone")
+	if zone and (zone:IsA("BasePart") or zone:IsA("Model")) then
+		return zone
+	end
+
+	if trainingArea:IsA("BasePart") or trainingArea:IsA("Model") then
+		return trainingArea
+	end
+
+	return nil
+end
+
+local function isPositionInsideBounds(position: Vector3, boundsCFrame: CFrame, boundsSize: Vector3, padding: number): boolean
+	local localPosition = boundsCFrame:PointToObjectSpace(position)
+	local halfSize = (boundsSize * 0.5) + Vector3.new(padding, padding, padding)
+
+	return math.abs(localPosition.X) <= halfSize.X
+		and math.abs(localPosition.Y) <= halfSize.Y
+		and math.abs(localPosition.Z) <= halfSize.Z
+end
+
+local function isPlayerPhysicallyInTrainingArea(player: Player, trainingArea): boolean
+	local root = getPlayerRoot(player)
+	if not root then
+		return false
+	end
+
+	local zone = getTrainingZoneInstance(trainingArea)
+	if not zone then
+		return false
+	end
+
+	if zone:IsA("BasePart") then
+		return isPositionInsideBounds(root.Position, zone.CFrame, zone.Size, TRAINING_AREA_POSITION_PADDING)
+	elseif zone:IsA("Model") then
+		local boundsCFrame, boundsSize = zone:GetBoundingBox()
+		return isPositionInsideBounds(root.Position, boundsCFrame, boundsSize, TRAINING_AREA_POSITION_PADDING)
+	end
+
+	return false
+end
+
 local function isPlayerFighting(player: Player): boolean
 	return FightService ~= nil and FightService.Sessions ~= nil and FightService.Sessions[player] ~= nil
+end
+
+local function isPlayerRegisteredForTraining(player: Player, trainingArea): boolean
+	if typeof(trainingArea) ~= "Instance" then
+		return false
+	end
+
+	local areaPlayers = PlayersInTraining[trainingArea]
+	return areaPlayers ~= nil and areaPlayers[player] == true
+end
+
+local function getTrainingAreaData(trainingArea)
+	if typeof(trainingArea) ~= "Instance" then
+		return nil
+	end
+
+	local area = trainingArea:GetAttribute("Area")
+	local index = trainingArea:GetAttribute("Index")
+
+	if TrainingAreasData == nil or TrainingAreasData[area] == nil then
+		return nil
+	end
+
+	return TrainingAreasData[area][index]
+end
+
+local function canPlayerUseTrainingArea(player: Player, trainingArea, shouldNotify: boolean): boolean
+	local areaData = getTrainingAreaData(trainingArea)
+	if not areaData then
+		return false
+	end
+
+	local playerData = DataService:GetData(player)
+	if not playerData then
+		return false
+	end
+
+	if areaData.VIP and not FindValue(playerData.Gamepasses, "VIP") then
+		if shouldNotify then
+			MonetizationService:PromptPurchase(player, "VIP", "GamePasses")
+		end
+		return false
+	end
+
+	if playerData.Money2 < areaData.PowerRequirement then
+		if shouldNotify then
+			TrainingService.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
+		end
+		return false
+	end
+
+	return true
 end
 
 local function getTrainingAnimationData(index: number)
@@ -150,6 +259,7 @@ local function buildTrainingShotConfig(trainingArea, requestedSpeedMultiplier)
 
 	local projectileLifetime = getBallNumber(animData, "Lifetime", 2)
 	local curveHeight = getBallNumber(animData, "CurveHeight", 12)
+	local horizontalCurve = getBallNumber(animData, "HorizontalCurve", 5)
 	local startForwardOffset = getBallNumber(animData, "StartForwardOffset", 2.0)
 	local startRightOffset = getBallNumber(animData, "StartRightOffset", 0.5)
 	local startHeightOffset = getBallNumber(animData, "StartHeightOffset", 0.2)
@@ -173,6 +283,7 @@ local function buildTrainingShotConfig(trainingArea, requestedSpeedMultiplier)
 		ProjectileLifetime = projectileLifetime,
 		BallLifetime = projectileLifetime, -- backward compatibility untuk client/patch lama
 		CurveHeight = curveHeight,
+		HorizontalCurve = horizontalCurve,
 		StartForwardOffset = startForwardOffset,
 		StartRightOffset = startRightOffset,
 		StartHeightOffset = startHeightOffset,
@@ -181,8 +292,8 @@ local function buildTrainingShotConfig(trainingArea, requestedSpeedMultiplier)
 end
 
 function TrainingService:IsPlayerInTrainingArea(player: Player, trainingArea): boolean
-	local areaPlayers = PlayersInTraining[trainingArea]
-	return areaPlayers ~= nil and areaPlayers[player] == true
+	return isPlayerRegisteredForTraining(player, trainingArea)
+		and isPlayerPhysicallyInTrainingArea(player, trainingArea)
 end
 
 function TrainingService:FacePlayerToTrainingTarget(player: Player, target)
@@ -249,7 +360,12 @@ function TrainingService:ShootTrainingBall(player: Player, trainingArea, speedMu
 		return false
 	end
 
-	if not self:IsPlayerInTrainingArea(player, trainingArea) then
+	if not isPlayerRegisteredForTraining(player, trainingArea) then
+		return false
+	end
+
+	if not isPlayerPhysicallyInTrainingArea(player, trainingArea) then
+		self:StopTraining(player, trainingArea)
 		return false
 	end
 
@@ -268,24 +384,32 @@ function TrainingService:Training(player: Player, trainingArea)
 		return warn("PlayersInTraining table is not initialized.")
 	end
 
+	if typeof(trainingArea) ~= "Instance" then
+		return false
+	end
+
 	if PlayersInTraining[trainingArea] == nil then
-		return warn("Training area not found: ", trainingArea.Name)
+		return false
 	end
 
 	if PlayersInTraining[trainingArea][player] == nil then
-		return warn("Player is not in training area: ", player.Name)
+		return false
 	end
 
-	local area = trainingArea:GetAttribute("Area")
-	local index = trainingArea:GetAttribute("Index")
-	local areaData = TrainingAreasData[area][index]
+	if not isPlayerPhysicallyInTrainingArea(player, trainingArea) then
+		self:StopTraining(player, trainingArea)
+		return false
+	end
+
+	local areaData = getTrainingAreaData(trainingArea)
+	if not areaData then
+		return false
+	end
+
 	local playerData = DataService:GetData(player)
 
-	if areaData.VIP then
-		if not FindValue(playerData.Gamepasses, "VIP") then
-			MonetizationService:PromptPurchase(player, "VIP", "GamePasses")
-			return
-		end
+	if not canPlayerUseTrainingArea(player, trainingArea, true) then
+		return false
 	end
 
 	if playerData.Money2 >= areaData.PowerRequirement then
@@ -297,12 +421,35 @@ function TrainingService:Training(player: Player, trainingArea)
 		--SeasonService:Increase(player, "MONEY_2 Daily", 1)
 		--SeasonService:Increase(player, "MONEY_2 Weekly", 1)
 		DataService:ChangeValue(player, "Money2", powerGet, false)
+		return true
 	else
 		self.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
+		return false
 	end
 end
 
 function TrainingService:StartTraining(player: Player, trainingArea)
+	if typeof(trainingArea) ~= "Instance" then
+		return {
+			Success = false,
+			Reason = "Invalid",
+		}
+	end
+
+	if not canPlayerUseTrainingArea(player, trainingArea, true) then
+		return {
+			Success = false,
+			Reason = "Unavailable",
+		}
+	end
+
+	if not isPlayerPhysicallyInTrainingArea(player, trainingArea) then
+		return {
+			Success = false,
+			Reason = "Outside",
+		}
+	end
+
 	-- Masukkan ke PlayersInTraining jika belum ada
 	if not PlayersInTraining[trainingArea] then
 		PlayersInTraining[trainingArea] = {}
@@ -320,11 +467,19 @@ function TrainingService:StartTraining(player: Player, trainingArea)
 	end
 
 	PlayersInTraining[trainingArea][player] = true
+	return {
+		Success = true,
+		Reason = "Started",
+	}
 end
 
 function TrainingService:StopTraining(player: Player, trainingArea)
 	if BallService then
 		BallService:ResetPlayer(player)
+	end
+
+	if typeof(trainingArea) ~= "Instance" then
+		return false
 	end
 
 	local areaPlayers = PlayersInTraining[trainingArea]
@@ -347,6 +502,8 @@ function TrainingService:StopTraining(player: Player, trainingArea)
 			end
 		end
 	end
+
+	return true
 end
 
 function TrainingService:GetMostEffectiveArea(player: Player)
@@ -384,24 +541,7 @@ function TrainingService:GetMostEffectiveArea(player: Player)
 end
 
 function TrainingService:CheckAvailability(player: Player, trainingArea)
-	local area = trainingArea:GetAttribute("Area")
-	local index = trainingArea:GetAttribute("Index")
-	local areaData = TrainingAreasData[area][index]
-	local playerData = DataService:GetData(player)
-
-	if areaData.VIP then
-		if not FindValue(playerData.Gamepasses, "VIP") then
-			MonetizationService:PromptPurchase(player, "VIP", "GamePasses")
-			return false
-		end
-	end
-
-	if playerData.Money2 < areaData.PowerRequirement then
-		self.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
-		return false
-	end
-
-	return true
+	return canPlayerUseTrainingArea(player, trainingArea, true)
 end
 
 -- KNIT START

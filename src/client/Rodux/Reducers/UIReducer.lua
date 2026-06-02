@@ -13,12 +13,25 @@ local Rodux = require(ReplicatedStorage.Packages.rodux)
 -- UIReducer
 local UIReducer = Rodux.createReducer({
 	CurrentUI = "",
+	StoreTargetSection = nil,
 	CurrentSeasonPassUI = "Rewards",
 	CurrentChristmasUI = "Daily",
 }, {
 	setCurrentUI = function(state, action)
 		local newState = table.clone(state)
 		newState.CurrentUI = action.value
+		return newState
+	end,
+
+	setStoreTargetSection = function(state, action)
+		local newState = table.clone(state)
+		newState.StoreTargetSection = action.value
+		return newState
+	end,
+
+	resetStoreTargetSection = function(state, action)
+		local newState = table.clone(state)
+		newState.StoreTargetSection = nil
 		return newState
 	end,
 

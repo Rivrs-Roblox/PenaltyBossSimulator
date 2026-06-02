@@ -31,6 +31,28 @@ local function EnsureCoachData(data: table)
 	return data.Coaches
 end
 
+local function IsRegularPurchasableCoach(coach: table?): boolean
+	return coach ~= nil
+		and not coach.VIP
+		and not coach.Reward
+		and not coach.StarterPack
+		and not coach.Chest
+end
+
+local function GetPreviousRegularCoachId(coachesTemplate: table, id: number): number?
+	local previousId = nil
+
+	for coachId, coachData in pairs(coachesTemplate) do
+		if type(coachId) == "number" and coachId < id and IsRegularPurchasableCoach(coachData) then
+			if previousId == nil or coachId > previousId then
+				previousId = coachId
+			end
+		end
+	end
+
+	return previousId
+end
+
 local CoachesService = Knit.CreateService({
 	Name = "CoachesService",
 
@@ -139,6 +161,18 @@ function CoachesService:Buy(player: Player, id: number, bypassPrice: boolean?)
 		end
 
 		return self:Equip(player, id)
+	end
+
+	if not bypassPrice and IsRegularPurchasableCoach(coach) then
+		local previousCoachId = GetPreviousRegularCoachId(self.Template.Coaches, id)
+		if previousCoachId ~= nil and not table.find(coachesData.Unlocked, previousCoachId) then
+			local previousCoach = self.Template.Coaches[previousCoachId]
+			local previousCoachName = previousCoach and (previousCoach.DisplayName or previousCoach.Name) or "previous coach"
+			return {
+				text = self.Template.Messages.Notifications.Buy_Previous_Coach_First(previousCoachName),
+				type = "ERROR",
+			}
+		end
 	end
 
 	local currency = coach.Currency or "Money2"

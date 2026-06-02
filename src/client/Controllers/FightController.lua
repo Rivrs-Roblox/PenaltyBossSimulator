@@ -3,8 +3,6 @@ local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
-local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 
 -- Knit packages
 local Packages = ReplicatedStorage.Packages
@@ -12,7 +10,6 @@ local Knit = require(Packages.Knit)
 local Promise = require(Packages.Promise)
 local Sound = require(Packages.Sound)
 local Signal = require(Packages.Signal)
-local Zone = require(ReplicatedStorage.Shared.ZonePlus)
 
 -- Player
 local player = Players.LocalPlayer
@@ -35,6 +32,7 @@ local TrailsController
 local FightUIController
 local EggsController
 local TradeController
+local ExitGiftController
 
 -- Helpers
 local Helpers = ReplicatedStorage.Shared.Helpers
@@ -48,7 +46,7 @@ local FightActions = require(StarterPlayer.StarterPlayerScripts.Client.Rodux.Act
 local hideConnections = {}
 
 local fightInstances = {
-	-- ["Area01"] = { Gate = , Zone = }
+	-- ["Area01"] = { PenaltyZone = ... }
 }
 
 -- #region Constants
@@ -66,6 +64,7 @@ local RESULT_ANIMATION_IDS = {
 		"rbxassetid://114904268403398",
 	},
 }
+local AUTO_SHOOT_COUNTDOWN = 10
 -- #endregion
 
 -- FightController
@@ -73,6 +72,7 @@ local FightController = Knit.CreateController({
 	Name = "FightController",
 	IsFighting = false,
 	IsKicking = false,
+	KickPhase = "None",
 
 	Template = {},
 	ShootAnimationData = {},
@@ -104,28 +104,92 @@ local function toZoneName(areaName: string): string
 	return n and ("Zone" .. n) or areaName
 end
 
-local function getBestPenaltyZone(data, enemiesData)
-	local playerPower = data.Money2
+local function getBestAutoWinTarget(data, enemiesData, bossProgress)
+	local playerPower = data.Money2 or 0
 	local unlockedAreas = data.Areas and data.Areas.Unlocked or { "Zone1" }
-	local bestArea = "Area01" -- default fallback (Area format, sama dengan enemiesData keys)
-	local highestPower = 0
+
+	local bestArea = "Area01"
+	local bestBossIndex = 1
+	local highestDefeatableBossPower = 0
+
 	for areaName, areaData in pairs(enemiesData) do
-		if areaName ~= "Tutorial" then
-			-- data.Areas.Unlocked pakai "Zone1", areaName pakai "Area01" → perlu translate
-			if not table.find(unlockedAreas, toZoneName(areaName)) then
-				continue
+		if areaName == "Tutorial" then
+			continue
+		end
+
+		-- Check if player unlocked this area
+		if not table.find(unlockedAreas, toZoneName(areaName)) then
+			continue
+		end
+
+		-- Ensure we have a valid fightInstance
+		local fightInstance = fightInstances[areaName]
+		if not fightInstance then
+			continue
+		end
+
+		-- Check progress in this area
+		local progress = bossProgress and bossProgress[areaName] or 0
+		local maxAllowedBoss = math.min(progress + 1, 5)
+
+		-- Find the highest boss we can defeat in this area
+		for bossIndex = 1, maxAllowedBoss do
+			local bossKey = "Boss " .. bossIndex
+			local bossData = areaData[bossKey]
+
+			-- Backwards compatibility fallbacks
+			if not bossData then
+				if bossIndex == 5 and areaData["Boss"] then
+					bossData = areaData["Boss"]
+				elseif areaData["MiniBoss " .. bossIndex] then
+					bossData = areaData["MiniBoss " .. bossIndex]
+				end
 			end
 
-			local goaliePower = areaData["MiniBoss 1"] and areaData["MiniBoss 1"].Power or 0
-			local fightInstance = fightInstances[areaName] -- sudah sama format, langsung lookup
-			if playerPower >= goaliePower and goaliePower > highestPower and fightInstance then
-				highestPower = goaliePower
-				bestArea = areaName
+			if bossData then
+				local goaliePower = bossData.Power or 0
+				-- We want to find the highest boss power that is <= playerPower
+				if playerPower >= goaliePower then
+					if goaliePower > highestDefeatableBossPower then
+						highestDefeatableBossPower = goaliePower
+						bestArea = areaName
+						bestBossIndex = bossIndex
+					elseif goaliePower == highestDefeatableBossPower and areaName >= bestArea then
+						-- tie-breaker: prefer higher area
+						bestArea = areaName
+						bestBossIndex = bossIndex
+					end
+				end
 			end
 		end
 	end
 
-	return bestArea
+	-- If the player's power is too low to defeat ANY boss in ANY unlocked area
+	-- (e.g. immediately after a rebirth, player power is 0 or extremely low),
+	-- we fall back to the very first boss of their highest unlocked area.
+	if highestDefeatableBossPower == 0 then
+		local highestUnlockedAreaNum = 1
+		local highestUnlockedAreaName = "Area01"
+
+		for _, zoneName in ipairs(unlockedAreas) do
+			local n = tonumber(zoneName:match("%d+"))
+			if n and n > highestUnlockedAreaNum then
+				highestUnlockedAreaNum = n
+				-- Format to AreaXX
+				highestUnlockedAreaName = string.format("Area%02d", n)
+			end
+		end
+
+		-- Ensure the highest unlocked area exists in enemiesData
+		if enemiesData[highestUnlockedAreaName] and fightInstances[highestUnlockedAreaName] then
+			bestArea = highestUnlockedAreaName
+		else
+			bestArea = "Area01"
+		end
+		bestBossIndex = 1
+	end
+
+	return bestArea, bestBossIndex
 end
 
 local function getAnimator(model: Instance): Animator?
@@ -417,7 +481,7 @@ function FightController:PlayKickEffect(zone: string, effectivePower: number)
 	Sound:PlaySound("MISC_Shoot_Penalty")
 end
 
-function FightController:ProceedKickAnimation(position: number, resultData: any)
+function FightController:ProceedKickAnimation(savedDirection: number, savedPower: number, resultData: any)
 	if not resultData or type(resultData) ~= "table" then
 		warn("[FightController] Failed to evaluate kick on server")
 		resultData = { Result = "Lost", PlayerPower = 0 }
@@ -444,9 +508,8 @@ function FightController:ProceedKickAnimation(position: number, resultData: any)
 	GoalieController:PlayGoalieAnimation("Idle", 0.2)
 
 	local goalArea = self:GetPenaltyZonePart("GoalArea")
-	local goalieArea = self:GetPenaltyZonePart("GoalieArea")
 
-	BallController:AnimateBallKick(position, result, goalArea.Position, goalieArea.Position, isSpecialKick, {
+	BallController:AnimateBallKick(savedDirection, result, goalArea.Position, isSpecialKick, {
 		onGoalieReact = function()
 			-- Kembalikan speed ke normal
 			BallController:SetSpeedMultiplier(1)
@@ -454,7 +517,7 @@ function FightController:ProceedKickAnimation(position: number, resultData: any)
 			CameraController:StopCameraFollow()
 
 			-- Play animasi defend goalie
-			GoalieController:PlayGoalieDefendAnimation(position, result)
+			GoalieController:PlayGoalieDefendAnimation(savedDirection, result)
 		end,
 		onResult = function()
 			CameraController:StopCameraVisualEffect()
@@ -471,31 +534,31 @@ function FightController:ProceedKickAnimation(position: number, resultData: any)
 	CameraController:FollowBallCamera()
 end
 
-function FightController:ScheduleAnimEvents(animData, callbacks)
-	for eventName, eventInfo in pairs(animData.Events) do
-		local realTime = eventInfo.Time / animData.Speed
-		task.delay(realTime, function()
-			-- Panggil callback kalau disediakan
-			local cb = callbacks[eventName]
-			if cb then
-				cb(eventInfo)
-			end
-		end)
-	end
-end
-
 function FightController:StopPointer()
 	if not self.IsKicking then
 		return
 	end
 
 	self.IsKicking = false
+	self.KickPhase = "None"
+
+	-- Instantly hide the countdown text for immediate input feedback
+	FightUIController:UpdateCountdown(0)
+
+	-- Cancel the auto-shoot thread immediately (if not currently running this thread)
+	if self._autoShootThread then
+		if coroutine.running() ~= self._autoShootThread then
+			task.cancel(self._autoShootThread)
+		end
+		self._autoShootThread = nil
+	end
 
 	self.OnKickSignal:Fire()
 
-	local savedPosition = FightUIController:StopPointer()
+	-- Lock BOTH and retrieve them
+	local savedDirection, savedPower = FightUIController:LockFight()
 
-	local success, resultData = FightService:EvaluateKick(savedPosition):await()
+	local success, resultData = FightService:EvaluateKick(savedDirection, savedPower):await()
 	if not success then
 		return warn("[FightController] Failed to evaluate kick on server")
 	end
@@ -550,7 +613,7 @@ function FightController:StopPointer()
 
 				BallController:SetEnabledPlayerBallEffect(false)
 
-				self:ProceedKickAnimation(savedPosition, resultData)
+				self:ProceedKickAnimation(savedDirection, savedPower, resultData)
 			end,
 			Bump = function(eventInfo)
 				Sound:PlaySound("MISC_Stomp")
@@ -583,7 +646,23 @@ function FightController:StopPointer()
 		})
 	else
 		task.delay(0.5, function()
-			self:ProceedKickAnimation(savedPosition, resultData)
+			self:ProceedKickAnimation(savedDirection, savedPower, resultData)
+		end)
+	end
+
+	-- Hide dynamic bar
+	FightUIController:HideDynamicBar()
+end
+
+function FightController:ScheduleAnimEvents(animData, callbacks)
+	for eventName, eventInfo in pairs(animData.Events) do
+		local realTime = eventInfo.Time / animData.Speed
+		task.delay(realTime, function()
+			-- Panggil callback kalau disediakan
+			local cb = callbacks[eventName]
+			if cb then
+				cb(eventInfo)
+			end
 		end)
 	end
 end
@@ -593,9 +672,6 @@ function FightController:ShowKickResult(result: string)
 	local isGoal = (result == "Goal" or result == "GoalBlast" or result == "GoalCorner")
 
 	FightUIController:PlayKickResultEffect(result)
-
-	-- Hide dynamic bar
-	FightUIController:HideDynamicBar()
 
 	self.IsKicking = false
 	self:SetEnabledPlayerSpecialEffect(false)
@@ -639,17 +715,48 @@ function FightController:SetupPenaltyRound()
 		Sound:PlaySound("MISC_Whistle")
 
 		if self.IsFighting then
-			FightUIController:ShowDynamicBar()
+			self.KickPhase = "Kicking"
+			local goalZone = self:GetPenaltyZonePart("GoalZone")
+			FightUIController:ShowFightUI(goalArea.Position, goalZone)
 			self.IsKicking = true
+
+			-- Cancel any existing auto-shoot thread (safety check)
+			if self._autoShootThread then
+				task.cancel(self._autoShootThread)
+				self._autoShootThread = nil
+			end
+
+			-- Start 5 seconds auto-shoot countdown timer
+			self._countdownValue = AUTO_SHOOT_COUNTDOWN
+			FightUIController:UpdateCountdown(self._countdownValue)
+
+			self._autoShootThread = task.spawn(function()
+				while self._countdownValue > 0 do
+					task.wait(1)
+					if not self.IsKicking then
+						break
+					end
+					self._countdownValue -= 1
+					FightUIController:UpdateCountdown(self._countdownValue)
+				end
+
+				if self.IsKicking and self._countdownValue == 0 then
+					self:StopPointer()
+				end
+			end)
 		end
 	end)
 end
 
 function FightController:PlayBossCinematicIntro(goalieModel: Model, onComplete: () -> ())
 	-- Show Boss Name UI
-	local bossName = "Boss"
+	local bossName = "Boss " .. (self.BossIndex or 5)
 	if self.Template and self.Template.Enemies and self.Template.Enemies[self.CurrentArea] then
-		local bossData = self.Template.Enemies[self.CurrentArea]["Boss"]
+		local bossKey = "Boss " .. (self.BossIndex or 5)
+		local bossData = self.Template.Enemies[self.CurrentArea][bossKey]
+		if not bossData and self.BossIndex == 5 then
+			bossData = self.Template.Enemies[self.CurrentArea]["Boss"]
+		end
 		if bossData and bossData.Name then
 			bossName = bossData.Name
 		end
@@ -689,11 +796,11 @@ function FightController:StartPenaltyRound(wave)
 
 	-- Spawn goalie
 	local goalieArea = self:GetPenaltyZonePart("GoalieArea")
-	GoalieController:SpawnGoalie(wave, self.CurrentArea, goalieArea)
+	GoalieController:SpawnGoalie(wave, self.CurrentArea, goalieArea, self.BossIndex)
 
 	CharactersController:SetFootballTransparancy(player, 0)
 
-	if wave == 5 then
+	if wave == 1 then
 		-- Boss Cinematic Intro
 		local goalieModel = GoalieController:GetGoalieModel()
 		if goalieModel then
@@ -708,8 +815,43 @@ function FightController:StartPenaltyRound(wave)
 	end
 end
 
+function FightController:UpdatePodiumLock(enemyPodium: Instance)
+	local area = enemyPodium:GetAttribute("Area")
+	local podiumType = enemyPodium:GetAttribute("Type")
+
+	if not area or not podiumType then
+		return
+	end
+
+	local bossIndex = tonumber(podiumType:match("%d+"))
+	if not bossIndex then
+		if podiumType == "Boss" then
+			bossIndex = 5
+		else
+			bossIndex = 1
+		end
+	end
+
+	local progress = self.BossProgress and self.BossProgress[area] or 0
+	local isUnlocked = (bossIndex == 1) or (progress >= bossIndex - 1)
+
+	local namePart = enemyPodium:FindFirstChild("Name")
+	local billboard = namePart and namePart:FindFirstChildOfClass("BillboardGui")
+	local lockElement = billboard and billboard:FindFirstChild("Lock")
+	if lockElement then
+		lockElement.Visible = not isUnlocked
+	end
+end
+
+function FightController:UpdateAllPodiumLocks()
+	local enemyPodiums = CollectionService:GetTagged("EnemyPodium")
+	for _, enemyPodium in enemyPodiums do
+		self:UpdatePodiumLock(enemyPodium)
+	end
+end
+
 --|| Existing Functions ||--
-function FightController:StartFight(area: string)
+function FightController:StartFight(area: string, bossIndex: number)
 	if
 		self.IsFighting
 		or TeleportController.IsTeleporting
@@ -751,6 +893,20 @@ function FightController:StartFight(area: string)
 
 		return
 	end
+
+	bossIndex = tonumber(bossIndex) or 1
+
+	-- Enforce sequential progression check
+	local progress = self.BossProgress and self.BossProgress[area] or 0
+	if bossIndex > 1 and progress < bossIndex - 1 then
+		NotificationController:Notify({
+			text = "You must defeat the previous boss first!",
+			type = "ERROR",
+			tag = "Fight",
+		})
+		return
+	end
+
 	self.IsFighting = true
 	self._isOkayToStart = false
 
@@ -779,12 +935,13 @@ function FightController:StartFight(area: string)
 
 	UIController:HideFrame()
 	UIController:RemoveHUD({ ignoreTopFrame = true, hideSpinWheel = true, ignoreBottomFrame = true })
+	ExitGiftController:HideFrame()
 
 	TeleportEffectFrame("Close")
 
 	task.wait(1)
 
-	FightService:StartFight(fightInstance.PenaltyZone)
+	FightService:StartFight(fightInstance.PenaltyZone, bossIndex)
 end
 
 function FightController:StartAutoWinTask()
@@ -801,57 +958,16 @@ function FightController:StartAutoWinTask()
 						continue
 					end
 
-					local area = getBestPenaltyZone(data, self.Template.Enemies)
+					local area, bossIndex = getBestAutoWinTarget(data, self.Template.Enemies, self.BossProgress)
 
-					if area then
-						self:StartFight(area)
+					if area and bossIndex then
+						self:StartFight(area, bossIndex)
 					end
 				end
 			end
 
 			task.wait(0.5)
 		end
-	end)
-end
-
-function FightController:SetInputConnections()
-	-- Input: Mouse1 / Touch untuk stop pointer saat kicking
-	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-		if gameProcessedEvent then
-			return
-		end
-
-		if not self.IsKicking then
-			return
-		end
-
-		if UserInputService:GetFocusedTextBox() then
-			return
-		end
-
-		if
-			input.UserInputType == Enum.UserInputType.MouseButton1
-			or input.KeyCode == Enum.KeyCode.ButtonR2
-			or input.KeyCode == Enum.KeyCode.Space
-		then
-			self:StopPointer()
-		end
-	end)
-
-	UserInputService.TouchTap:Connect(function(touchPositions, gameProcessedEvent)
-		if gameProcessedEvent then
-			return
-		end
-
-		if not self.IsKicking then
-			return
-		end
-
-		if UserInputService:GetFocusedTextBox() then
-			return
-		end
-
-		self:StopPointer()
 	end)
 end
 
@@ -942,6 +1058,7 @@ function FightController:KnitInit()
 	FightUIController = Knit.GetController("FightUIController")
 	EggsController = Knit.GetController("EggsController")
 	TradeController = Knit.GetController("TradeController")
+	ExitGiftController = Knit.GetController("ExitGiftController")
 end
 
 function FightController:KnitStart()
@@ -951,8 +1068,9 @@ function FightController:KnitStart()
 	-- Preload assets
 	self:PreloadNecessaryAssets()
 
-	FightService.FightStarted:Connect(function(fightArea)
+	FightService.FightStarted:Connect(function(fightArea, bossIndex)
 		self.CurrentArea = fightArea
+		self.BossIndex = bossIndex or 1
 		self.CurrentWave = 0
 
 		Sound:StopSound("MUSIC_Background")
@@ -986,6 +1104,12 @@ function FightController:KnitStart()
 	FightService.FightEnded:Connect(function()
 		if self.IsFighting then
 			self.IsFighting = false
+		end
+
+		-- Cancel the auto-shoot thread immediately on fight end
+		if self._autoShootThread then
+			task.cancel(self._autoShootThread)
+			self._autoShootThread = nil
 		end
 
 		-- Cleanup penalty kick state
@@ -1077,52 +1201,24 @@ function FightController:KnitStart()
 		end
 	end)
 
-	self:SetInputConnections()
+	self.BossProgress = {}
+
+	DataService.BossProgressUpdated:Connect(function(updatedProgress)
+		self.BossProgress = updatedProgress
+		self:UpdateAllPodiumLocks()
+	end)
 
 	local _, data = DataService:GetData():await()
-
-	-- Battle zone setup
-	local function setupGate(gate)
-		if gate:GetAttribute("IsZoneSetup") then
-			return
-		end
-		gate:SetAttribute("IsZoneSetup", true)
-
-		local area = gate:GetAttribute("Area")
-
-		local zone = Zone.new(gate)
-
-		-- Handle player entering the zone
-		zone.playerEntered:Connect(function(player)
-			if player == Players.LocalPlayer then
-				self:StartFight(area)
-			end
-		end)
-
-		if fightInstances[area] == nil then
-			fightInstances[area] = {
-				Gate = nil,
-				PenaltyZone = nil,
-			}
-		end
-
-		fightInstances[area].Gate = gate
+	if data then
+		self.BossProgress = data.BossProgress or {}
+		self:UpdateAllPodiumLocks()
 	end
-
-	local gates = CollectionService:GetTagged("BattleZone")
-
-	for _, battleZone in gates do
-		setupGate(battleZone)
-	end
-
-	CollectionService:GetInstanceAddedSignal("BattleZone"):Connect(setupGate)
 
 	local function setupPenaltyZone(penaltyZone)
 		local area = penaltyZone:GetAttribute("Area")
 
 		if fightInstances[area] == nil then
 			fightInstances[area] = {
-				Gate = nil,
 				PenaltyZone = nil,
 			}
 		end
@@ -1143,6 +1239,92 @@ function FightController:KnitStart()
 	end
 
 	CollectionService:GetInstanceAddedSignal("PenaltyZone"):Connect(setupPenaltyZone)
+
+	-- Initialize ProximityPrompt for all EnemyPodiums
+	local function setupPodium(enemyPodium)
+		local area = enemyPodium:GetAttribute("Area")
+		local podiumType = enemyPodium:GetAttribute("Type")
+
+		local bossIndex = tonumber(podiumType:match("%d+"))
+		if not bossIndex then
+			if podiumType == "Boss" then
+				bossIndex = 5
+			else
+				bossIndex = 1
+			end
+		end
+
+		local enemyName = area .. " - " .. podiumType
+		if self.Template and self.Template.Enemies and self.Template.Enemies[area] then
+			local enemyData = self.Template.Enemies[area]["Boss " .. bossIndex]
+			if enemyData and enemyData.Name then
+				enemyName = enemyData.Name
+			end
+		end
+
+		local base = enemyPodium:WaitForChild("Base", 10)
+		if not base then
+			warn("Base not found for enemy podium", enemyPodium)
+			return
+		end
+
+		local function configurePrompt(model)
+			if not model:IsA("Model") then
+				return
+			end
+
+			local prompt = model:FindFirstChild("FightPrompt") or model:FindFirstChildOfClass("ProximityPrompt")
+			if not prompt then
+				prompt = Instance.new("ProximityPrompt")
+				prompt.Name = "FightPrompt"
+				prompt.ActionText = "Fight"
+				prompt.HoldDuration = 0.5
+				prompt.MaxActivationDistance = 10
+				prompt.Parent = model
+				prompt.Style = Enum.ProximityPromptStyle.Custom
+			end
+
+			prompt.ObjectText = enemyName
+
+			if not prompt:GetAttribute("Connected") then
+				prompt:SetAttribute("Connected", true)
+				prompt.Triggered:Connect(function()
+					local parsedBossIndex = tonumber(podiumType:match("%d+"))
+					if not parsedBossIndex then
+						if podiumType == "Boss" then
+							parsedBossIndex = 5
+						else
+							parsedBossIndex = 1
+						end
+					end
+					self:StartFight(area, parsedBossIndex)
+				end)
+			end
+		end
+
+		-- Setup for currently streamed-in models
+		for _, child in ipairs(base:GetChildren()) do
+			if child:IsA("Model") then
+				configurePrompt(child)
+			end
+		end
+
+		-- Setup for models that stream in later
+		base.ChildAdded:Connect(function(child)
+			if child:IsA("Model") then
+				configurePrompt(child)
+			end
+		end)
+
+		self:UpdatePodiumLock(enemyPodium)
+	end
+
+	local enemyPodiums = CollectionService:GetTagged("EnemyPodium")
+	for _, enemyPodium in enemyPodiums do
+		setupPodium(enemyPodium)
+	end
+
+	CollectionService:GetInstanceAddedSignal("EnemyPodium"):Connect(setupPodium)
 
 	self:StartAutoWinTask()
 end

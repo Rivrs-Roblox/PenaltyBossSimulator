@@ -12,6 +12,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Roact = require(ReplicatedStorage.Packages.roact)
 local RoactHooks = require(ReplicatedStorage.Packages.hooks)
+local RoduxHooks = require(ReplicatedStorage.Packages.roduxhooks)
 
 -- Components
 local Components = StarterPlayerScripts.Client.Roact.Components
@@ -23,6 +24,10 @@ local DataCacheController = Knit.GetController("DataCacheController")
 local UI = DataCacheController:GetFile("Images")
 
 function BottomFrame(_, hooks)
+	local FightReducer = RoduxHooks.useSelector(hooks, function(state)
+		return state.FightReducer
+	end)
+
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.fromScale(0.5, 0.99),
@@ -47,6 +52,7 @@ function BottomFrame(_, hooks)
 				icon = UI.Money2,
 				text = "Training",
 				hooks = hooks,
+				visible = not FightReducer.Fighting,
 				order = 1,
 			}),
 			AutoWin = AutoUIButton({

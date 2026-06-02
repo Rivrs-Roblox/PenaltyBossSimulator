@@ -109,9 +109,7 @@ function PetsController:AddPets(player: Player, Pets: table)
 	for i, _ in self.PetsInSession[player] do
 		if not GeneratedPets[i] then
 			self.PetsInSession[player][i] = nil
-			if self.PetInstances:FindFirstChild(player.Name .. "_" .. tostring(i)) then
-				self.PetInstances:FindFirstChild(player.Name .. "_" .. tostring(i)):Destroy()
-			end
+			self:DestroyRenderedPet(player, i)
 		end
 	end
 end
@@ -378,10 +376,7 @@ function PetsController:KnitInit()
 				if self.PetsInSession[p] then
 					for i, _ in self.PetsInSession[p] do
 						self.PetsInSession[p][i] = nil
-						local model = self.PetInstances:FindFirstChild(p.Name .. "_" .. tostring(i))
-						if model then
-							model:Destroy()
-						end
+						self:DestroyRenderedPet(p, i)
 					end
 				end
 			end

@@ -143,6 +143,7 @@ Fill.Position = UDim2.new(0, 0, 0.5, 0)
 Fill.Size = UDim2.new(0, 0, 1, 0)
 Fill.BackgroundTransparency = 1
 Fill.Parent = Background
+Fill.ScaleType = Enum.ScaleType.Crop
 
 -- local FillCorner = Instance.new("UICorner")
 -- FillCorner.CornerRadius = UDim.new(0.25, 0)

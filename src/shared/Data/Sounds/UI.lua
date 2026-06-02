@@ -95,12 +95,4 @@ return table.freeze({
 		Category = "UI", -- Optional, will be determined from name if not provided
 		SoundType = "2D",
 	},
-
-	UI_SkillCheck = {
-		Id = 83783730013920,
-		Looped = false,
-		Volume = 1,
-		Category = "UI", -- Optional, will be determined from name if not provided
-		SoundType = "2D",
-	},
 })

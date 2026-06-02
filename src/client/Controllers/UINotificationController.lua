@@ -35,6 +35,46 @@ local UINotificationController = Knit.CreateController({
 	Template = {},
 })
 
+local function isRegularPurchasableCoach(coach: table?): boolean
+	return coach ~= nil
+		and not coach.VIP
+		and not coach.Reward
+		and not coach.StarterPack
+		and not coach.Chest
+end
+
+local function isRegularPurchasableCharacter(character: table?): boolean
+	return character ~= nil
+		and not character.VIP
+		and not character.Reward
+		and not character.StarterPack
+		and not character.RejoinReward
+end
+
+local function getPreviousRegularId(templateData: table, id: number, isRegularPurchasable: (table?) -> boolean): number?
+	local previousId = nil
+
+	for itemId, itemData in pairs(templateData) do
+		if type(itemId) == "number" and itemId < id and isRegularPurchasable(itemData) then
+			if previousId == nil or itemId > previousId then
+				previousId = itemId
+			end
+		end
+	end
+
+	return previousId
+end
+
+local function canBuyInSequence(
+	templateData: table,
+	ownedItems: table,
+	id: number,
+	isRegularPurchasable: (table?) -> boolean
+): boolean
+	local previousId = getPreviousRegularId(templateData, id, isRegularPurchasable)
+	return previousId == nil or table.find(ownedItems, previousId) ~= nil
+end
+
 --|| Functions ||--
 function UINotificationController:InitChecks()
 	task.spawn(function()
@@ -118,6 +158,7 @@ function UINotificationController:InitChecks()
 						and not char.Reward
 						and not char.StarterPack
 						and not char.RejoinReward
+						and canBuyInSequence(self.Template.Characters, Characters, id, isRegularPurchasableCharacter)
 					then
 						CharacterCount += 1
 					end
@@ -143,7 +184,12 @@ function UINotificationController:InitChecks()
 
 				local CoachCount = 0
 				for id, coach in (self.Template.Coaches or {}) do
-					if not table.find(Coaches, id) and Money2 >= coach.Price and not coach.VIP and not coach.Chest then
+					if
+						not table.find(Coaches, id)
+						and Money2 >= coach.Price
+						and isRegularPurchasableCoach(coach)
+						and canBuyInSequence(self.Template.Coaches, Coaches, id, isRegularPurchasableCoach)
+					then
 						CoachCount += 1
 					end
 				end

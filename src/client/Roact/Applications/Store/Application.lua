@@ -34,12 +34,15 @@ local GamepassItem = require(script.Parent.Frames.Gamepasses.Item)
 -- Constants
 local FramesConstants = require(StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
 
+-- Store
+local RoduxStore = require(StarterPlayerScripts.Client.Rodux.Store)
+local UIActions = require(StarterPlayerScripts.Client.Rodux.Actions.UIActions)
+
 -- UI
 local DataCacheController = Knit.GetController("DataCacheController")
 local Template = DataCacheController:GetFile("Template")
 local UI = DataCacheController:GetFile("Images")
 
--- Store
 local scrollRef = Roact.createRef()
 local featuredRef = Roact.createRef()
 local gamepassRef = Roact.createRef()
@@ -78,7 +81,24 @@ function Store(_, hooks)
 		if scrollFrame and target then
 			local offset = target.AbsolutePosition.Y - scrollFrame.AbsolutePosition.Y + scrollFrame.CanvasPosition.Y
 			scrollFrame.CanvasPosition = Vector2.new(0, offset)
+			return true
 		end
+
+		return false
+	end
+
+	local function getSectionRef(section)
+		if section == "Featured" then
+			return featuredRef
+		elseif section == "Gamepass" then
+			return gamepassRef
+		elseif section == "Wins" then
+			return winsRef
+		elseif section == "Boosts" then
+			return boostsRef
+		end
+
+		return nil
 	end
 
 	local function onScroll(rbx)
@@ -113,6 +133,41 @@ function Store(_, hooks)
 			setActiveTab(newTab)
 		end
 	end
+
+	local targetSection = UIReducer.StoreTargetSection
+	hooks.useEffect(function()
+		if UIReducer.CurrentUI ~= FramesConstants.Store or targetSection == nil then
+			return nil
+		end
+
+		local targetRef = getSectionRef(targetSection)
+		if targetRef == nil then
+			RoduxStore:dispatch(UIActions.resetStoreTargetSection())
+			return nil
+		end
+
+		local cancelled = false
+		task.spawn(function()
+			for _ = 1, 10 do
+				if cancelled then
+					return
+				end
+
+				if scrollTo(targetRef, targetSection) then
+					RoduxStore:dispatch(UIActions.resetStoreTargetSection())
+					return
+				end
+
+				task.wait()
+			end
+
+			RoduxStore:dispatch(UIActions.resetStoreTargetSection())
+		end)
+
+		return function()
+			cancelled = true
+		end
+	end, { UIReducer.CurrentUI, targetSection })
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),

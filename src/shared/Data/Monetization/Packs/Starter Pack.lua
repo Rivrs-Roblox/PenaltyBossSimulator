@@ -28,7 +28,7 @@ return table.freeze({
 		end,
 		["RestrictedRegionCanBuy"] = true,
 	},
-	[3312387397] = {
+	[3600525897] = {
 		["Name"] = "Pro Pack",
 		["BeforeCheck"] = function(self, userId)
 			local template = DataCacheService:GetFile("Template")
@@ -48,7 +48,7 @@ return table.freeze({
 		end,
 		["RestrictedRegionCanBuy"] = true,
 	},
-	[3312390066] = {
+	[3600526015] = {
 		["Name"] = "Master Pack",
 		["BeforeCheck"] = function(self, userId)
 			local template = DataCacheService:GetFile("Template")

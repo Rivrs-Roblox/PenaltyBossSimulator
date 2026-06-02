@@ -2,6 +2,12 @@
 -- Catatan: PowerPerSecond dipakai TrainingService sebagai base per tick training, lalu dikalikan DataService multiplier.
 -- Saat ini loop training server memakai task.wait(1.5), jadi secara aktual ini bukan murni per 1 detik.
 
+local VIP_POWER_MULTIPLIER = 1.2
+
+local function getVipPower(freePower: number): number
+	return math.floor((freePower * VIP_POWER_MULTIPLIER) + 0.5)
+end
+
 return table.freeze({
 	["Zone1"] = {
 		[1] = {
@@ -26,6 +32,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 9,
+			PowerRequirement = 14_400,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(9),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -53,6 +64,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 112,
+			PowerRequirement = 352_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(112),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -80,6 +96,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 405,
+			PowerRequirement = 2_880_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(405),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -107,6 +128,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 1_350,
+			PowerRequirement = 19_200_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(1_350),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -134,6 +160,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 4_950,
+			PowerRequirement = 160_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(4_950),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -161,6 +192,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 16_650,
+			PowerRequirement = 1_360_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(16_650),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -188,6 +224,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 58_500,
+			PowerRequirement = 11_200_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(58_500),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -215,6 +256,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 202_500,
+			PowerRequirement = 96_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(202_500),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -242,6 +288,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 697_500,
+			PowerRequirement = 800_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(697_500),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -269,6 +320,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 2_385_000,
+			PowerRequirement = 6_400_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(2_385_000),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -296,6 +352,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 8_100_000,
+			PowerRequirement = 56_000_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(8_100_000),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -323,6 +384,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 27_900_000,
+			PowerRequirement = 448_000_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(27_900_000),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -350,6 +416,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 94_500_000,
+			PowerRequirement = 3_840_000_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(94_500_000),
 			PowerRequirement = 0,
 			VIP = true,
 		},
@@ -377,6 +448,11 @@ return table.freeze({
 		},
 		[5] = {
 			PowerPerSecond = 324_000_000,
+			PowerRequirement = 32_000_000_000_000_000,
+			VIP = false,
+		},
+		[6] = {
+			PowerPerSecond = getVipPower(324_000_000),
 			PowerRequirement = 0,
 			VIP = true,
 		},
