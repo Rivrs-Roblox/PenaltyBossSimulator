@@ -35,6 +35,7 @@ local CoachesController = Knit.GetController("CoachesController")
 local MonetizationController = Knit.GetController("MonetizationController")
 local StoreController = Knit.GetController("StoreController")
 local UIController = Knit.GetController("UIController")
+local NotificationController = Knit.GetController("NotificationController")
 
 -- UI
 local UI = DataCacheController:GetFile("Images")
@@ -63,6 +64,8 @@ return function(params: table, hooks)
 			Reward = false :: boolean,
 			StarterPack = false :: boolean,
 			Chest = false :: boolean,
+			locked = false :: boolean,
+			previousName = nil,
 			multiplier = 1 :: number,
 			order = 0 :: number,
 			flag = "Portugal" :: string,
@@ -103,6 +106,10 @@ return function(params: table, hooks)
 			elseif params.Chest then "Chest Rewards Exclusive"
 			else FormatNumber(params.price))
 		else ButtonText
+
+	local lockedText = if params.previousName ~= nil
+		then `Unlock {params.previousName} first.`
+		else "Unlock the previous coach first."
 
 	local gradientColors
 	local strokeColor
@@ -305,6 +312,16 @@ return function(params: table, hooks)
 			BackgroundColor3 = ButtonColor,
 
 			[Roact.Event.MouseButton1Click] = function()
+				if params.locked then
+					NotificationController:Notify({
+						tag = "Coach",
+						text = lockedText,
+						type = "ERROR",
+					})
+					Sound:PlaySound("UI_Click")
+					return
+				end
+
 				if not params.possessed then
 					if params.VIP then
 						StoreController:BuyItem({ name = `Coach - {params.name}` })
@@ -385,6 +402,39 @@ return function(params: table, hooks)
 					Color = Color3.fromHex("313131"),
 					Thickness = 1.5,
 				}),
+			}),
+		}),
+		Locked = params.locked and Roact.createElement("ImageButton", {
+			AutoButtonColor = false,
+			BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+			BackgroundTransparency = 0.35,
+			BorderSizePixel = 0,
+			Image = "",
+			Position = UDim2.fromScale(0, 0),
+			Size = UDim2.fromScale(1, 1),
+			ZIndex = 30,
+			[Roact.Event.MouseButton1Click] = function()
+				NotificationController:Notify({
+					tag = "Coach",
+					text = lockedText,
+					type = "ERROR",
+				})
+				Sound:PlaySound("UI_Click")
+			end,
+		}, {
+			UICorner = Roact.createElement("UICorner", {
+				CornerRadius = UDim.new(0, 2),
+			}),
+			LockIcon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = UI.Lock,
+				Position = UDim2.fromScale(0.5, 0.5),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(0.28, 0.28),
+				ZIndex = 31,
+			}, {
+				Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
 			}),
 		}),
 	})

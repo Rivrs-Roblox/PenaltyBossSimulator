@@ -7,6 +7,7 @@
 -- Game services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
+local UserInputService = game:GetService("UserInputService")
 
 -- Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
@@ -31,8 +32,15 @@ local VolumeSlider = require(Frames.Slider)
 local Item = require(Frames.Item)
 
 local SETTINGS_ICON = "rbxassetid://125225286754597"
+local AMBIENTS_ICON = "rbxassetid://126045313881885"
+local MUSIC_ICON = "rbxassetid://135360238783529"
 local SOUND_ICON = "rbxassetid://126045313881885"
 local TRADE_ICON = "rbxassetid://129162351030527"
+local UI_ICON = "rbxassetid://88047742281813"
+local PET_ICON = "rbxassetid://102865255751549"
+local DESKTOP_PANEL_SIZE = UDim2.fromScale(0.6, 0.6)
+local MOBILE_PANEL_SIZE = UDim2.fromScale(0.9, 0.9)
+local SETTINGS_Z_INDEX = 200
 
 function Settings(_, hooks)
 	local UIReducer = RoduxHooks.useSelector(hooks, function(state)
@@ -44,12 +52,13 @@ function Settings(_, hooks)
 	end)
 
 	local isOpen = UIReducer.CurrentUI == FramesConstants.Settings
+	local panelSize = if UserInputService.TouchEnabled then MOBILE_PANEL_SIZE else DESKTOP_PANEL_SIZE
 
 	local SettingsItems = {}
 
 	SettingsItems["UI_Volume"] = VolumeSlider({
 		Name = "UI",
-		Icon = SOUND_ICON,
+		Icon = UI_ICON,
 		Value = SettingsReducer.UI_Volume,
 		OnChange = function(value)
 			SoundController:SetGlobalVolume("UI", value)
@@ -63,11 +72,12 @@ function Settings(_, hooks)
 		end,
 		hooks = hooks,
 		Order = 1,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
 	})
 
 	SettingsItems["Music_Volume"] = VolumeSlider({
 		Name = "Ambients",
-		Icon = SOUND_ICON,
+		Icon = AMBIENTS_ICON,
 		Value = SettingsReducer.Music_Volume,
 		OnChange = function(value)
 			SoundController:SetGlobalVolume("MUSIC", value)
@@ -80,12 +90,13 @@ function Settings(_, hooks)
 			end
 		end,
 		hooks = hooks,
-		Order = 2,
+		Order = 1,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
 	})
 
 	SettingsItems["Effects_Volume"] = VolumeSlider({
 		Name = "Effect & Music",
-		Icon = SOUND_ICON,
+		Icon = MUSIC_ICON,
 		Value = SettingsReducer.MISC_Volume,
 		OnChange = function(value)
 			SoundController:SetGlobalVolume("MISC", value)
@@ -94,7 +105,39 @@ function Settings(_, hooks)
 			SoundController:ToggleGlobalVolume("MISC", enabled)
 		end,
 		hooks = hooks,
+		Order = 2,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
+	})
+
+	SettingsItems["UI_Volume"] = VolumeSlider({
+		Name = "UI",
+		Icon = UI_ICON,
+		Value = SettingsReducer.UI_Volume,
+		OnChange = function(value)
+			SoundController:SetGlobalVolume("UI", value)
+		end,
+		OnToggle = function(enabled)
+			if enabled then
+				SoundController:SetGlobalVolume("UI", 100)
+			else
+				SoundController:SetGlobalVolume("UI", 0)
+			end
+		end,
+		hooks = hooks,
 		Order = 3,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
+	})
+
+	SettingsItems["Pets_Visible"] = Item({
+		Name = "Pet Visible",
+		Icon = PET_ICON,
+		Value = SettingsReducer.Pets_Visible,
+		Action = function()
+			SettingsController:Toggle("Pets_Visible")
+		end,
+		hooks = hooks,
+		Order = 4,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
 	})
 
 	SettingsItems["Trade"] = Item({
@@ -105,7 +148,8 @@ function Settings(_, hooks)
 			SettingsController:Toggle("Trade")
 		end,
 		hooks = hooks,
-		Order = 4,
+		Order = 5,
+		ZIndexBase = SETTINGS_Z_INDEX + 3,
 	})
 
 	return Roact.createElement("Frame", {
@@ -115,16 +159,17 @@ function Settings(_, hooks)
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 		BackgroundColor3 = Color3.fromHex("000000"),
-		ZIndex = 2,
+		ZIndex = SETTINGS_Z_INDEX,
 	}, {
 		Content = Blue_Background({
 			title = "Settings",
 			titleIcon = SETTINGS_ICON,
-			size = UDim2.fromScale(0.6, 0.6),
+			size = panelSize,
 			pos = UDim2.fromScale(0.5, 0.5),
 			ratio = 1,
 			condition = isOpen,
 			align = Enum.TextXAlignment.Left,
+			zIndex = SETTINGS_Z_INDEX + 1,
 			hooks = hooks,
 		}, {
 
@@ -134,7 +179,7 @@ function Settings(_, hooks)
 				Size = UDim2.fromScale(0.9, 0.803),
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
-				ZIndex = 3,
+				ZIndex = SETTINGS_Z_INDEX + 2,
 			}, {
 				UIListLayout = Roact.createElement("UIListLayout", {
 					SortOrder = Enum.SortOrder.LayoutOrder,

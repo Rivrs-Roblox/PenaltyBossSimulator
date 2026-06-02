@@ -13,6 +13,7 @@ local TrailsService
 -- Controllers
 local NotificationController
 local UIController
+local FightController
 
 local Helpers = ReplicatedStorage.Shared.Helpers
 local SetupArea = require(Helpers.SetupArea)
@@ -36,6 +37,15 @@ local TrailsController = Knit.CreateController({
 function TrailsController:SyncMoveSpeed(character)
 	character = character or player.Character
 	if not character then
+		return
+	end
+
+	if FightController.IsFighting then
+		local humanoid = character:FindFirstChild("Humanoid") or character:WaitForChild("Humanoid", 5)
+		if humanoid then
+			humanoid.WalkSpeed = 0
+			humanoid.JumpPower = 0
+		end
 		return
 	end
 
@@ -101,6 +111,7 @@ function TrailsController:KnitStart()
 	local DataCacheController = Knit.GetController("DataCacheController")
 	self.Template = DataCacheController:GetFile("Template")
 
+	FightController = Knit.GetController("FightController")
 	NotificationController = Knit.GetController("NotificationController")
 
 	UIController = Knit.GetController("UIController")

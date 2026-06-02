@@ -182,11 +182,17 @@ function CameraController:PlayBossEyeSequence(goalie: Model)
 		return
 	end
 
+	local headOffset = 2.4
+	local goalieHum = goalie:FindFirstChild("Humanoid")
+	if goalieHum then
+		headOffset = goalieHum.HipHeight - 0.4
+	end
+
 	camera.CameraType = Enum.CameraType.Scriptable
 
 	local lookDir = goalie.PrimaryPart.CFrame.LookVector
 	local rightDir = goalie.PrimaryPart.CFrame.RightVector
-	local headPos = goalie.PrimaryPart.Position + Vector3.new(0, 2.4, 0)
+	local headPos = goalie.PrimaryPart.Position + Vector3.new(0, headOffset, 0)
 
 	-- Eye focus points
 	local eyeCamPosMiddle = headPos + lookDir * 4
@@ -211,9 +217,15 @@ function CameraController:PlayBossZoomOutSequence(goalie: Model)
 		return
 	end
 
+	local hipHeight = 2.8
+	local goalieHum = goalie:FindFirstChild("Humanoid")
+	if goalieHum then
+		hipHeight = goalieHum.HipHeight
+	end
+
 	local lookDir = goalie.PrimaryPart.CFrame.LookVector
-	local headPos = goalie.PrimaryPart.Position + Vector3.new(0, 1.5, 0)
-	local fullBodyCamPos = headPos + lookDir * 8 + Vector3.new(0, 0.5, 0)
+	local headPos = goalie.PrimaryPart.Position + Vector3.new(0, hipHeight / 2, 0)
+	local fullBodyCamPos = headPos + lookDir * (hipHeight * 3)
 
 	local tweenZoomOut =
 		TweenService:Create(camera, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {

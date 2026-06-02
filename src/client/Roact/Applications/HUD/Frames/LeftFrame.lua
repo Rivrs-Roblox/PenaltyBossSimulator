@@ -143,7 +143,7 @@ function LeftFrame(_, hooks)
 				BackgroundTransparency = 1,
 				Position = UDim2.fromScale(0.5, 0.5),
 				ZIndex = 2,
-				Image = "rbxassetid://106178870318178",
+				Image = "rbxassetid://128626729525181",
 				Rotation = rejoinStyles.rotation,
 				Size = UDim2.fromScale(1, 1),
 			}, {

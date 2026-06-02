@@ -135,6 +135,12 @@ function ExitGiftController:SpawnGiftModel()
 end
 
 function ExitGiftController:ShowFrame()
+	if self._shown then
+		return
+	end
+
+	self._shown = true
+
 	local Info = TweenInfo.new(1, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut, 0, false, 0)
 	local TweenFrame = TweenService:Create(
 		Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui").ExitGift,
@@ -142,7 +148,7 @@ function ExitGiftController:ShowFrame()
 		{ ["Position"] = UDim2.fromScale(0.5, 0.4) }
 	)
 
-	Sound:PlaySound("MISC_ExitGift")
+	Sound:PlaySound("MISC_Exit_Gift")
 
 	TweenFrame:Play()
 	TweenFrame.Completed:Connect(function()
@@ -153,39 +159,57 @@ function ExitGiftController:ShowFrame()
 
 	local shakeInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut, 5, true, 0)
 
+	local exitGiftFrame = Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui").ExitGift
+
 	if self.shakeTween then
 		self.shakeTween:Cancel()
 		self.shakeTween:Destroy()
 		self.shakeTween = nil
 	end
 
-	self.shakeTween = TweenService:Create(
-		Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui").ExitGift,
-		shakeInfo,
-		{ Rotation = 5 }
-	)
-	self.shakeTween:Play()
-	self.shakeTween.Completed:Connect(function()
+	-- Force reset rotation to 0 before starting the new shake tween
+	exitGiftFrame.Rotation = 0
+
+	local thisTween = TweenService:Create(exitGiftFrame, shakeInfo, { Rotation = 5 })
+	self.shakeTween = thisTween
+
+	thisTween:Play()
+
+	thisTween.Completed:Connect(function(playbackState)
+		-- 1. Ignore if the tween was cancelled (avoids duplicate trigger on Cancel())
+		if playbackState ~= Enum.PlaybackState.Completed then
+			return
+		end
+
 		task.wait(1)
-		if self.shakeTween then
-			self.shakeTween:Play()
+
+		-- 2. Verify that this thread's tween is still the active tween (avoids overlapping race conditions)
+		if self.shakeTween == thisTween then
+			thisTween:Play()
 		end
 	end)
 end
 
 function ExitGiftController:HideFrame()
+	if not self._shown then
+		return
+	end
+
+	self._shown = false
+
+	local exitGiftFrame = Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui").ExitGift
+
 	if self.shakeTween then
 		self.shakeTween:Cancel()
 		self.shakeTween:Destroy()
 		self.shakeTween = nil
 	end
 
+	-- Force reset rotation back to 0 on hide so it slides down straight and resets cleanly
+	exitGiftFrame.Rotation = 0
+
 	local Info = TweenInfo.new(0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut, 0, false, 0)
-	local TweenFrame = TweenService:Create(
-		Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui").ExitGift,
-		Info,
-		{ ["Position"] = UDim2.fromScale(0.5, 1.35) }
-	)
+	local TweenFrame = TweenService:Create(exitGiftFrame, Info, { ["Position"] = UDim2.fromScale(0.5, 1.35) })
 	TweenFrame:Play()
 	TweenFrame.Completed:Connect(function()
 		TweenFrame:Destroy()
@@ -250,34 +274,36 @@ function ExitGiftController:KnitStart()
 
 		self.IsClaiming = true
 
-		ExitGiftService:ClaimExitGift():andThen(function(response)
-			self.IsClaiming = false
+		ExitGiftService:ClaimExitGift()
+			:andThen(function(response)
+				self.IsClaiming = false
 
-			if response then
-				NotificationController:Notify(response)
-			end
-
-			if response and response.type == "SUCCESS" then
-				if currentData then
-					currentData.ExitGiftClaimed = true
+				if response then
+					NotificationController:Notify(response)
 				end
 
-				if self.giftPrompt then
-					self.giftPrompt:Destroy()
-					self.giftPrompt = nil
-				end
+				if response and response.type == "SUCCESS" then
+					if currentData then
+						currentData.ExitGiftClaimed = true
+					end
 
-				if self.giftModel then
-					returnGiftModelToPool(self.giftModel)
-					self.giftModel = nil
-				end
+					if self.giftPrompt then
+						self.giftPrompt:Destroy()
+						self.giftPrompt = nil
+					end
 
-				self:HideFrame()
-			end
-		end):catch(function(err)
-			self.IsClaiming = false
-			warn("[ExitGift] Claim failed:", err)
-		end)
+					if self.giftModel then
+						returnGiftModelToPool(self.giftModel)
+						self.giftModel = nil
+					end
+
+					self:HideFrame()
+				end
+			end)
+			:catch(function(err)
+				self.IsClaiming = false
+				warn("[ExitGift] Claim failed:", err)
+			end)
 	end)
 
 	ExitGiftService.ExitGiftClaimed:Connect(function()

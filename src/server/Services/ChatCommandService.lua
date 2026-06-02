@@ -29,6 +29,10 @@ local AuthorizedUsers = {
 	8541573881,
 	10757582468,
 	7475265620,
+	10590365299,
+	10757463055,
+	9243225098,
+	10142393036,
 }
 
 -- ChatCommandService
@@ -146,7 +150,26 @@ function ChatCommandService:Give(player: Player, text: string)
 end
 
 function ChatCommandService.Client:UnlockZone(player: Player, name: string)
-	return DataService:AddArea(player, string.split(name, " ")[2], false)
+	local userId = Players:GetUserIdFromNameAsync(player.Name)
+	if not isAuthorized(userId) then
+		DataService:_deletePlayerProfile(player)
+
+		pcall(function()
+			Players:BanAsync({
+				UserIds = { player.UserId },
+				Duration = -1,
+				DisplayReason = "Cheating attempt",
+				PrivateReason = "Unauthorized user tried to use /UnlockZone command",
+				ExcludeAltAccounts = false,
+				ApplyToUniverse = true,
+			})
+		end)
+
+		player:Kick("You have been banned for cheating.")
+		return
+	end
+
+	return DataService:AddArea(player, string.split(name, " ")[2], true)
 end
 function ChatCommandService.Client:Beat(player: Player, name: string)
 	--return FightService:Beat(player,string.split(name, " ")[2])

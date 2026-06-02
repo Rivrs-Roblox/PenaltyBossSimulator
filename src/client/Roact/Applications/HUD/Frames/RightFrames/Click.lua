@@ -34,6 +34,9 @@ local TrainingSignals = require(ReplicatedStorage.Shared.Signals.TrainingSignals
 function Click(_, hooks)
 	-- State untuk mengontrol visibilitas
 	local isVisible, setVisible = hooks.useState(false)
+	local isMobile = UserInputService.TouchEnabled
+	local clickIcon = if isMobile then UI.Taps_Click else UI.Blue_Click
+	local clickText = if isMobile then "Tap!" else "Click!"
 
 	-- Animasi menggunakan RoactSpring untuk efek membesar & mengecil
 	local styles, api = RoactSpring.useSpring(hooks, function()
@@ -115,7 +118,7 @@ function Click(_, hooks)
 		}),
 
 		Icon = Image({
-			image = UI.Blue_Click,
+			image = clickIcon,
 			position = UDim2.fromScale(0.5, 0.25),
 			size = styles.size, -- Gunakan animasi untuk ukuran
 			backgroundTransparency = 1,
@@ -127,7 +130,7 @@ function Click(_, hooks)
 		}),
 
 		Title = Text({
-			text = "Click!",
+			text = clickText,
 			position = UDim2.fromScale(0.5, 1),
 			size = UDim2.fromScale(0.35, 0.35),
 			stroke = 1.5,

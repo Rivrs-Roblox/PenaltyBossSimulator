@@ -37,6 +37,8 @@ return table.freeze({
 		["Current"] = "Zone1",
 	},
 
+	["BossProgress"] = {},
+
 	["BestZoneWon"] = 0,
 
 	["Chests"] = {

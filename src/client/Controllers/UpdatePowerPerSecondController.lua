@@ -1,6 +1,7 @@
 -- Game Services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 
 -- Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
@@ -15,6 +16,7 @@ local FruitsService = nil
 local BoostService = nil
 local PetsService = nil
 local CoachesService = nil
+local CodesService = nil
 
 -- Controllers
 local DataCacheController
@@ -51,6 +53,7 @@ function UpdatePowerPerSecondController:KnitInit()
 	BoostService = Knit.GetService("BoostService")
 	PetsService = Knit.GetService("PetsService")
 	CoachesService = Knit.GetService("CoachesService")
+	CodesService = Knit.GetService("CodesService")
 
 	DataCacheController = Knit.GetController("DataCacheController")
 	self.Template = DataCacheController:GetFile("Template")
@@ -90,6 +93,22 @@ function UpdatePowerPerSecondController:KnitInit()
 
 	CoachesService.CoachesUpdated:Connect(function()
 		self:UpdatePowerPerSecond()
+	end)
+
+	CodesService.PlayerVerified:Connect(function()
+		self:UpdatePowerPerSecond()
+	end)
+
+	Players.PlayerAdded:Connect(function()
+		task.delay(0.2, function()
+			self:UpdatePowerPerSecond()
+		end)
+	end)
+
+	Players.PlayerRemoving:Connect(function()
+		task.delay(0.2, function()
+			self:UpdatePowerPerSecond()
+		end)
 	end)
 
 	-- BoostEventService.BoostStarted:Connect(function(boostData)

@@ -17,51 +17,56 @@ return table.freeze({
 	Blue_Button = "rbxassetid://16259941034",
 
 	Arrow_Up = "rbxassetid://13548126854",
-	Spin_Wheel = "rbxassetid://92831539226242",
-	Gift = "rbxassetid://108191258516060",
+	Spin_Wheel = "rbxassetid://103603871768066",
+	Gift = "rbxassetid://80157382111866",
 	Free_Pet = "rbxassetid://109499507921823",
 	Rejoin_Pet = "rbxassetid://71216667102928",
 	Rejoin_Pet_Sideway = "rbxassetid://71216667102928",
 
 	Sparkle = "rbxassetid://106466414055348",
 
-	Rebirths = "rbxassetid://101294918745001",
+	Rebirths = "rbxassetid://113418726949889",
 	Money1 = "rbxassetid://17667787972",
-	Money2 = "rbxassetid://71880595336974",
+	Money2 = "rbxassetid://77032573971196",
 	Money2_NoStroke = "rbxassetid://113331249779719",
-	Wins = "rbxassetid://108499802754420",
+	Wins = "rbxassetid://116196577698114",
 	Wins_NoStroke = "rbxassetid://129424156147325",
-	Multiplier = "rbxassetid://112623188454953",
+	Multiplier = "rbxassetid://71199624438527",
 	Stars = "rbxassetid://119997009207385",
 	Speed = "rbxassetid://119659399561028",
 
-	Store = "rbxassetid://107396527830385",
+	Store = "rbxassetid://88913028006367",
 	Custom = "rbxassetid://73491411684213",
-	Pets = "rbxassetid://103901141281428",
-	Rebirth = "rbxassetid://101294918745001",
-	Travel = "rbxassetid://83238579499788",
-	Trails = "rbxassetid://88555636437167",
+	Pets = "rbxassetid://131918515022364",
+	Rebirth = "rbxassetid://113418726949889",
+	Travel = "rbxassetid://70460468401964",
+	Trails = "rbxassetid://125666998387756",
 	Auras = "rbxassetid://119769548001417",
-	Invite = "rbxassetid://102801816134630",
+	Invite = "rbxassetid://81489400616635",
 	Codes = "rbxassetid://15036887889",
-	Trading = "rbxassetid://128766941288775",
-	Daily = "rbxassetid://121058804147489",
+	Trading = "rbxassetid://76656662106824",
+	Daily = "rbxassetid://124486963535130",
 	Season = "rbxassetid://16452861277",
-	Settings = "rbxassetid://125225286754597",
+	Settings = "rbxassetid://92053208597135",
 	Skins = "rbxassetid://93387756791382",
 	Inventory = "rbxassetid://96088986090549",
 	Rewards = "rbxassetid://72857982925608",
-	Coaches = "rbxassetid://94593614658291",
-	Characters = "rbxassetid://76558147588196",
-	Gamepasses = "rbxassetid://129498566640257",
-	Featured = "rbxassetid://76751031999459",
-	UpdateLog = "rbxassetid://138440823166284",
+	Coaches = "rbxassetid://110357151412946",
+	Characters = "rbxassetid://102680197612300",
+	Gamepasses = "rbxassetid://77032573971196",
+	Featured = "rbxassetid://89864475539356",
+	UpdateLog = "rbxassetid://88309525177825",
+
+	--|| STORE HUD ||--
+	VIP_HUD = "rbxassetid://105946677793961",
+	x2_Money2_HUD = "rbxassetid://77032573971196",
+	triple_Hatch_HUD = "rbxassetid://77748358937632",
 
 	Player = "rbxassetid://16254263603",
 	Boss = "rbxassetid://16259949015",
 
 	Fruits = "rbxassetid://120480208776395",
-	Boosts = "rbxassetid://132232460054998",
+	Boosts = "rbxassetid://96981432976437",
 
 	Inventory_Item_Background = "rbxassetid://16336617630",
 
@@ -89,8 +94,8 @@ return table.freeze({
 	Evolutive_50Percent = "rbxassetid://72238202611174",
 
 	x2_Money1 = "rbxassetid://16345922828",
-	x2_Money2 = "rbxassetid://71880595336974",
-	x2_Rebirth = "rbxassetid://101294918745001",
+	x2_Money2 = "rbxassetid://77032573971196",
+	x2_Rebirth = "rbxassetid://113418726949889",
 	x2_Wins = "rbxassetid://108499802754420",
 
 	plus2_Pet_Equip = "rbxassetid://115921918308620",
@@ -99,7 +104,7 @@ return table.freeze({
 	plus25_Pet_Storage = "rbxassetid://130042397835489",
 	plus75_Pet_Storage = "rbxassetid://130042397835489",
 
-	triple_Hatch = "rbxassetid://107662258123773",
+	triple_Hatch = "rbxassetid://77748358937632",
 	octuple_Hatch = "rbxassetid://123631593351135",
 
 	lucky = "rbxassetid://119595028928265",
@@ -107,7 +112,7 @@ return table.freeze({
 	ultra_Lucky = "rbxassetid://128903213622876",
 
 	teleport = "rbxassetid://16345932526",
-	VIP = "rbxassetid://108029432546303",
+	VIP = "rbxassetid://105946677793961",
 
 	Small_Wins_Pack = "rbxassetid://134210368571973",
 	Regular_Wins_Pack = "rbxassetid://79770955375337",
@@ -115,9 +120,9 @@ return table.freeze({
 	Huge_Wins_Pack = "rbxassetid://80079402871401",
 
 	x2_Money1_Boost = "rbxassetid://16254346956",
-	x2_Money2_Boost = "rbxassetid://108611069084839",
-	x2_Wins_Boost = "rbxassetid://75217127752263",
-	Bundle_Boost = "rbxassetid://80189917784663",
+	x2_Money2_Boost = "rbxassetid://80590746147617",
+	x2_Wins_Boost = "rbxassetid://74079259619691",
+	Bundle_Boost = "rbxassetid://95815865277819",
 
 	--|| Spins ||--
 	Free_Wheel = "rbxassetid://102953243363760",

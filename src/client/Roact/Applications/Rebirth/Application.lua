@@ -38,8 +38,8 @@ local RebirthController = Knit.GetController("RebirthController")
 local Template = DataCacheController:GetFile("Template")
 local RebirthTable = DataCacheController:GetFile("RebirthTable")
 
-local REBIRTH_ICON = "rbxassetid://106303260347906"
-local PROGRESS_ICON = "rbxassetid://112781848763017"
+local REBIRTH_ICON = "rbxassetid://113418726949889"
+local PROGRESS_ICON = "rbxassetid://87965046776914"
 
 local function getRebirthRequirement(rebirth: number)
 	if rebirth < #RebirthTable then

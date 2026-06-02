@@ -63,16 +63,14 @@ local function getVisualStyle(params)
 	return gradient, strokeColor, rarity
 end
 
-local function getAmountText(amount)
-	if typeof(amount) == "number" then
+local function getAmountText(amount, rewardType)
+	amount = amount or 1
+
+	if rewardType == "Egg" then
 		return "x" .. FormatNumber(amount)
 	end
 
-	if amount ~= nil then
-		return "x1 " .. tostring(amount)
-	end
-
-	return "x1"
+	return "+" .. FormatNumber(amount)
 end
 
 -- RewardsCard
@@ -104,7 +102,7 @@ local function RewardCard(params: table, hooks)
 
 	local gradient, strokeColor, rarity = getVisualStyle(params)
 	local iconImage = UI[params.image] or "rbxassetid://96612943456507"
-	local amountText = getAmountText(params.amount)
+	local amountText = getAmountText(params.amount, params.rewardType)
 
 	return Roact.createElement("ImageButton", {
 		BackgroundColor3 = Color3.fromHex("ffffff"),

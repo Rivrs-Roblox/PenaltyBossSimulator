@@ -48,8 +48,11 @@ end
 
 local function getRewardAmount(reward, areaName)
 	local areaData = reward.Areas and reward.Areas[areaName]
-	if reward.Reward == "Fruit" then
-		return reward.Amount
+	-- if reward.Reward == "Fruit" then
+	-- 	return tostring(reward.Amount)
+	-- end
+	if reward.Reward == "Fruit" or reward.Reward == "Pets" or reward.Reward == "Egg" then
+		return reward.Amount or 1
 	end
 	if typeof(areaData) == "table" and reward.Reward ~= "Pets"  and reward.Reward ~= "Egg" then
 		return areaData[2] or 1
@@ -57,7 +60,7 @@ local function getRewardAmount(reward, areaName)
 
 	
 
-	return reward.Image
+	return 1
 end
 
 local function ActionButton(params)

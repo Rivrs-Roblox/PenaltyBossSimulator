@@ -16,6 +16,32 @@ local IDLE_ANIMATION_ID = "rbxassetid://97024548119401"
 local RUN_ANIMATION_ID = "rbxassetid://105106002784990"
 local JUMP_ANIMATION_ID = "rbxassetid://97546612840798"
 
+local function isRegularPurchasableCharacter(characterEntry: table?): boolean
+	return characterEntry ~= nil
+		and not characterEntry.VIP
+		and not characterEntry.Reward
+		and not characterEntry.StarterPack
+		and not characterEntry.RejoinReward
+end
+
+local function getPreviousRegularCharacterId(charactersTemplate: table, id: number): number?
+	local previousId = nil
+
+	for characterId, characterEntry in pairs(charactersTemplate) do
+		if
+			type(characterId) == "number"
+			and characterId < id
+			and isRegularPurchasableCharacter(characterEntry)
+		then
+			if previousId == nil or characterId > previousId then
+				previousId = characterId
+			end
+		end
+	end
+
+	return previousId
+end
+
 local CharactersService = Knit.CreateService({
 	Name = "CharactersService",
 	Client = {
@@ -42,8 +68,17 @@ local function setFootballTransparancy(player: Player, transparancy: number)
 end
 
 local function setCustomAnimate(animMap, player)
-	local humanoid = player.Character:FindFirstChild("Humanoid")
+	local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
+	if not humanoid then
+		return
+	end
+
 	local animator = humanoid:FindFirstChildOfClass("Animator")
+	if not animator then
+		animator = Instance.new("Animator")
+		animator.Parent = humanoid
+	end
+
 	for _, track in ipairs(animator:GetPlayingAnimationTracks()) do
 		track:Stop(0) -- 0 = tanpa fade, bisa pakai 0.2 kalau mau smooth
 	end
@@ -155,6 +190,21 @@ function CharactersService:Buy(player: Player, id: number, bypassPrice: boolean?
 
 	if table.find(data.Characters.Unlocked, id) then
 		return { text = "You already own this character!", type = "ERROR" }
+	end
+
+	if not bypassPrice and isRegularPurchasableCharacter(characterEntry) then
+		local previousCharacterId = getPreviousRegularCharacterId(self.Template.Characters, id)
+		if previousCharacterId ~= nil and not table.find(data.Characters.Unlocked, previousCharacterId) then
+			local previousCharacter = self.Template.Characters[previousCharacterId]
+			local previousCharacterName = previousCharacter
+				and (previousCharacter.DisplayName or previousCharacter.Name)
+				or "previous character"
+
+			return {
+				text = self.Template.Messages.Notifications.Buy_Previous_Character_First(previousCharacterName),
+				type = "ERROR",
+			}
+		end
 	end
 
 	if

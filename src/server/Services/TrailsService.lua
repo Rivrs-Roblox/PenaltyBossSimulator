@@ -35,12 +35,12 @@ local function weldTrail(trailName, character)
 	local trail = targetTrail:Clone()
 	trail.Name = "Trail"
 
-	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-	trail.PrimaryPart.CFrame = humanoidRootPart.CFrame
-	trail.Parent = humanoidRootPart
+	local charPart = character:WaitForChild("RightFoot")
+	trail.PrimaryPart.CFrame = charPart.CFrame
+	trail.Parent = charPart
 
 	local weld = Instance.new("WeldConstraint")
-	weld.Part0 = humanoidRootPart
+	weld.Part0 = charPart
 	weld.Part1 = trail.PrimaryPart
 	weld.Parent = trail
 
@@ -48,8 +48,8 @@ local function weldTrail(trailName, character)
 end
 
 local function removeTrail(character)
-	local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-	for _, child in ipairs(humanoidRootPart:GetChildren()) do
+	local charPart = character:WaitForChild("RightFoot")
+	for _, child in ipairs(charPart:GetChildren()) do
 		if child:IsA("Model") and child.Name == "Trail" then
 			child:Destroy()
 		end

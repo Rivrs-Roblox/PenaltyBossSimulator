@@ -8,6 +8,7 @@
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StarterPlayer = game:GetService("StarterPlayer")
+local UserInputService = game:GetService("UserInputService")
 
 -- Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
@@ -38,10 +39,32 @@ local function TopLargeDisplay(props, hooks)
 			order = 1,
 			noButton = false,
 			numScrollAdjust = 0,
+			storeSection = "Featured",
+			plusTouchTargetSize = UDim2.fromScale(1, 1),
+			plusMobileTouchTargetSize = UDim2.fromScale(2.2, 2.2),
 		},
 	})
 
 	if hooks then
+		local plusTouchTargetSize = if UserInputService.TouchEnabled
+			then props.plusMobileTouchTargetSize
+			else props.plusTouchTargetSize
+
+		local function onPlusActivated()
+			if FightController.IsFighting or FightController.IsTrading then
+				return
+			end
+
+			if props.bottomText ~= "Rebirths" then
+				Store:dispatch(UIActions.setStoreTargetSection(props.storeSection))
+				Store:dispatch(UIActions.setCurrentUI("Store"))
+				UIController:RemoveHUD({ ignoreTopFrame = true })
+			else
+				Store:dispatch(UIActions.setCurrentUI("Rebirth"))
+				UIController:RemoveHUD({ ignoreTopFrame = true })
+			end
+		end
+
 		return Roact.createElement("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 0.2,
@@ -61,30 +84,36 @@ local function TopLargeDisplay(props, hooks)
 			}),
 
 			Plus = if not props.noButton
-				then Roact.createElement("ImageButton", {
+				then Roact.createElement("Frame", {
 					LayoutOrder = 3,
-					ScaleType = 3,
 					AnchorPoint = Vector2.new(0.5, 0.5),
-					Image = "rbxassetid://98999428594161",
 					BackgroundTransparency = 1,
 					Position = UDim2.fromScale(0.9, 0.5),
 					Size = UDim2.fromScale(0.5, 0.5),
-					ImageColor3 = Color3.fromHex("b0b0b0"),
-					[Roact.Event.MouseButton1Click] = function()
-						if FightController.IsFighting or FightController.IsTrading then
-							return
-						end
-
-						if props.bottomText ~= "Rebirths" then
-							Store:dispatch(UIActions.setCurrentUI("Store"))
-							UIController:RemoveHUD({ ignoreTopFrame = true })
-							UIController:ChangeShopCanvaPosition(props.numScrollAdjust)
-						else
-							Store:dispatch(UIActions.setCurrentUI("Rebirth"))
-							UIController:RemoveHUD({ ignoreTopFrame = true })
-						end
-					end,
-				}, { Ratio = Roact.createElement("UIAspectRatioConstraint", {}) })
+				}, {
+					Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+					Icon = Roact.createElement("ImageLabel", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						BackgroundTransparency = 1,
+						Image = "rbxassetid://98999428594161",
+						ImageColor3 = Color3.fromHex("b0b0b0"),
+						Position = UDim2.fromScale(0.5, 0.5),
+						ScaleType = 3,
+						Size = UDim2.fromScale(1, 1),
+						ZIndex = 2,
+					}),
+					TouchTarget = Roact.createElement("ImageButton", {
+						AnchorPoint = Vector2.new(0.5, 0.5),
+						AutoButtonColor = false,
+						BackgroundTransparency = 1,
+						ImageTransparency = 0.1,
+						ImageColor3 = Color3.fromHex("b0b0b0"),
+						Position = UDim2.fromScale(0.5, 0.5),
+						Size = plusTouchTargetSize,
+						ZIndex = 3,
+						[Roact.Event.Activated] = onPlusActivated,
+					}),
+				})
 				else nil,
 
 			BottomText = Text({

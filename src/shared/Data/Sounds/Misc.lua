@@ -175,4 +175,11 @@ return table.freeze({
 		Category = "Misc", -- Optional, will be determined from name if not provided
 		SoundType = "2D",
 	},
+	MISC_Exit_Gift = {
+		Id = 83186747117708,
+		Looped = false,
+		Volume = 0.4,
+		Category = "Misc", -- Optional, will be determined from name if not provided
+		SoundType = "2D",
+	},
 })

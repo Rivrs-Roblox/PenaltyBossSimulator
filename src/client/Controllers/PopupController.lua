@@ -22,6 +22,9 @@ local UIController = nil
 local DataCacheController = nil
 local DataService = nil
 
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
 -- PopupController
 local PopupController = Knit.CreateController({
 	Name = "PopupController",
@@ -41,6 +44,18 @@ local Positions = {
 		Size = UDim2.fromScale(0.039, 0.13),
 	},
 }
+
+local function getPopupGui(): ScreenGui
+	local popupGui = playerGui:FindFirstChild("PopupGui")
+	if not popupGui then
+		popupGui = Instance.new("ScreenGui", playerGui)
+		popupGui.Name = "PopupGui"
+		popupGui.DisplayOrder = 2
+		popupGui.IgnoreGuiInset = true
+		popupGui.ResetOnSpawn = false
+	end
+	return popupGui
+end
 
 --|| Functions ||--
 function PopupController:TweenFrameIn(params: table)
@@ -127,7 +142,7 @@ function PopupController:SpawnOnScreen(params: table): Frame
 	local RNG = Random.new()
 	local Coords = UDim2.fromScale(RNG:NextNumber(X_MIN, X_MAX), RNG:NextNumber(Y_MIN, Y_MAX))
 
-	local Frame = Instance.new("Frame", Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui"))
+	local Frame = Instance.new("Frame", getPopupGui())
 	Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 	Frame.Size = UDim2.fromScale(0, 0)
 	Frame.Position = Coords
@@ -179,7 +194,7 @@ function PopupController:SpawnMoneyOnScreen(params: table): Frame
 	local RNG = Random.new()
 	local Coords = UDim2.fromScale(RNG:NextNumber(X_MIN, X_MAX), RNG:NextNumber(Y_MIN, Y_MAX))
 
-	local Frame = Instance.new("Frame", Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui"))
+	local Frame = Instance.new("Frame", getPopupGui())
 	Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 	Frame.Size = UDim2.fromScale(0, 0)
 	Frame.Position = Coords
@@ -222,7 +237,7 @@ function PopupController:SpawnMoneyOnScreen(params: table): Frame
 end
 
 function PopupController:SpawnImpactCircle(pos)
-	local ImpactCircle = Instance.new("ImageLabel", Players.LocalPlayer.PlayerGui:WaitForChild("GameScreenGui"))
+	local ImpactCircle = Instance.new("ImageLabel", getPopupGui())
 	ImpactCircle.Image = "rbxassetid://18605797355"
 	ImpactCircle.AnchorPoint = Vector2.new(0.5, 0.5)
 	ImpactCircle.Position = pos

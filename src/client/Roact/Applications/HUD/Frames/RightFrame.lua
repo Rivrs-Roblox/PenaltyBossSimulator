@@ -72,58 +72,98 @@ local function GamepassButton(props, hooks)
 		}
 	end)
 
-	return Roact.createElement("Frame", {
-		BackgroundTransparency = 1,
+	return Roact.createElement("ImageButton", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
+		BackgroundColor3 = Color3.fromHex("ffffff"),
+		BorderColor3 = Color3.fromHex("000000"),
+		BorderSizePixel = 0,
 		LayoutOrder = props.order,
-	}, {
-		Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+		Size = UDim2.fromScale(1, 1),
 
-		Image = Roact.createElement("ImageButton", {
+		[Roact.Event.MouseEnter] = function()
+			api.start({
+				scale = 1.1,
+				rotation = props.hoverRotation or 35,
+				config = { mass = 1, tension = 1000, friction = 50 },
+			})
+		end,
+
+		[Roact.Event.MouseLeave] = function()
+			api.start({
+				scale = 1,
+				rotation = 0,
+				config = { mass = 1, tension = 1000, friction = 50 },
+			})
+		end,
+
+		[Roact.Event.MouseButton1Down] = function()
+			api.start({ scale = 0.8 })
+		end,
+
+		[Roact.Event.MouseButton1Up] = function()
+			api.start({
+				scale = 1,
+				config = { mass = 1, tension = 1000, friction = 50 },
+			})
+
+			Sound:PlaySound("UI_Open")
+		end,
+
+		[Roact.Event.MouseButton1Click] = function()
+			promptGamepass(props.productName)
+		end,
+	}, {
+		Ratio = Roact.createElement("UIAspectRatioConstraint", {
+			AspectRatio = 1,
+		}),
+		UIScale = Roact.createElement("UIScale", {
+			Scale = styles.scale,
+		}),
+		UIGradient = Roact.createElement("UIGradient", {
+			Color = ColorSequence.new({
+				ColorSequenceKeypoint.new(0, Color3.fromHex("ffc800")),
+				ColorSequenceKeypoint.new(1, Color3.fromHex("8f0000")),
+			}),
+			Rotation = 90,
+		}),
+		UICorner = Roact.createElement("UICorner", {
+			CornerRadius = UDim.new(1, 0),
+		}),
+		UIStroke = Roact.createElement("UIStroke", {
+			Color = Color3.fromHex("ffd900"),
+			Thickness = 2,
+		}),
+
+		Icon = Roact.createElement("ImageLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Position = UDim2.fromScale(0.5, 0.5),
-			ScaleType = Enum.ScaleType.Stretch,
-			Size = UDim2.fromScale(1, 1),
-			ZIndex = 2,
+			BackgroundColor3 = Color3.fromHex("ffffff"),
 			Image = props.icon,
+			Position = UDim2.fromScale(0.5, 0.5),
 			Rotation = styles.rotation,
-
-			[Roact.Event.MouseEnter] = function()
-				api.start({
-					sizeAlpha = 1.1,
-					rotation = 35,
-					config = { mass = 1, tension = 1000, friction = 50 },
-				})
-			end,
-
-			[Roact.Event.MouseLeave] = function()
-				api.start({
-					sizeAlpha = 1,
-					rotation = 0,
-					config = { mass = 1, tension = 1000, friction = 50 },
-				})
-			end,
-
-			[Roact.Event.MouseButton1Down] = function()
-				api.start({ sizeAlpha = 0.8 })
-			end,
-
-			[Roact.Event.MouseButton1Up] = function()
-				api.start({
-					sizeAlpha = 1,
-					config = { mass = 1, tension = 1000, friction = 50 },
-				})
-
-				Sound:PlaySound("UI_Open")
-			end,
-
-			[Roact.Event.MouseButton1Click] = function()
-				promptGamepass(props.productName)
-			end,
+			ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(0.85, 0.85),
+			ZIndex = 2,
 		}, {
-			UIScale = Roact.createElement("UIScale", {
-				Scale = styles.scale,
+			Ratio = Roact.createElement("UIAspectRatioConstraint", {}),
+		}),
+
+		ValueText = Roact.createElement("TextLabel", {
+			AnchorPoint = Vector2.new(1, 1),
+			BackgroundTransparency = 1,
+			FontFace = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold),
+			Position = UDim2.fromScale(0.95, 0.95),
+			Size = UDim2.fromScale(0.45, 0.4),
+			Text = props.valueText or "",
+			TextColor3 = Color3.fromHex("ffea00"),
+			TextScaled = true,
+			TextSize = 14,
+			TextWrapped = true,
+			Visible = props.valueText ~= nil,
+			ZIndex = 3,
+		}, {
+			UIStroke = Roact.createElement("UIStroke", {
+				Thickness = 2,
 			}),
 		}),
 	})
@@ -215,7 +255,7 @@ function RightFrame(_, hooks)
 			}),
 
 			ButtonText = Text({
-				text = "Starter Pack!",
+				text = `{currentPack.Name}!`,
 				color = Color3.fromHex("fafafa"),
 				anchorPoint = Vector2.new(0.5, 1),
 				position = UDim2.fromScale(0.5, 0.98),
@@ -276,8 +316,8 @@ function RightFrame(_, hooks)
 				SortOrder = Enum.SortOrder.LayoutOrder,
 				HorizontalAlignment = Enum.HorizontalAlignment.Right,
 				VerticalAlignment = Enum.VerticalAlignment.Top,
-				CellSize = UDim2.fromScale(0.32, 1),
-				CellPadding = UDim2.fromScale(0.01, 0.1),
+				CellSize = UDim2.fromScale(0.3, 1),
+				CellPadding = UDim2.fromScale(0.05, 0.1),
 			}),
 
 			Pass1 = Roact.createElement(GamepassButton, {
@@ -285,6 +325,7 @@ function RightFrame(_, hooks)
 				icon = UI.VIP,
 				productName = "VIP",
 				hoverRotation = 15,
+				valueText = "VIP",
 			}),
 
 			Pass2 = Roact.createElement(GamepassButton, {
@@ -292,6 +333,7 @@ function RightFrame(_, hooks)
 				icon = UI.x2_Money2,
 				productName = "x2 Power",
 				hoverRotation = 15,
+				valueText = "x2",
 			}),
 
 			Pass3 = Roact.createElement(GamepassButton, {
@@ -299,6 +341,7 @@ function RightFrame(_, hooks)
 				icon = UI.triple_Hatch,
 				productName = "x3 Hatch",
 				hoverRotation = 15,
+				valueText = "x3",
 			}),
 		}),
 

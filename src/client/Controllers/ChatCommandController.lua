@@ -44,13 +44,13 @@ local Commands = {
 		end,
 		Admin = true,
 	},
-	-- ["/UnlockZone"] = {
-	-- 	Name = "UnlockZoneCommand",
-	-- 	Function = function(self, _: Player, name: string)
-	-- 		self:UnlockZone(name)
-	-- 	end,
-	-- 	Admin = true,
-	-- },
+	["/UnlockZone"] = {
+		Name = "UnlockZoneCommand",
+		Function = function(self, _: Player, name: string)
+			self:UnlockZone(name)
+		end,
+		Admin = true,
+	},
 	-- ["/Beat"] = {
 	-- 	Name = "BeatCommand",
 	-- 	Function = function(self, _: Player, name: string)

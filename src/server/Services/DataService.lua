@@ -71,6 +71,7 @@ local DataService = Knit.CreateService({
 		RebirthsUpdated = Knit.CreateSignal(),
 		AreasUpdated = Knit.CreateSignal(),
 		AreaUpdated = Knit.CreateSignal(),
+		BossProgressUpdated = Knit.CreateSignal(),
 		TutorialCompleted = Knit.CreateSignal(),
 		PowerUpdated = Knit.CreateSignal(),
 	},
@@ -98,7 +99,7 @@ function DataService.Client:TutorialFinished(player: Player, state: boolean)
 end
 
 function DataService.Client:AddArea(player: Player, name: string)
-	return self.Server:AddArea(player, name)
+	return self.Server:AddArea(player, name, false)
 end
 
 function DataService.Client:TutorialProgressed(player: Player, step: number)
@@ -559,14 +560,59 @@ function DataService:UpdateData(player: Player, data: {})
 end
 
 -- Add area to player's data
-function DataService:AddArea(player: Player, name: string)
+function DataService:AddArea(player: Player, name: string, bypass: boolean?)
 	local data = self:GetData(player)
 	if data == nil then
 		return
 	end
 
-	local price = self.Template.Areas[name].Price
-	self:ChangeValue(player, "Wins", -price, true)
+	-- 1. Check if already unlocked
+	if table.find(data.Areas.Unlocked, name) then
+		return
+	end
+
+	if not bypass then
+		-- 2. Check sequential progression
+		local unlockedZones = data.Areas and data.Areas.Unlocked or { "Zone1" }
+		local lastUnlocked = unlockedZones[#unlockedZones]
+		local lastUnlockedNumber = tonumber(string.match(lastUnlocked, "%d+"))
+		local zoneNumber = tonumber(string.match(name, "%d+"))
+
+		if not lastUnlockedNumber or not zoneNumber or (zoneNumber - 1) ~= lastUnlockedNumber then
+			return
+		end
+
+		-- 3. Check if all bosses in the previous zone are beaten
+		local prevAreaId = string.format("Area%02d", lastUnlockedNumber)
+		local enemies = self.Template.Enemies
+		local areaEnemies = enemies and enemies[prevAreaId]
+
+		if areaEnemies then
+			local maxBossCount = 0
+			for enemyKey, _ in pairs(areaEnemies) do
+				local bIndex = tonumber(string.match(enemyKey, "Boss%s+(%d+)"))
+					or tonumber(string.match(enemyKey, "MiniBoss%s+(%d+)"))
+				if bIndex and bIndex > maxBossCount then
+					maxBossCount = bIndex
+				elseif enemyKey == "Boss" and 5 > maxBossCount then
+					maxBossCount = 5
+				end
+			end
+
+			local progress = data.BossProgress and data.BossProgress[prevAreaId] or 0
+			if progress < maxBossCount then
+				return
+			end
+		end
+
+		-- 4. Check if player has enough wins
+		local price = self.Template.Areas[name] and self.Template.Areas[name].Price or 0
+		if data.Wins < price then
+			return
+		end
+
+		self:ChangeValue(player, "Wins", -price, true)
+	end
 
 	table.insert(data.Areas.Unlocked, name)
 	self.Client.AreasUpdated:Fire(player, data.Areas.Unlocked)
@@ -586,6 +632,25 @@ function DataService:SetArea(player: Player, name: string)
 
 	data.Area = name
 	self.Client.AreaUpdated:Fire(player, data.Area)
+end
+
+-- Update player's boss progress
+function DataService:UpdateBossProgress(player: Player, area: string, bossIndex: number)
+	local data = self:GetData(player)
+	if data == nil then
+		return false
+	end
+
+	data.BossProgress = data.BossProgress or {}
+	local currentProgress = data.BossProgress[area] or 0
+
+	if bossIndex > currentProgress then
+		data.BossProgress[area] = bossIndex
+		self.Client.BossProgressUpdated:Fire(player, data.BossProgress)
+		return true
+	end
+
+	return false
 end
 
 function DataService:TutorialProgressed(player: Player, step: number)

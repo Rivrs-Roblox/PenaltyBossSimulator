@@ -160,6 +160,9 @@ return table.freeze({
 		Coach_Deleted = function(name: string)
 			return `You've deleted {name} coach!`
 		end,
+		Buy_Previous_Coach_First = function(name: string)
+			return `Unlock {name} first before buying this coach.`
+		end,
 
 		Pet_Not_Exists = function(name: string)
 			return `This pet ({name}) does not exists.`
@@ -213,6 +216,9 @@ return table.freeze({
 		end,
 		SoccerCharacter_Claimed = function(name)
 			return `You've claimed your {name} character !`
+		end,
+		Buy_Previous_Character_First = function(name: string)
+			return `Unlock {name} first before buying this character.`
 		end,
 
 		Reward_Already_Claimed = "You've already claimed this reward.",
