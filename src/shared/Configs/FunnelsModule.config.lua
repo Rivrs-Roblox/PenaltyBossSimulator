@@ -3,14 +3,14 @@ return table.freeze({
 		First_Auto_On_Join = true,
 
 		[1] = "Join the game",
-		[2] = "Earn Powers",
-		[3] = "Buy a coach",
-		[4] = "Earn Powers again",
-		[5] = "Gain 50 Wins",
-		[6] = "Buy a character",
-		[7] = "Hatch first pet",
-		[8] = "Unlock new zone",
-		[9] = "Completed Tutorial",
+		[2] = "Completed Kick Tutorial",
+		[3] = "Completed 120 Power Training",
+		[4] = "Completed Buy Coach",
+		[5] = "Completed 150 Power Training",
+		[6] = "Completed 50 Wins Challenge",
+		[7] = "Completed Buy Player",
+		[8] = "Completed Pet Hatching",
+		[9] = "Unlocked New Zone (Tutorial End)",
 	},
 
 	["Progress"] = {

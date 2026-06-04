@@ -137,15 +137,21 @@ function FightService:StartFight(player: Player, battleZone: Object, bossIndex: 
 	player:RequestStreamAroundAsync(playerArea.Position)
 	playerCharacter:PivotTo(playerArea.CFrame * CFrame.new(offset))
 
+	local isTutorialFight = false
+	if data and data.TutorialStep == 1 and area == "Area01" then
+		isTutorialFight = true
+	end
+
 	self.Sessions[player] = {
 		CurrentArea = area,
 		BossIndex = bossIndex,
 		CurrentWave = 1,
 		IsTutorial = data and not data.TutorialComplete,
+		IsTutorialFight = isTutorialFight,
 		State = "WaitingForKick",
 	}
 
-	self.Client.FightStarted:Fire(player, area, bossIndex)
+	self.Client.FightStarted:Fire(player, area, bossIndex, isTutorialFight)
 	self.Client.WaveUpdated:Fire(player, 1)
 
 	self.OnFightStarted:Fire(player)
@@ -196,12 +202,18 @@ function FightService:EvaluateKick(player: Player, directionPosition: number, po
 	local playerPower = data and data.Money2 or 0
 	local effectivePower = playerPower * powerMultiplier
 
-	local areaData = self.Template.Enemies[session.CurrentArea]
-	if not areaData then
-		return { Result = "Lost", PlayerPower = playerPower }
+	local goalieData
+	if session.IsTutorialFight then
+		goalieData = self.Template.Enemies["Tutorial"]
+	else
+		local areaData = self.Template.Enemies[session.CurrentArea]
+		if not areaData then
+			return { Result = "Lost", PlayerPower = playerPower }
+		end
+
+		goalieData = self:GetGoalieDataForWave(areaData, session.BossIndex, session.CurrentWave)
 	end
 
-	local goalieData = self:GetGoalieDataForWave(areaData, session.BossIndex, session.CurrentWave)
 	if not goalieData then
 		return { Result = "Lost", PlayerPower = playerPower }
 	end
@@ -296,11 +308,16 @@ function FightService:ApplyKickResult(player: Player)
 
 	if result == "Goal" or result == "GoalBlast" or result == "GoalCorner" then
 		-- Reward untuk goalie yang baru saja dikalahkan (CurrentWave)
-		local enemyData = self:GetGoalieDataForWave(
-			self.Template.Enemies[session.CurrentArea],
-			session.BossIndex,
-			session.CurrentWave
-		)
+		local enemyData
+		if session.IsTutorialFight then
+			enemyData = self.Template.Enemies["Tutorial"]
+		else
+			enemyData = self:GetGoalieDataForWave(
+				self.Template.Enemies[session.CurrentArea],
+				session.BossIndex,
+				session.CurrentWave
+			)
+		end
 		if enemyData then
 			local finalReward = enemyData.Reward * rewardMultiplier
 			DataService:ChangeValue(player, "Wins", finalReward)
@@ -320,7 +337,9 @@ function FightService:ApplyKickResult(player: Player)
 
 		if session.CurrentWave > MAX_WAVES then
 			-- Save boss progress
-			DataService:UpdateBossProgress(player, session.CurrentArea, session.BossIndex)
+			if not session.IsTutorialFight then
+				DataService:UpdateBossProgress(player, session.CurrentArea, session.BossIndex)
+			end
 
 			-- All 5 goalies beaten — fight cleared!
 			self.Client.WaveUpdated:Fire(player, "Cleared")

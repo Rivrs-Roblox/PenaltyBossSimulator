@@ -33,6 +33,7 @@ local AuthorizedUsers = {
 	10757463055,
 	9243225098,
 	10142393036,
+	7426205217,
 }
 
 -- ChatCommandService

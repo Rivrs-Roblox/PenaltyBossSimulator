@@ -230,7 +230,7 @@ function DailyRewards(_, hooks)
 				ScrollBarThickness = 6,
 				ScrollingDirection = Enum.ScrollingDirection.X,
 				Size = UDim2.fromScale(0.95, 0.9),
-				ZIndex = 4,
+				ZIndex = 2,
 			}, {
 				UIListLayout = Roact.createElement("UIListLayout", {
 					VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -251,7 +251,7 @@ function DailyRewards(_, hooks)
 				BackgroundColor3 = Color3.fromHex("ffffff"),
 				BorderSizePixel = 0,
 				Size = UDim2.fromScale(0.686, 0.1),
-				ZIndex = 5,
+				ZIndex = 2,
 			}, {
 				UIListLayout = Roact.createElement("UIListLayout", {
 					VerticalAlignment = Enum.VerticalAlignment.Center,

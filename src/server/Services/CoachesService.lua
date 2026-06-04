@@ -62,7 +62,7 @@ local CoachesService = Knit.CreateService({
 		CoachesUpdated = Knit.CreateSignal(),
 		CoachBought = Knit.CreateSignal(),
 		PlayerCoachesUpdated = Knit.CreateSignal(),
-	},
+	},	
 
 	CoachesToggled = {},
 })
@@ -130,7 +130,19 @@ function CoachesService:BroadcastCoachState(player: Player, data: table)
 		Current = coachesData.Current,
 	})
 
-	self.Client.PlayerCoachesUpdated:FireAll(player, self:BuildEquippedCoachPayload(data))
+	self.Client.PlayerCoachesUpdated:FireAll(
+		player,
+		if self:IsPlayerFighting(player) then {} else self:BuildEquippedCoachPayload(data)
+	)
+end
+
+function CoachesService:BroadcastCoachInventory(player: Player, data: table)
+	local coachesData = EnsureCoachData(data)
+
+	self.Client.CoachesUpdated:Fire(player, {
+		Unlocked = coachesData.Unlocked,
+		Current = coachesData.Current,
+	})
 end
 
 function CoachesService:Buy(player: Player, id: number, bypassPrice: boolean?)
@@ -151,8 +163,8 @@ function CoachesService:Buy(player: Player, id: number, bypassPrice: boolean?)
 	if table.find(coachesData.Unlocked, id) then
 		if self:IsPlayerFighting(player) then
 			self.CoachesToggled[player.UserId] = id
-			coachesData.Current = 0
-			self:BroadcastCoachState(player, data)
+			self:BroadcastCoachInventory(player, data)
+			self.Client.PlayerCoachesUpdated:FireAll(player, {})
 
 			return {
 				text = self.Template.Messages.Notifications.Coach_Bought(coach.DisplayName or coach.Name),
@@ -197,8 +209,8 @@ function CoachesService:Buy(player: Player, id: number, bypassPrice: boolean?)
 	-- Jangan panggil self:Equip() di sini.
 	if self:IsPlayerFighting(player) then
 		self.CoachesToggled[player.UserId] = id
-		coachesData.Current = 0
-		self:BroadcastCoachState(player, data)
+		self:BroadcastCoachInventory(player, data)
+		self.Client.PlayerCoachesUpdated:FireAll(player, {})
 
 		return {
 			text = self.Template.Messages.Notifications.Coach_Bought(coach.DisplayName or coach.Name),
@@ -224,6 +236,10 @@ function CoachesService:Equip(player: Player, id: number)
 	end
 
 	local coachesData = EnsureCoachData(data)
+
+	if self:IsPlayerFighting(player) then
+		return { text = "Coaches are hidden during fight.", type = "ERROR" }
+	end
 
 	local previousCoach = nil
 	if coachesData.Current ~= 0 then
@@ -275,6 +291,11 @@ function CoachesService:GetCoaches(player: Player, requestedPlayer: Player)
 	end
 
 	EnsureCoachData(data)
+
+	if self:IsPlayerFighting(requestedPlayer) then
+		return {}
+	end
+
 	return self:BuildEquippedCoachPayload(data)
 end
 
@@ -314,8 +335,7 @@ function CoachesService:KnitInit()
 		local coachesData = EnsureCoachData(data)
 
 		if coachesData.Current ~= 0 then
-			self.CoachesToggled[player.UserId] = coachesData.Current
-			self:Unequip(player)
+			self.Client.PlayerCoachesUpdated:FireAll(player, {})
 		end
 	end)
 
@@ -323,8 +343,14 @@ function CoachesService:KnitInit()
 		local lastCoachId = self.CoachesToggled[player.UserId]
 
 		if lastCoachId then
-			self:Equip(player, lastCoachId)
 			self.CoachesToggled[player.UserId] = nil
+			self:Equip(player, lastCoachId)
+			return
+		end
+
+		local data = DataService:GetData(player)
+		if data then
+			self:BroadcastCoachState(player, data)
 		end
 	end)
 

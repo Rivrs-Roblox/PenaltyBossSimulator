@@ -1,12 +1,20 @@
 {
-    "name": "Development",
-    "description": "Default development environment (Self-Contained)",
-    "icon": "🛠️",
-    "createdAt": "2026-04-06T08:05:40.259Z",
-    "path": "{Application.projectRootPath}/Environments/Development",
+    "name": "Testing",
+    "description": "For testing purpose",
+    "icon": "📁",
     "items": [
         "src",
-        "default.project.json"
+        "default.project.json",
+        "Packages"
     ],
-    "universeId": "9998101256"
+    "universeId": "10045030596",
+    "places": [
+        {
+            "id": 102211256497086,
+            "name": "Penalty Boss Simulator Test",
+            "description": ""
+        }
+    ],
+    "updatedAt": "2026-06-04T08:54:02.613Z",
+    "lastSource": "Development"
 }

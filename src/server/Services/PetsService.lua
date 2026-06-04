@@ -72,19 +72,6 @@ local function isValidPet(petsLibrary: table, petData: table?): boolean
 	return type(petData) == "table" and petData.Name ~= nil and petsLibrary[petData.Name] ~= nil
 end
 
-local function copyEquippedPets(equippedPets: table): table
-	local saved = {}
-	for id, pet in pairs(equippedPets or {}) do
-		if type(pet) == "table" and pet.Name ~= nil then
-			saved[tostring(id)] = {
-				id = tostring(id),
-				name = pet.Name,
-			}
-		end
-	end
-	return saved
-end
-
 -- PetsService
 local PetsService = Knit.CreateService({
 	Name = "PetsService",
@@ -92,7 +79,6 @@ local PetsService = Knit.CreateService({
 	Pets = {},
 	Template = {},
 	EquipBestDebounce = {},
-	PetsToggledForFight = {},
 
 	Client = {
 		PetsUpdated = Knit.CreateSignal(),
@@ -163,7 +149,10 @@ function PetsService:BroadcastPets(player: Player, data: table)
 		pets = data.Inventory.Pets,
 		equippedPets = data.Inventory.EquippedPets,
 	})
-	self.Client.PlayerPetsUpdated:FireAll(player, data.Inventory.EquippedPets)
+	self.Client.PlayerPetsUpdated:FireAll(
+		player,
+		if self:IsPlayerInFight(player) then {} else data.Inventory.EquippedPets
+	)
 	self.Client.ScaledPetsUpdated:Fire(player, data.Inventory.ScaledPetsPower)
 end
 
@@ -226,24 +215,10 @@ function PetsService:UnequipPetsForFight(player: Player)
 		return
 	end
 
-	local userId = tostring(player.UserId)
-	if self.PetsToggledForFight[userId] == nil then
-		self.PetsToggledForFight[userId] = copyEquippedPets(data.Inventory.EquippedPets)
-	end
-
-	data.Inventory.EquippedPets = {}
-	self:BroadcastPets(player, data)
+	self.Client.PlayerPetsUpdated:FireAll(player, {})
 end
 
 function PetsService:RestorePetsAfterFight(player: Player)
-	local userId = tostring(player.UserId)
-	local savedPets = self.PetsToggledForFight[userId]
-	if savedPets == nil then
-		return
-	end
-
-	self.PetsToggledForFight[userId] = nil
-
 	local data = DataService:GetData(player)
 	if not data then
 		return
@@ -251,23 +226,6 @@ function PetsService:RestorePetsAfterFight(player: Player)
 
 	ensureInventoryData(data)
 	self:CleanInvalidPets(player, data)
-
-	data.Inventory.EquippedPets = {}
-	local equippedCount = 0
-	local maxEquipped = data.Inventory.Storage.Equipped or 4
-
-	for id, savedPet in pairs(savedPets) do
-		if equippedCount >= maxEquipped then
-			break
-		end
-
-		local petId = tostring(id)
-		local ownedPet = data.Inventory.Pets[petId]
-		if isValidPet(self.Pets, ownedPet) and ownedPet.Name == savedPet.name then
-			data.Inventory.EquippedPets[petId] = safeClone(self.Pets[ownedPet.Name])
-			equippedCount += 1
-		end
-	end
 
 	self:BroadcastPets(player, data)
 end
@@ -343,11 +301,6 @@ function PetsService:DeletePet(player: Player, id: number | string)
 
 	data.Inventory.Pets[petId] = nil
 	data.Inventory.EquippedPets[petId] = nil
-
-	local savedFightPets = self.PetsToggledForFight[tostring(player.UserId)]
-	if savedFightPets then
-		savedFightPets[petId] = nil
-	end
 
 	for petName, _ in pairs(data.Inventory.ScaledPetsPower) do
 		self:UpdateScaledPower(player, petName)
@@ -605,6 +558,11 @@ function PetsService:GetPets(player: Player, requestedPlayer: Player?)
 
 	ensureInventoryData(data)
 	self:CleanInvalidPets(requestedPlayer, data)
+
+	if self:IsPlayerInFight(requestedPlayer) then
+		return {}
+	end
+
 	return data.Inventory.EquippedPets
 end
 

@@ -110,8 +110,8 @@ function SoundModule:createChildSound()
 	elseif self.soundType == SoundModule.Type.EFFECT_3D then
 		childSound.RollOffMode = Enum.RollOffMode.Linear
 		childSound.EmitterSize = 10
-		childSound.RollOffMinDistance = 5
-		childSound.RollOffMaxDistance = 50
+		childSound.RollOffMinDistance = self.soundData.RollOffMinDistance or 5
+		childSound.RollOffMaxDistance = self.soundData.RollOffMaxDistance or 50
 	elseif self.soundType == SoundModule.Type.AMBIENT then
 		childSound.RollOffMode = Enum.RollOffMode.Linear
 		childSound.EmitterSize = 50

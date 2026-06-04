@@ -17,6 +17,10 @@ local RoduxHooks = require(ReplicatedStorage.Packages.roduxhooks)
 -- Constants
 local FramesConstants = require(StarterPlayer.StarterPlayerScripts.Client.Roact.Constants.FramesConstants)
 
+-- Components
+local Components = StarterPlayer.StarterPlayerScripts.Client.Roact.Components
+local Blue_Background = require(Components.Main.Blue_Background)
+
 -- Helpers
 local FormatNumber = require(ReplicatedStorage.Shared.Helpers.Numbers.FormatNumber)
 local GetTableLength = require(ReplicatedStorage.Shared.Helpers.GetTableLength)
@@ -24,7 +28,6 @@ local GetTableLength = require(ReplicatedStorage.Shared.Helpers.GetTableLength)
 -- Controllers
 local DataCacheController = Knit.GetController("DataCacheController")
 local RainbowMachineController = Knit.GetController("RainbowMachineController")
-local UIController = Knit.GetController("UIController")
 
 -- Frames
 local Frames = script.Parent.Frames
@@ -37,90 +40,6 @@ local Colors = DataCacheController:GetFile("Colors")
 local PetsData = DataCacheController:GetFile("Pets")
 
 local TITLE_ICON = "rbxassetid://103901141281428"
-local CLOSE_ICON = "rbxassetid://120045489184571"
-
-local function Title()
-	return Roact.createElement("Frame", {
-		AnchorPoint = Vector2.new(0, 0.5),
-		BackgroundTransparency = 1,
-		Position = UDim2.fromScale(0.04, 0.08),
-		Size = UDim2.fromScale(0.55, 0.09),
-		ZIndex = 5,
-	}, {
-		UIListLayout = Roact.createElement("UIListLayout", {
-			FillDirection = Enum.FillDirection.Horizontal,
-			Padding = UDim.new(0.02, 0),
-			SortOrder = Enum.SortOrder.LayoutOrder,
-			VerticalAlignment = Enum.VerticalAlignment.Center,
-		}),
-
-		Icon = Roact.createElement("ImageLabel", {
-			LayoutOrder = 1,
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundTransparency = 1,
-			Image = TITLE_ICON,
-			ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(1.2, 1.2),
-			ZIndex = 6,
-		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint"),
-		}),
-
-		TitleText = Roact.createElement("TextLabel", {
-			LayoutOrder = 2,
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundTransparency = 1,
-			FontFace = Font.fromName("Ubuntu", Enum.FontWeight.Bold, Enum.FontStyle.Normal),
-			Size = UDim2.fromScale(0.8, 1),
-			Text = "Rainbow Pets",
-			TextColor3 = Color3.fromHex("fafafa"),
-			TextScaled = true,
-			TextWrapped = true,
-			TextXAlignment = Enum.TextXAlignment.Left,
-			ZIndex = 6,
-		}),
-	})
-end
-
-local function CloseButton()
-	return Roact.createElement("ImageButton", {
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = Color3.fromHex("ffffff"),
-		BorderSizePixel = 0,
-		Position = UDim2.fromScale(0.94, 0.08),
-		Size = UDim2.fromScale(0.09, 0.09),
-		ZIndex = 10,
-
-		[Roact.Event.MouseButton1Click] = function()
-			UIController:HideFrame()
-		end,
-	}, {
-		UIGradient = Roact.createElement("UIGradient", {
-			Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, Color3.fromHex("ff362f")),
-				ColorSequenceKeypoint.new(1, Color3.fromHex("8d1414")),
-			}),
-			Rotation = 90,
-		}),
-		UICorner = Roact.createElement("UICorner", {
-			CornerRadius = UDim.new(0, 6),
-		}),
-		UIStroke = Roact.createElement("UIStroke", {
-			Color = Color3.fromHex("8f0000"),
-			Thickness = 3,
-		}),
-		Icon = Roact.createElement("ImageLabel", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundTransparency = 1,
-			Image = CLOSE_ICON,
-			Position = UDim2.fromScale(0.5, 0.5),
-			ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(0.5, 0.5),
-			ZIndex = 11,
-		}),
-		Ratio = Roact.createElement("UIAspectRatioConstraint"),
-	})
-end
 
 local function SearchBar(textBoxRef)
 	return Roact.createElement("Frame", {
@@ -340,43 +259,17 @@ function RainbowPets(_, hooks)
 		Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(1, 1),
 	}, {
-		Popup = Roact.createElement("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.fromHex("ffffff"),
-			BorderSizePixel = 0,
-			Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromScale(0.7, 0.7),
-			Visible = UIReducer.CurrentUI == FramesConstants.RainbowPets,
-			ZIndex = 2,
+		Content = Blue_Background({
+			title = "Rainbow Pets",
+			titleIcon = TITLE_ICON,
+			size = UDim2.fromScale(0.7, 0.7),
+			pos = UDim2.fromScale(0.5, 0.5),
+			ratio = 1.6,
+			condition = UIReducer.CurrentUI == FramesConstants.RainbowPets,
+			align = Enum.TextXAlignment.Left,
+			zIndex = 2,
+			hooks = hooks,
 		}, {
-			Ratio = Roact.createElement("UIAspectRatioConstraint", {
-				AspectRatio = 1.6,
-			}),
-			UICorner = Roact.createElement("UICorner", {
-				CornerRadius = UDim.new(0, 10),
-			}),
-			UIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromHex("1e314b")),
-					ColorSequenceKeypoint.new(1, Color3.fromHex("0a0e27")),
-				}),
-				Rotation = 90,
-			}),
-			UIStroke = Roact.createElement("UIStroke", {
-				Color = Color3.fromHex("ffffff"),
-				Thickness = 5,
-			}, {
-				UIGradient = Roact.createElement("UIGradient", {
-					Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, Color3.fromHex("3369e6")),
-						ColorSequenceKeypoint.new(1, Color3.fromHex("1e388d")),
-					}),
-					Rotation = 90,
-				}),
-			}),
-
-			Title = Title(),
-			Close = CloseButton(),
 			PlayerScroll = Scroll({ children = MyPets }),
 			Bottom = BottomBar({
 				textBoxRef = TextBoxRef.value,

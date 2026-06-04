@@ -102,6 +102,7 @@ return table.freeze({
 
 	["TutorialStep"] = 1,
 	["TutorialComplete"] = false,
+	["DefaultEggEpicClaimed"] = false,
 
 	["GroupRewardClaimed"] = false,
 

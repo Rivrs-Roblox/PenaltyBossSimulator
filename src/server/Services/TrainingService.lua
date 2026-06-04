@@ -17,13 +17,13 @@ local FightService
 -- Helpers
 local Helpers = ReplicatedStorage.Shared.Helpers
 local FindValue = require(Helpers.Table.FindValue)
-local FormatNumber = require(Helpers.Numbers.FormatNumber)
 
 -- Data
 local TrainingAnimationData = require(ReplicatedStorage.Shared.Data.TrainingAnimationData)
 
 local TrainingAreas
 local TrainingAreasData
+local EnemiesData
 local PlayersInTraining = {}
 
 local FACE_DURATION = 1
@@ -35,7 +35,7 @@ local TRAINING_AREA_POSITION_PADDING = 3
 local TrainingService = Knit.CreateService({
 	Name = "TrainingService",
 	Client = {
-		InsufficientPower = Knit.CreateSignal(),
+		TrainingAreaLocked = Knit.CreateSignal(),
 	},
 })
 
@@ -157,11 +157,86 @@ local function getTrainingAreaData(trainingArea)
 	local area = trainingArea:GetAttribute("Area")
 	local index = trainingArea:GetAttribute("Index")
 
+	if typeof(area) ~= "string" or index == nil then
+		return nil
+	end
+
 	if TrainingAreasData == nil or TrainingAreasData[area] == nil then
 		return nil
 	end
 
 	return TrainingAreasData[area][index]
+end
+
+local function zoneNameToAreaId(zoneName: string?): string?
+	if typeof(zoneName) ~= "string" then
+		return nil
+	end
+
+	local zoneNumber = tonumber(zoneName:match("%d+"))
+	if not zoneNumber then
+		return nil
+	end
+
+	return string.format("Area%02d", zoneNumber)
+end
+
+local function getRequiredBossIndex(trainingIndex: number?, areaData): number?
+	if typeof(trainingIndex) ~= "number" or trainingIndex <= 1 then
+		return nil
+	end
+
+	if areaData and areaData.VIP then
+		return nil
+	end
+
+	return trainingIndex
+end
+
+local function getBossData(areaId: string?, bossIndex: number?)
+	if not areaId or typeof(bossIndex) ~= "number" then
+		return nil
+	end
+
+	local areaEnemies = EnemiesData and EnemiesData[areaId]
+	if not areaEnemies then
+		return nil
+	end
+
+	local bossData = areaEnemies["Boss " .. bossIndex] or areaEnemies["MiniBoss " .. bossIndex]
+	if bossData then
+		return bossData
+	end
+
+	if bossIndex == 5 then
+		return areaEnemies.Boss
+	end
+
+	return nil
+end
+
+local function getBossDisplayName(areaId: string?, bossIndex: number?): string
+	local bossData = getBossData(areaId, bossIndex)
+	if bossData and bossData.Name then
+		return bossData.Name
+	end
+
+	return "Boss " .. tostring(bossIndex)
+end
+
+local function isTrainingAreaBossUnlocked(playerData, zoneName: string?, trainingIndex: number?, areaData): boolean
+	local requiredBossIndex = getRequiredBossIndex(trainingIndex, areaData)
+	if not requiredBossIndex then
+		return true
+	end
+
+	local areaId = zoneNameToAreaId(zoneName)
+	if not areaId then
+		return false
+	end
+
+	local progress = playerData.BossProgress and playerData.BossProgress[areaId] or 0
+	return progress >= requiredBossIndex
 end
 
 local function canPlayerUseTrainingArea(player: Player, trainingArea, shouldNotify: boolean): boolean
@@ -182,9 +257,13 @@ local function canPlayerUseTrainingArea(player: Player, trainingArea, shouldNoti
 		return false
 	end
 
-	if playerData.Money2 < areaData.PowerRequirement then
+	local zoneName = trainingArea:GetAttribute("Area")
+	local trainingIndex = tonumber(trainingArea:GetAttribute("Index"))
+	if not isTrainingAreaBossUnlocked(playerData, zoneName, trainingIndex, areaData) then
 		if shouldNotify then
-			TrainingService.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
+			local areaId = zoneNameToAreaId(zoneName)
+			local bossName = getBossDisplayName(areaId, getRequiredBossIndex(trainingIndex, areaData))
+			TrainingService.Client.TrainingAreaLocked:Fire(player, bossName)
 		end
 		return false
 	end
@@ -406,26 +485,19 @@ function TrainingService:Training(player: Player, trainingArea)
 		return false
 	end
 
-	local playerData = DataService:GetData(player)
-
 	if not canPlayerUseTrainingArea(player, trainingArea, true) then
 		return false
 	end
 
-	if playerData.Money2 >= areaData.PowerRequirement then
-		local powerGet = areaData.PowerPerSecond
-		-- if BoostEventService.CurrentBoost and BoostEventService.CurrentBoost.type == "Money2" then
-		-- 	powerGet = powerGet * BoostEventService.CurrentBoost.multiplier
-		-- end
+	local powerGet = areaData.PowerPerSecond
+	-- if BoostEventService.CurrentBoost and BoostEventService.CurrentBoost.type == "Money2" then
+	-- 	powerGet = powerGet * BoostEventService.CurrentBoost.multiplier
+	-- end
 
-		--SeasonService:Increase(player, "MONEY_2 Daily", 1)
-		--SeasonService:Increase(player, "MONEY_2 Weekly", 1)
-		DataService:ChangeValue(player, "Money2", powerGet, false)
-		return true
-	else
-		self.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
-		return false
-	end
+	--SeasonService:Increase(player, "MONEY_2 Daily", 1)
+	--SeasonService:Increase(player, "MONEY_2 Weekly", 1)
+	DataService:ChangeValue(player, "Money2", powerGet, false)
+	return true
 end
 
 function TrainingService:StartTraining(player: Player, trainingArea)
@@ -508,7 +580,6 @@ end
 
 function TrainingService:GetMostEffectiveArea(player: Player)
 	local playerData = DataService:GetData(player)
-	local playerPower = playerData.Money2
 	local unlockedAreas = playerData.Areas.Unlocked
 
 	local effectiveTrainingArea = nil
@@ -522,7 +593,7 @@ function TrainingService:GetMostEffectiveArea(player: Player)
 					end
 				end
 
-				if playerPower >= data.PowerRequirement then
+				if isTrainingAreaBossUnlocked(playerData, zoneName, level, data) then
 					if effectiveTrainingArea ~= nil then
 						-- Bandingkan powerPerSecond untuk mencari area terbaik
 						if data.PowerPerSecond > effectiveTrainingArea.powerPerSecond then
@@ -553,15 +624,22 @@ function TrainingService:KnitStart()
 	BallService = Knit.GetService("BallService")
 	FightService = Knit.GetService("FightService")
 
-	TrainingAreasData = DataCacheService:GetFile("Template").TrainingAreas
+	local templateData = DataCacheService:GetFile("Template")
+	TrainingAreasData = templateData.TrainingAreas
+	EnemiesData = templateData.Enemies
 
 	TrainingAreas = CollectionService:GetTagged("TrainingArea")
 
 	for _, trainingArea in ipairs(TrainingAreas) do
 		local area = trainingArea:GetAttribute("Area")
 		local index = trainingArea:GetAttribute("Index")
+		local areaData = nil
 
-		if TrainingAreasData[area][index].VIP then
+		if typeof(area) == "string" and index ~= nil and TrainingAreasData[area] then
+			areaData = TrainingAreasData[area][index]
+		end
+
+		if not areaData or areaData.VIP then
 			continue
 		end
 
@@ -569,10 +647,15 @@ function TrainingService:KnitStart()
 
 		local requiredText = BillboardGui:FindFirstChild("RequiredText")
 		if requiredText then
-			requiredText.Text = `{FormatNumber(TrainingAreasData[area][index].PowerRequirement)} Required`
+			local requiredBossIndex = getRequiredBossIndex(tonumber(index), areaData)
+			if requiredBossIndex then
+				local areaId = zoneNameToAreaId(area)
+				requiredText.Text = `Defeat {getBossDisplayName(areaId, requiredBossIndex)} !!`
+				requiredText.Visible = true
+			else
+				requiredText.Visible = false
+			end
 		end
-
-		--requiredText.Text = `{FormatNumber(TrainingAreasData[area][index].PowerRequirement)} Required`
 	end
 end
 

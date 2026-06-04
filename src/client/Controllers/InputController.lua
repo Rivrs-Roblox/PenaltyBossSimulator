@@ -26,6 +26,8 @@ local InputController = Knit.CreateController({
 
 	-- UI References
 	_controlFrame = nil,
+	_mobileFrame = nil,
+	_pcFrame = nil,
 	_joystickFrame = nil,
 	_joystickKnob = nil,
 	_gamepadFrame = nil,
@@ -37,10 +39,6 @@ local FightController
 
 local POINTER_SPEED = 1.5 -- Kecepatan pointer (full left to right per second)
 local AIM_STEER_SPEED = 0.8 -- Steer speed: 0.8 units per second
-
-local function isPlayerOnMobile()
-	return UserInputService.TouchEnabled
-end
 
 function InputController:KnitInit()
 	FightController = Knit.GetController("FightController")
@@ -60,9 +58,20 @@ function InputController:SetupControlUI()
 	local dynamicBarGui = playerGui:WaitForChild("DynamicBarGui")
 
 	self._controlFrame = dynamicBarGui:WaitForChild("Control")
-	self._joystickFrame = self._controlFrame:WaitForChild("Mobile"):WaitForChild("Left")
-	self._joystickKnob = self._joystickFrame:WaitForChild("Joystick")
+	
+	-- Safely wait for Mobile frame and its components
+	self._mobileFrame = self._controlFrame:WaitForChild("Mobile", 5)
+	if self._mobileFrame then
+		self._joystickFrame = self._mobileFrame:WaitForChild("Left", 5)
+		if self._joystickFrame then
+			self._joystickKnob = self._joystickFrame:WaitForChild("Joystick", 5)
+		end
+	end
 
+	-- Safely wait for PC frame to prevent replication race conditions
+	self._pcFrame = self._controlFrame:WaitForChild("PC", 5)
+
+	-- Safely wait for Gamepad frame
 	self._gamepadFrame = self._controlFrame:WaitForChild("Gamepad", 5)
 	if self._gamepadFrame then
 		self._gamepadJoystickFrame = self._gamepadFrame:FindFirstChild("Left") or self._gamepadFrame
@@ -80,18 +89,46 @@ function InputController:UpdateControlVisibility(inputType)
 	if not self._controlFrame then
 		return
 	end
-	local isMobile = isPlayerOnMobile()
-	local isGamepad = inputType == Enum.UserInputType.Gamepad1
+
+	local isMobile = false
+	local isGamepad = false
+	local isPC = false
+
+	if inputType == Enum.UserInputType.Touch then
+		isMobile = true
+	elseif
+		inputType == Enum.UserInputType.Gamepad1
 		or inputType == Enum.UserInputType.Gamepad2
 		or inputType == Enum.UserInputType.Gamepad3
 		or inputType == Enum.UserInputType.Gamepad4
-	local isPC = not isMobile and not isGamepad
-
-	if self._controlFrame:FindFirstChild("Mobile") then
-		self._controlFrame.Mobile.Visible = isMobile and not isGamepad
+	then
+		isGamepad = true
+	elseif
+		inputType == Enum.UserInputType.Keyboard
+		or inputType == Enum.UserInputType.MouseButton1
+		or inputType == Enum.UserInputType.MouseButton2
+		or inputType == Enum.UserInputType.MouseButton3
+		or inputType == Enum.UserInputType.MouseMovement
+		or inputType == Enum.UserInputType.MouseWheel
+	then
+		isPC = true
+	else
+		-- Fallback check for startup or when inputType is None / Focus
+		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+			isMobile = true
+		elseif UserInputService.GamepadEnabled then
+			isGamepad = true
+		else
+			isPC = true
+		end
 	end
-	if self._controlFrame:FindFirstChild("PC") then
-		self._controlFrame.PC.Visible = isPC
+
+	-- Apply visibility using cached UI frames
+	if self._mobileFrame then
+		self._mobileFrame.Visible = isMobile and not isGamepad
+	end
+	if self._pcFrame then
+		self._pcFrame.Visible = isPC
 	end
 	if self._gamepadFrame then
 		self._gamepadFrame.Visible = isGamepad
