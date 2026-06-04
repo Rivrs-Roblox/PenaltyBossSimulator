@@ -182,6 +182,21 @@ local function canPlayerUseTrainingArea(player: Player, trainingArea, shouldNoti
 		return false
 	end
 
+	-- Boss progress gate: Spot n+1 requires boss n beaten in this zone
+	local spotIndex = trainingArea:GetAttribute("Index") or 1
+	if spotIndex > 1 and not areaData.VIP then
+		local zoneName = trainingArea:GetAttribute("Area") -- e.g. "Zone1"
+		local zoneNum = tonumber(zoneName and zoneName:match("%d+")) or 1
+		local areaKey = string.format("Area%02d", zoneNum)
+		local bossProgress = playerData.BossProgress and playerData.BossProgress[areaKey] or 0
+		if bossProgress < spotIndex - 1 then
+			if shouldNotify then
+				TrainingService.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
+			end
+			return false
+		end
+	end
+
 	if playerData.Money2 < areaData.PowerRequirement then
 		if shouldNotify then
 			TrainingService.Client.InsufficientPower:Fire(player, areaData.PowerRequirement - playerData.Money2)
