@@ -112,9 +112,15 @@ function EggsService:Hatch(Player: Player, Amount: number, Egg: string, AutoDele
 		return v.Chance * ChanceMultiplier
 	end, false)
 
+	-- First pet guarantee: nếu chưa có pet nào + DefaultEgg → luôn nhận Epic (Cow)
 	local SelectedPets = {}
+	local isFirstPet = Egg == "DefaultEgg" and GetTableAmount(data.Inventory.Pets) == 0
 	for i = 1, Amount do
-		table.insert(SelectedPets, RandomElement(Chances))
+		if isFirstPet and i == 1 then
+			table.insert(SelectedPets, "Cow")
+		else
+			table.insert(SelectedPets, RandomElement(Chances))
+		end
 	end
 
 	local FilteredSelectedPets = Filter(SelectedPets, function(x)

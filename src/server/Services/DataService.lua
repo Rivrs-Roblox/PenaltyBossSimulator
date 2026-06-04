@@ -503,54 +503,38 @@ function DataService:GetMultiplier(player: Player, key: string)
 		end
 	end
 
+	-- [DEBUG MODE: tất cả buff tắt tạm để test base PPS thuần]
 	-- Consumable Multipliers (Fruits/Boosts)
-	local Items = DataCacheService:GetFile("Items")
-	for _, item in data.Inventory.ActiveFruits do
-		if key == Items[item.Name].Type then
-			multiplier *= 1 + Items[item.Name].Boost
-		end
-	end
-
-	for _, item in data.Inventory.ActiveBoosts do
-		if key == Items[item.Name].Type then
-			multiplier *= 2
-		end
-	end
+	-- local Items = DataCacheService:GetFile("Items")
+	-- for _, item in data.Inventory.ActiveFruits do
+	-- 	if key == Items[item.Name].Type then
+	-- 		multiplier *= 1 + Items[item.Name].Boost
+	-- 	end
+	-- end
+	-- for _, item in data.Inventory.ActiveBoosts do
+	-- 	if key == Items[item.Name].Type then
+	-- 		multiplier *= 2
+	-- 	end
+	-- end
 
 	-- Global Multipliers
 	multiplier *= (1 + (data.Rebirth * 0.2)) -- +20% per rebirth
 
-	-- Friends logic
-	local friendsCount = 0
-	for _, otherPlayer in ipairs(Players:GetPlayers()) do
-		if otherPlayer ~= player and otherPlayer:IsFriendsWith(player.UserId) then
-			friendsCount += 1
-		end
-	end
-	multiplier *= (1 + (friendsCount * 0.10)) -- +10% per friend
-
-	if data.Codes.Verified then
-		multiplier *= 2
-	end
-
-	if player.MembershipType == Enum.MembershipType.Premium then
-		multiplier *= 1.1
-	end
-
-	if FindValue(data.Gamepasses, "VIP") then
-		multiplier *= 2
-	end
-
-	-- Gamepass X2 logic
-	local economyName = if key == "Money1"
-		then self.Template.Economy.Money1
-		elseif key == "Money2" then self.Template.Economy.Money2
-		elseif key == "Rebirth" then "Rebirths"
-		else key
-
-	if FindValue(data.Gamepasses, "x2 " .. economyName) then
-		multiplier *= 2
-	end
+	-- Friends / Codes / Premium / VIP / x2 gamepass — tắt tạm
+	-- local friendsCount = 0
+	-- for _, otherPlayer in ipairs(Players:GetPlayers()) do
+	-- 	if otherPlayer ~= player and otherPlayer:IsFriendsWith(player.UserId) then
+	-- 		friendsCount += 1
+	-- 	end
+	-- end
+	-- multiplier *= (1 + (friendsCount * 0.10))
+	-- if data.Codes.Verified then multiplier *= 2 end
+	-- if player.MembershipType == Enum.MembershipType.Premium then multiplier *= 1.1 end
+	-- if FindValue(data.Gamepasses, "VIP") then multiplier *= 2 end
+	-- local economyName = if key == "Money1" then self.Template.Economy.Money1
+	-- 	elseif key == "Money2" then self.Template.Economy.Money2
+	-- 	elseif key == "Rebirth" then "Rebirths" else key
+	-- if FindValue(data.Gamepasses, "x2 " .. economyName) then multiplier *= 2 end
 
 	return multiplier
 end
