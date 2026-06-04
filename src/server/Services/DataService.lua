@@ -517,8 +517,10 @@ function DataService:GetMultiplier(player: Player, key: string)
 	-- 	end
 	-- end
 
-	-- Global Multipliers
-	multiplier *= (1 + (data.Rebirth * 0.2)) -- +20% per rebirth
+	-- Global Multipliers — rebirth chỉ affect Power (Money1/Money2), không affect Wins
+	if key == "Money1" or key == "Money2" then
+		multiplier *= (1 + (data.Rebirth * 0.2)) -- +20% per rebirth
+	end
 
 	-- Friends / Codes / Premium / VIP / x2 gamepass — tắt tạm
 	-- local friendsCount = 0
