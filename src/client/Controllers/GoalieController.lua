@@ -95,7 +95,7 @@ function GoalieController:GetGoalieHipHeight()
 	return 2.4
 end
 
-function GoalieController:SpawnGoalie(wave, area, goalieArea, bossIndex)
+function GoalieController:SpawnGoalie(wave, area, goalieArea, bossIndex, isTutorialFight)
 	-- Cleanup existing goalie
 	self:CleanupGoalie()
 
@@ -138,13 +138,19 @@ function GoalieController:SpawnGoalie(wave, area, goalieArea, bossIndex)
 	goalie.Parent = workspace
 
 	-- Ambil data goalie dari template
-	local areaData = self.Template.Enemies[area]
-	if not areaData then
-		warn("[GoalieController] No enemy data for area:", area)
-		return
+	local goalieData
+	if isTutorialFight then
+		goalieData = self.Template.Enemies["Tutorial"]
+	else
+		local areaData = self.Template.Enemies[area]
+		if not areaData then
+			warn("[GoalieController] No enemy data for area:", area)
+			return
+		end
+
+		goalieData = getGoalieDataForWave(areaData, bossIndex, wave)
 	end
 
-	local goalieData = getGoalieDataForWave(areaData, bossIndex, wave)
 	if not goalieData then
 		warn(
 			"[GoalieController] No goalie data for area: " .. area .. ", BossIndex: " .. bossIndex .. ", Wave: " .. wave

@@ -4,7 +4,7 @@ return table.freeze({
 	["Rewards"] = {
 		[1] = {
 			Title = "+1000 " .. Economy.Money2,
-			Icon = "Money2_NoStroke",
+			Icon = "Money2",
 			Price = 1,
 
 			RewardType = "Money2",
@@ -12,7 +12,7 @@ return table.freeze({
 		},
 		[2] = {
 			Title = "+100 Wins",
-			Icon = "Wins_NoStroke",
+			Icon = "Wins",
 			Price = 5,
 
 			RewardType = "Wins",
@@ -20,7 +20,7 @@ return table.freeze({
 		},
 		[3] = {
 			Title = "+10000 Wins",
-			Icon = "Wins_NoStroke",
+			Icon = "Wins",
 			Price = 10,
 
 			RewardType = "Wins",

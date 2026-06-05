@@ -72,8 +72,12 @@ local TUTORIAL_STEPS = {
 	[2] = {
 		Text = "Gain 120 Power by training!",
 		ArrowTarget = function()
-			local PowerArea =
-				workspace.Area01:WaitForChild("TrainingTargets"):WaitForChild("Target01"):FindFirstChild("Pivot", true)
+			local PowerArea = workspace.Area01
+				:WaitForChild("TrainingTargets")
+				:WaitForChild("Target01")
+				:WaitForChild("Model")
+				:WaitForChild("Training")
+				:WaitForChild("Pivot")
 			return PowerArea
 		end,
 		Target = 120,

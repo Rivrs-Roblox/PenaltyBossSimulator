@@ -751,7 +751,12 @@ end
 function FightController:PlayBossCinematicIntro(goalieModel: Model, onComplete: () -> ())
 	-- Show Boss Name UI
 	local bossName = "Boss " .. (self.BossIndex or 5)
-	if self.Template and self.Template.Enemies and self.Template.Enemies[self.CurrentArea] then
+	if self.IsTutorialFight then
+		local bossData = self.Template.Enemies["Tutorial"]
+		if bossData and bossData.Name then
+			bossName = bossData.Name
+		end
+	elseif self.Template and self.Template.Enemies and self.Template.Enemies[self.CurrentArea] then
 		local bossKey = "Boss " .. (self.BossIndex or 5)
 		local bossData = self.Template.Enemies[self.CurrentArea][bossKey]
 		if not bossData and self.BossIndex == 5 then
@@ -796,7 +801,7 @@ function FightController:StartPenaltyRound(wave)
 
 	-- Spawn goalie
 	local goalieArea = self:GetPenaltyZonePart("GoalieArea")
-	GoalieController:SpawnGoalie(wave, self.CurrentArea, goalieArea, self.BossIndex)
+	GoalieController:SpawnGoalie(wave, self.CurrentArea, goalieArea, self.BossIndex, self.IsTutorialFight)
 
 	CharactersController:SetFootballTransparancy(player, 0)
 
@@ -835,12 +840,22 @@ function FightController:UpdatePodiumLock(enemyPodium: Instance)
 	local progress = self.BossProgress and self.BossProgress[area] or 0
 	local isUnlocked = (bossIndex == 1) or (progress >= bossIndex - 1)
 
-	local namePart = enemyPodium:FindFirstChild("Name")
-	local billboard = namePart and namePart:FindFirstChildOfClass("BillboardGui")
-	local lockElement = billboard and billboard:FindFirstChild("Lock")
-	if lockElement then
-		lockElement.Visible = not isUnlocked
-	end
+	task.spawn(function()
+		local namePart = enemyPodium:WaitForChild("Name", 5)
+		if not namePart then
+			return
+		end
+
+		local billboard = namePart:WaitForChild("BillboardGui", 5)
+		if not billboard then
+			return
+		end
+
+		local lockElement = billboard:WaitForChild("Lock", 5)
+		if lockElement then
+			lockElement.Visible = not isUnlocked
+		end
+	end)
 end
 
 function FightController:UpdateAllPodiumLocks()
@@ -1068,9 +1083,10 @@ function FightController:KnitStart()
 	-- Preload assets
 	self:PreloadNecessaryAssets()
 
-	FightService.FightStarted:Connect(function(fightArea, bossIndex)
+	FightService.FightStarted:Connect(function(fightArea, bossIndex, isTutorialFight)
 		self.CurrentArea = fightArea
 		self.BossIndex = bossIndex or 1
+		self.IsTutorialFight = isTutorialFight
 		self.CurrentWave = 0
 
 		Sound:StopSound("MUSIC_Background")
@@ -1119,6 +1135,7 @@ function FightController:KnitStart()
 		self:StopAnimations()
 		CameraController:ResetCamera()
 		self.IsKicking = false
+		self.IsTutorialFight = nil
 		self.CurrentWave = 0
 		self._currentBattleZone = nil
 		Store:dispatch(FightActions.setFighting(false))

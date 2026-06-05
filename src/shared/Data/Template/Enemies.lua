@@ -1,4 +1,6 @@
 return table.freeze({
+	["Tutorial"] = { Name = "Mateus", Power = 30, Reward = 25 },
+
 	["Area01"] = {
 		["Boss 1"] = { Name = "Mateus", Power = 100, Reward = 1 },
 		["Boss 2"] = { Name = "Caio", Power = 3_636, Reward = 2 },

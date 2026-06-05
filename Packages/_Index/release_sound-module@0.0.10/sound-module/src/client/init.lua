@@ -122,7 +122,7 @@ function SoundCtrl:EnhanceSoundData(soundData, soundName)
         enhanced.SoundType = enhanced.SoundType or "3D"
         enhanced.RollOffEnabled = enhanced.RollOffEnabled ~= nil and enhanced.RollOffEnabled or true
         enhanced.RollOffMinDistance = enhanced.RollOffMinDistance or 5
-        enhanced.RollOffMaxDistance = enhanced.RollOffMaxDistance or 50
+        enhanced.RollOffMaxDistance = enhanced.RollOffMaxDistance or 80
         enhanced.EmitterSize = enhanced.EmitterSize or 10
         -- Apply global volume multiplier
         enhanced.Volume = enhanced.Volume * (self.GlobalVolume.MISC / 100)
@@ -190,8 +190,14 @@ function SoundCtrl:GetOrCreateSound(soundName, parent)
 	-- If not preloaded, continue with regular sound creation
 	local key = soundName .. "_" .. (parent and parent:GetFullName() or "noParent")
 
-	if self.Sounds[key] then
-		return self.Sounds[key]
+	local existingSound = self.Sounds[key]
+	if existingSound then
+		if parent and existingSound.parent ~= parent then
+			existingSound:destroy()
+			self.Sounds[key] = nil
+		else
+			return existingSound
+		end
 	end
 
 	local AllSoundData = require(SoundDataFolder)

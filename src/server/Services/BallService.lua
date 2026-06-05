@@ -785,6 +785,7 @@ local function makeClientShotInfo(shotId: number, shotConfig)
 
 	return {
 		ShotId = shotId,
+		PlayerUserId = shotConfig.PlayerUserId,
 		TrainingIndex = shotConfig.TrainingIndex,
 		TrainingZone = shotConfig.TrainingZone,
 		AnimationId = shotConfig.AnimationId,
@@ -863,6 +864,7 @@ function BallService:ShootBall(player: Player, target, shotConfig)
 	self.ActiveShotPhases[player] = "windup"
 
 	local clientShotInfo = makeClientShotInfo(shotId, {
+		PlayerUserId = player.UserId,
 		TrainingIndex = shotConfig.TrainingIndex,
 		TrainingZone = shotConfig.TrainingZone,
 		AnimationId = shotConfig.AnimationId,

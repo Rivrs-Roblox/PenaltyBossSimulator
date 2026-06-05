@@ -16,7 +16,6 @@ local Helpers = ReplicatedStorage.Shared.Helpers
 local GetTableAmount = require(Helpers.Table.GetTableAmount)
 local FindValue = require(Helpers.Table.FindValue)
 local Map = require(Helpers.Table.Map)
-local Filter = require(Helpers.Table.Filter)
 local RandomElement = require(Helpers.Table.RandomElement)
 local FunnelsModule = require(ReplicatedStorage.Packages.funnelsModule)
 
@@ -29,12 +28,47 @@ local MonetizationService = nil
 local BoostEventService = nil
 --local EarnCandyService = nil
 
+local DEFAULT_EGG = "DefaultEgg"
+local DEFAULT_EGG_GUARANTEED_RARITY = "Epic"
+
+local function getRandomPetByRarity(eggPets: table, petsLibrary: table, rarity: string): string?
+	local Chances = {}
+
+	for petName, eggPetInfo in eggPets do
+		local petInfo = petsLibrary[petName]
+		if petInfo and petInfo.Rarity == rarity then
+			Chances[petName] = eggPetInfo.Chance or 1
+		end
+	end
+
+	if next(Chances) == nil then
+		return nil
+	end
+
+	return RandomElement(Chances)
+end
+
+local function hasOwnedPetFromEgg(data: table, eggPets: table): boolean
+	if data.Inventory == nil or data.Inventory.Pets == nil then
+		return false
+	end
+
+	for _, petData in data.Inventory.Pets do
+		if petData.Name and eggPets[petData.Name] then
+			return true
+		end
+	end
+
+	return false
+end
+
 -- EggsService
 local EggsService = Knit.CreateService({
 	Name = "EggsService",
 
 	Template = {},
 	Eggs = {},
+	Pets = {},
 })
 
 --|| Client Functions ||--
@@ -43,7 +77,14 @@ function EggsService.Client:Hatch(Player: Player, Amount: number, Egg: string, A
 end
 
 --|| Functions ||--
-function EggsService:Hatch(Player: Player, Amount: number, Egg: string, AutoDelete: { string }, Robux: boolean, Free: boolean)
+function EggsService:Hatch(
+	Player: Player,
+	Amount: number,
+	Egg: string,
+	AutoDelete: { string },
+	Robux: boolean,
+	Free: boolean
+)
 	local data = DataService:GetData(Player)
 	if data == nil then
 		return false, warn("[EGGS SERVICE] Player has no data: " .. Player.Name)
@@ -112,20 +153,43 @@ function EggsService:Hatch(Player: Player, Amount: number, Egg: string, AutoDele
 		return v.Chance * ChanceMultiplier
 	end, false)
 
-	-- First pet guarantee: nếu chưa có pet nào + DefaultEgg → luôn nhận Epic (Cow)
+	local GuaranteedDefaultEggPet = nil
+	if
+		Egg == DEFAULT_EGG
+		and data.DefaultEggEpicClaimed ~= true
+		and data.TutorialDefaultEggEpicClaimed ~= true
+		and not hasOwnedPetFromEgg(data, Pets)
+	then
+		GuaranteedDefaultEggPet = getRandomPetByRarity(Pets, self.Pets, DEFAULT_EGG_GUARANTEED_RARITY)
+		if GuaranteedDefaultEggPet then
+			data.DefaultEggEpicClaimed = true
+			data.TutorialDefaultEggEpicClaimed = true
+		else
+			warn(`[EGGS SERVICE] No {DEFAULT_EGG_GUARANTEED_RARITY} pet found for first hatch guarantee in egg: {Egg}`)
+		end
+	end
+
 	local SelectedPets = {}
-	local isFirstPet = Egg == "DefaultEgg" and GetTableAmount(data.Inventory.Pets) == 0
 	for i = 1, Amount do
-		if isFirstPet and i == 1 then
-			table.insert(SelectedPets, "Cow")
+		if i == 1 and GuaranteedDefaultEggPet then
+			table.insert(SelectedPets, GuaranteedDefaultEggPet)
 		else
 			table.insert(SelectedPets, RandomElement(Chances))
 		end
 	end
 
-	local FilteredSelectedPets = Filter(SelectedPets, function(x)
-		return not table.find(AutoDelete, x)
-	end)
+	if type(AutoDelete) ~= "table" then
+		AutoDelete = {}
+	end
+
+	local FilteredSelectedPets = {}
+	for i, Name in SelectedPets do
+		local isGuaranteedDefaultEggPet = i == 1 and GuaranteedDefaultEggPet == Name
+		if isGuaranteedDefaultEggPet or not table.find(AutoDelete, Name) then
+			table.insert(FilteredSelectedPets, Name)
+		end
+	end
+
 	for _, Name in FilteredSelectedPets do
 		PetsService:AddPet(Player, Name)
 	end
@@ -167,6 +231,7 @@ function EggsService:KnitInit()
 
 	self.Template = DataCacheService:GetFile("Template")
 	self.Eggs = DataCacheService:GetFile("Eggs")
+	self.Pets = DataCacheService:GetFile("Pets")
 
 	print("[EGGS SERVICE] Service loaded successfully.")
 end

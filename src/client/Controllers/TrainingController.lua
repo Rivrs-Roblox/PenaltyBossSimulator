@@ -17,6 +17,7 @@ local Zone = require(ReplicatedStorage.Shared.ZonePlus)
 -- Services
 local TrainingService
 local BallService
+local DataService
 
 -- Controllers
 local NotificationController
@@ -24,14 +25,11 @@ local AutoController
 local CharactersController
 local TrailsController
 local FightController
+local DataCacheController
 
 -- Player
 local player = Players.LocalPlayer
 local playerGui = player:FindFirstChildOfClass("PlayerGui")
-
--- Helpers
-local Helpers = ReplicatedStorage.Shared.Helpers
-local FormatNumber = require(Helpers.Numbers.FormatNumber)
 
 -- Signals
 local AutoTrainingSignals = require(ReplicatedStorage.Shared.Signals.AutoTrainingSignals)
@@ -39,8 +37,12 @@ local TrainingSignals = require(ReplicatedStorage.Shared.Signals.TrainingSignals
 
 -- Data
 local TrainingAnimationData = require(ReplicatedStorage.Shared.Data.TrainingAnimationData)
+local TrainingAreasData
+local EnemiesData
+local ImagesData
 
 local trainingAreas = {}
+local bossProgress = {}
 local activePrompt
 local currentTrainingArea
 local trainingAnimationTrack
@@ -57,6 +59,7 @@ local animationCache = {}
 local preloadedTrainingAnimations = {}
 local goalPulseCache = setmetatable({}, { __mode = "k" })
 local currentTrainingShotId
+local lastGoalPulseShotId
 local isTrainingProjectileActive = false
 
 local HOLD_DURATION = 0.5
@@ -64,12 +67,23 @@ local COOLDOWN_TIME = 0.45
 local ANIMATION_SPEED_DECAY = 0.5
 local ANIMATION_SPEED_INCREASE = 0.25
 local BEAM_SPEED = 2
+local VIP_TRAINING_INDEX = 6
 local TRAINING_START_RETRY_ATTEMPTS = 5
 local TRAINING_START_RETRY_INTERVAL = 0.12
 local DISABLE_COLLISION_TRAINING_INDEXES = {
 	[3] = true,
 	[4] = true,
 	[5] = true,
+}
+local TRAINING_BILLBOARD_ICON_NAMES = {
+	"PowerImage",
+	"PowerIcon",
+	"Money2Icon",
+	"RequirementIcon",
+	"CurrencyIcon",
+	"Icon",
+	"Power",
+	"Money2",
 }
 
 -- TrainingController
@@ -88,6 +102,234 @@ end
 
 local function getTrainingAnimationData(index: number)
 	return TrainingAnimationData.Areas[index] or TrainingAnimationData.Default
+end
+
+local function zoneNameToAreaId(zoneName: string?): string?
+	if typeof(zoneName) ~= "string" then
+		return nil
+	end
+
+	local zoneNumber = tonumber(zoneName:match("%d+"))
+	if not zoneNumber then
+		return nil
+	end
+
+	return string.format("Area%02d", zoneNumber)
+end
+
+local function getTrainingAreaTemplateData(trainingArea: Instance?)
+	if not trainingArea or not TrainingAreasData then
+		return nil
+	end
+
+	local area = trainingArea:GetAttribute("Area")
+	local index = trainingArea:GetAttribute("Index")
+
+	if typeof(area) ~= "string" or index == nil then
+		return nil
+	end
+
+	return TrainingAreasData[area] and TrainingAreasData[area][index]
+end
+
+local function getRequiredBossIndex(trainingArea: Instance?): number?
+	if not trainingArea then
+		return nil
+	end
+
+	local index = tonumber(trainingArea:GetAttribute("Index"))
+	if not index or index <= 1 then
+		return nil
+	end
+
+	local areaData = getTrainingAreaTemplateData(trainingArea)
+	if (areaData and areaData.VIP) or index == VIP_TRAINING_INDEX then
+		return nil
+	end
+
+	return index
+end
+
+local function isVipTrainingArea(trainingArea: Instance?): boolean
+	if not trainingArea then
+		return false
+	end
+
+	local areaData = getTrainingAreaTemplateData(trainingArea)
+	if areaData and areaData.VIP then
+		return true
+	end
+
+	return tonumber(trainingArea:GetAttribute("Index")) == VIP_TRAINING_INDEX
+end
+
+local function getBossData(areaId: string?, bossIndex: number?)
+	if not areaId or typeof(bossIndex) ~= "number" then
+		return nil
+	end
+
+	local areaEnemies = EnemiesData and EnemiesData[areaId]
+	if not areaEnemies then
+		return nil
+	end
+
+	local bossData = areaEnemies["Boss " .. bossIndex] or areaEnemies["MiniBoss " .. bossIndex]
+	if bossData then
+		return bossData
+	end
+
+	if bossIndex == 5 then
+		return areaEnemies.Boss
+	end
+
+	return nil
+end
+
+local function getBossDisplayName(areaId: string?, bossIndex: number?): string
+	local bossData = getBossData(areaId, bossIndex)
+	if bossData and bossData.Name then
+		return bossData.Name
+	end
+
+	return "Boss " .. tostring(bossIndex)
+end
+
+local function getTrainingBillboard(trainingArea: Instance?)
+	local parent = trainingArea and trainingArea.Parent
+	local requirement = parent and parent:FindFirstChild("Requirement")
+
+	return requirement and requirement:FindFirstChild("BillboardGui")
+end
+
+local function getRequiredText(trainingArea: Instance?)
+	local billboard = getTrainingBillboard(trainingArea)
+	return billboard and billboard:FindFirstChild("RequiredText")
+end
+
+local function findNamedIcon(root: Instance?)
+	if not root then
+		return nil
+	end
+
+	for _, iconName in ipairs(TRAINING_BILLBOARD_ICON_NAMES) do
+		local icon = root:FindFirstChild(iconName, true)
+		if icon and (icon:IsA("ImageLabel") or icon:IsA("ImageButton")) then
+			return icon
+		end
+	end
+
+	return nil
+end
+
+local function isBillboardIconCandidate(instance: Instance): boolean
+	if not (instance:IsA("ImageLabel") or instance:IsA("ImageButton")) then
+		return false
+	end
+
+	local lowerName = string.lower(instance.Name)
+	return lowerName ~= "background" and lowerName ~= "bg" and lowerName ~= "back"
+end
+
+local function findAnyIconCandidate(root: Instance?)
+	if not root then
+		return nil
+	end
+
+	for _, descendant in ipairs(root:GetDescendants()) do
+		if isBillboardIconCandidate(descendant) then
+			return descendant
+		end
+	end
+
+	return nil
+end
+
+local function getTrainingBillboardIcon(trainingArea: Instance?)
+	local billboard = getTrainingBillboard(trainingArea)
+	local requiredText = billboard and billboard:FindFirstChild("RequiredText", true)
+	local icon = findNamedIcon(requiredText and requiredText.Parent)
+	if icon then
+		return icon
+	end
+
+	icon = findAnyIconCandidate(requiredText and requiredText.Parent)
+	if icon then
+		return icon
+	end
+
+	icon = findNamedIcon(billboard)
+	if icon then
+		return icon
+	end
+
+	local plusText = billboard and billboard:FindFirstChild("PlusText", true)
+	icon = findNamedIcon(plusText and plusText.Parent)
+	if icon then
+		return icon
+	end
+
+	icon = findAnyIconCandidate(plusText and plusText.Parent)
+	if icon then
+		return icon
+	end
+
+	if billboard then
+		for _, descendant in ipairs(billboard:GetDescendants()) do
+			if descendant:IsA("ImageLabel") or descendant:IsA("ImageButton") then
+				local lowerName = string.lower(descendant.Name)
+				if lowerName:find("icon") or lowerName:find("power") or lowerName:find("money") then
+					return descendant
+				end
+			end
+		end
+	end
+
+	return findAnyIconCandidate(billboard)
+end
+
+local function setTrainingBillboardIcon(trainingArea: Instance?, isUnlocked: boolean)
+	local icon = getTrainingBillboardIcon(trainingArea)
+	if not icon or not ImagesData then
+		return
+	end
+
+	icon.Image = if isUnlocked then ImagesData.Money2 else ImagesData.Lock
+end
+
+local function updateTrainingAreaRequirementText(trainingArea: Instance?)
+	if isVipTrainingArea(trainingArea) then
+		return
+	end
+
+	local requiredText = getRequiredText(trainingArea)
+	if not requiredText then
+		return
+	end
+
+	local requiredBossIndex = getRequiredBossIndex(trainingArea)
+	if not requiredBossIndex then
+		requiredText.Visible = false
+		setTrainingBillboardIcon(trainingArea, true)
+		return
+	end
+
+	local areaId = zoneNameToAreaId(trainingArea:GetAttribute("Area"))
+	local progress = areaId and bossProgress[areaId] or 0
+
+	if progress >= requiredBossIndex then
+		requiredText.Visible = false
+		setTrainingBillboardIcon(trainingArea, true)
+	else
+		requiredText.Text = `Defeat {getBossDisplayName(areaId, requiredBossIndex)} !!`
+		requiredText.Visible = true
+		setTrainingBillboardIcon(trainingArea, false)
+	end
+end
+
+local function updateAllTrainingAreaRequirementTexts()
+	for _, trainingArea in ipairs(trainingAreas) do
+		updateTrainingAreaRequirementText(trainingArea)
+	end
 end
 
 local function getCurrentTrainingAnimationData()
@@ -421,6 +663,9 @@ local function findGoalModelFromTrainingArea(trainingArea: Instance?): Model?
 	end
 
 	local assets = trainingAreaParent:FindFirstChild("Assets")
+	if not assets then
+		return nil
+	end
 
 	local goal = assets:FindFirstChild("Goal")
 	if goal and goal:IsA("Model") then
@@ -591,11 +836,48 @@ local function isSameTrainingShot(shotInfo): boolean
 		return true
 	end
 
+	if typeof(shotInfo.PlayerUserId) == "number" and shotInfo.PlayerUserId ~= player.UserId then
+		return false
+	end
+
 	if currentTrainingShotId == nil then
 		return true
 	end
 
 	return shotInfo.ShotId == currentTrainingShotId
+end
+
+local function isCurrentTrainingTarget(target: Instance?): boolean
+	if typeof(target) ~= "Instance" or not currentTrainingArea then
+		return false
+	end
+
+	local currentTarget = currentTrainingArea:FindFirstChild("Target")
+	if not currentTarget then
+		return false
+	end
+
+	return target == currentTarget or target:IsDescendantOf(currentTarget) or currentTarget:IsDescendantOf(target)
+end
+
+local function shouldPlayGoalPulseForImpact(target: Instance?, shotInfo): boolean
+	if not currentTrainingArea or not isTrainingProjectileActive then
+		return false
+	end
+
+	if currentTrainingShotId == nil or typeof(shotInfo) ~= "table" then
+		return false
+	end
+
+	if not isSameTrainingShot(shotInfo) or not isCurrentTrainingTarget(target) then
+		return false
+	end
+
+	if typeof(shotInfo) == "table" and lastGoalPulseShotId == shotInfo.ShotId then
+		return false
+	end
+
+	return true
 end
 
 local function playTrainingAnimation(shotInfo)
@@ -615,6 +897,7 @@ local function playTrainingAnimation(shotInfo)
 		animationId = shotInfo.AnimationId or animationId
 		playbackSpeed = tonumber(shotInfo.PlaybackSpeed) or playbackSpeed
 		currentTrainingShotId = shotInfo.ShotId
+		lastGoalPulseShotId = nil
 
 		if typeof(shotInfo.SpeedMultiplier) == "number" then
 			animationSpeed =
@@ -622,6 +905,7 @@ local function playTrainingAnimation(shotInfo)
 		end
 	else
 		currentTrainingShotId = nil
+		lastGoalPulseShotId = nil
 	end
 
 	if not animationId or animationId == "" then
@@ -896,6 +1180,7 @@ function TrainingController:StopTraining(trainingArea)
 
 	stopTrainingAnimation()
 	currentTrainingShotId = nil
+	lastGoalPulseShotId = nil
 
 	if not isTrainingProjectileActive then
 		setCharacterBallVisual(true)
@@ -934,19 +1219,37 @@ end
 function TrainingController:KnitStart()
 	BallService = Knit.GetService("BallService")
 	TrainingService = Knit.GetService("TrainingService")
-	TrainingService.InsufficientPower:Connect(function(amount)
-		NotificationController:Notify({
-			tag = "Training",
-			text = "You need " .. FormatNumber(amount) .. " more power!",
-			type = "ERROR",
-		})
-	end)
+	DataService = Knit.GetService("DataService")
+
+	DataCacheController = Knit.GetController("DataCacheController")
+	local templateData = DataCacheController:GetFile("Template")
+	TrainingAreasData = templateData.TrainingAreas
+	EnemiesData = templateData.Enemies
+	ImagesData = DataCacheController:GetFile("Images")
 
 	NotificationController = Knit.GetController("NotificationController")
 	AutoController = Knit.GetController("AutoController")
 	CharactersController = Knit.GetController("CharactersController")
 	TrailsController = Knit.GetController("TrailsController")
 	FightController = Knit.GetController("FightController")
+
+	TrainingService.TrainingAreaLocked:Connect(function(bossName)
+		NotificationController:Notify({
+			tag = "Training",
+			text = "Required: Defeat " .. tostring(bossName) .. " first!",
+			type = "ERROR",
+		})
+	end)
+
+	DataService.BossProgressUpdated:Connect(function(updatedProgress)
+		bossProgress = updatedProgress or {}
+		updateAllTrainingAreaRequirementTexts()
+	end)
+
+	DataService:GetData():andThen(function(data)
+		bossProgress = data and data.BossProgress or {}
+		updateAllTrainingAreaRequirementTexts()
+	end)
 
 	AutoTrainingSignals.AutoTrainingStopped:Connect(function()
 		if currentTrainingArea then
@@ -969,9 +1272,17 @@ function TrainingController:KnitStart()
 		setCharacterBallVisual(false)
 	end)
 
-	BallService.BallImpact:Connect(function(target, impactPosition)
+	BallService.BallImpact:Connect(function(target, impactPosition, shotInfo)
 		if typeof(impactPosition) ~= "Vector3" then
 			return
+		end
+
+		if not shouldPlayGoalPulseForImpact(target, shotInfo) then
+			return
+		end
+
+		if typeof(shotInfo) == "table" then
+			lastGoalPulseShotId = shotInfo.ShotId
 		end
 
 		playTrainingGoalPulse(currentTrainingArea)
@@ -985,6 +1296,7 @@ function TrainingController:KnitStart()
 
 		stopTrainingAnimation()
 		currentTrainingShotId = nil
+		lastGoalPulseShotId = nil
 		isTrainingProjectileActive = false
 
 		local restoreDelay = 0
@@ -1033,6 +1345,7 @@ function TrainingController:KnitStart()
 				self:StopTraining(trainingArea)
 			end)
 			table.insert(trainingAreas, trainingArea)
+			updateTrainingAreaRequirementText(trainingArea)
 		end
 
 		for _, area in CollectionService:GetTagged("TrainingArea") do
@@ -1046,6 +1359,10 @@ function TrainingController:KnitStart()
 		while true do
 			if AutoController.IsAutoTraining then
 				TrainingService:GetMostEffectiveArea():andThen(function(effectiveTrainingArea)
+					if not effectiveTrainingArea then
+						return
+					end
+
 					for _, trainingArea in pairs(trainingAreas) do
 						local area = trainingArea:GetAttribute("Area")
 

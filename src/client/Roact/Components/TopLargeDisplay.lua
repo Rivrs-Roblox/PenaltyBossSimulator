@@ -51,7 +51,7 @@ local function TopLargeDisplay(props, hooks)
 			else props.plusTouchTargetSize
 
 		local function onPlusActivated()
-			if FightController.IsFighting or FightController.IsTrading then
+			if FightController.IsFighting or TradeController.IsTrading then
 				return
 			end
 

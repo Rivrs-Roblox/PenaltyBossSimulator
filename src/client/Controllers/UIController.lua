@@ -185,15 +185,17 @@ function UIController:ShowFrame(params: {})
 		return print("Frame", params.frame, "is NULL")
 	end
 
-	if params.frame == "DailyRewards" then
-		--Store:dispatch(AllRewardsActions.setAllRewards("DailyRewards"))
-		Store:dispatch(UIActions.setCurrentUI("DailyRewards"))
-		return
-	end
+	
 
 	if params.frame ~= "Battle" then
 		self:RemoveHUD({ ignoreTopFrame = true })
 		--print("Frame Battle Detected")
+	end
+
+	if params.frame == "DailyRewards" then
+		--Store:dispatch(AllRewardsActions.setAllRewards("DailyRewards"))
+		Store:dispatch(UIActions.setCurrentUI("DailyRewards"))
+		return
 	end
 
 	if params.frame == "Aura" or params.frame == "Trails" then

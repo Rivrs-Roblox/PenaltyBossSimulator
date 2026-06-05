@@ -46,7 +46,7 @@ function SoundServ:PlaySound(soundName, parent)
 	end
 
 	-- Determine which players should receive the sound
-	local playersToReceive = self:GetPlayersInRange(parent)
+	local playersToReceive = self:GetPlayersInRange(parent, soundName)
 
 	-- Fire the signal to play the sound for appropriate clients
 	for _, player in ipairs(playersToReceive) do
@@ -58,7 +58,7 @@ end
 
 function SoundServ:StopSound(soundName, parent)
 	-- Determine which players should receive the stop signal
-	local playersToReceive = self:GetPlayersInRange(parent)
+	local playersToReceive = self:GetPlayersInRange(parent, soundName)
 
 	-- Fire the signal to stop the sound for appropriate clients
 	for _, player in ipairs(playersToReceive) do
@@ -103,7 +103,7 @@ function SoundServ:PlaySoundInRange(soundName, position, range)
 end
 
 -- Helper methods
-function SoundServ:GetPlayersInRange(parent)
+function SoundServ:GetPlayersInRange(parent, soundName)
 	local players = {}
 
 	-- If no parent specified or parent is a global object, send to all players
@@ -117,6 +117,15 @@ function SoundServ:GetPlayersInRange(parent)
 		return { playerOwner }
 	end
 
+	-- Get the max distance from SoundData
+	local maxDistance = 100
+	if soundName then
+		local SoundData = require(ReplicatedStorage.Shared.Data.Sounds)
+		if SoundData[soundName] and SoundData[soundName].RollOffMaxDistance then
+			maxDistance = SoundData[soundName].RollOffMaxDistance
+		end
+	end
+
 	-- For 3D positional sounds, get players within audible range
 	local position = self:GetParentPosition(parent)
 	if position then
@@ -124,8 +133,7 @@ function SoundServ:GetPlayersInRange(parent)
 			local character = player.Character
 			if character and character:FindFirstChild("HumanoidRootPart") then
 				local distance = (character.HumanoidRootPart.Position - position).Magnitude
-				-- Use a reasonable default range (you might want to make this configurable)
-				if distance <= 25 then
+				if distance <= maxDistance then
 					table.insert(players, player)
 				end
 			end
