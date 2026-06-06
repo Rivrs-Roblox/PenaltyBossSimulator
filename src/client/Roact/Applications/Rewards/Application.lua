@@ -247,7 +247,7 @@ function Rewards(_, hooks)
 	}, {
 		Content = Blue_Background({
 			title = "Time Rewards",
-			titleIcon = UI.Rewards or "rbxassetid://72857982925608",
+			titleIcon = UI.Rewards or "",
 			size = UDim2.fromScale(0.7, 0.7),
 			pos = UDim2.fromScale(0.5, 0.5),
 			ratio = 1.6,

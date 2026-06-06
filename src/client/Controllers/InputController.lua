@@ -114,7 +114,7 @@ function InputController:UpdateControlVisibility(inputType)
 		isPC = true
 	else
 		-- Fallback check for startup or when inputType is None / Focus
-		if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+		if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then
 			isMobile = true
 		elseif UserInputService.GamepadEnabled then
 			isGamepad = true

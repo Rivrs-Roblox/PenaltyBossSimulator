@@ -503,40 +503,54 @@ function DataService:GetMultiplier(player: Player, key: string)
 		end
 	end
 
-	-- [DEBUG MODE: tất cả buff tắt tạm để test base PPS thuần]
 	-- Consumable Multipliers (Fruits/Boosts)
-	-- local Items = DataCacheService:GetFile("Items")
-	-- for _, item in data.Inventory.ActiveFruits do
-	-- 	if key == Items[item.Name].Type then
-	-- 		multiplier *= 1 + Items[item.Name].Boost
-	-- 	end
-	-- end
-	-- for _, item in data.Inventory.ActiveBoosts do
-	-- 	if key == Items[item.Name].Type then
-	-- 		multiplier *= 2
-	-- 	end
-	-- end
-
-	-- Global Multipliers — rebirth chỉ affect Power (Money1/Money2), không affect Wins
-	if key == "Money1" or key == "Money2" then
-		multiplier *= (1 + (data.Rebirth * 0.2)) -- +20% per rebirth
+	local Items = DataCacheService:GetFile("Items")
+	for _, item in data.Inventory.ActiveFruits do
+		if key == Items[item.Name].Type then
+			multiplier *= 1 + Items[item.Name].Boost
+		end
 	end
 
-	-- Friends / Codes / Premium / VIP / x2 gamepass — tắt tạm
-	-- local friendsCount = 0
-	-- for _, otherPlayer in ipairs(Players:GetPlayers()) do
-	-- 	if otherPlayer ~= player and otherPlayer:IsFriendsWith(player.UserId) then
-	-- 		friendsCount += 1
-	-- 	end
-	-- end
-	-- multiplier *= (1 + (friendsCount * 0.10))
-	-- if data.Codes.Verified then multiplier *= 2 end
-	-- if player.MembershipType == Enum.MembershipType.Premium then multiplier *= 1.1 end
-	-- if FindValue(data.Gamepasses, "VIP") then multiplier *= 2 end
-	-- local economyName = if key == "Money1" then self.Template.Economy.Money1
-	-- 	elseif key == "Money2" then self.Template.Economy.Money2
-	-- 	elseif key == "Rebirth" then "Rebirths" else key
-	-- if FindValue(data.Gamepasses, "x2 " .. economyName) then multiplier *= 2 end
+	for _, item in data.Inventory.ActiveBoosts do
+		if key == Items[item.Name].Type then
+			multiplier *= 2
+		end
+	end
+
+	-- Global Multipliers
+	multiplier *= (1 + (data.Rebirth * 0.2)) -- +20% per rebirth
+
+	-- Friends logic
+	local friendsCount = 0
+	for _, otherPlayer in ipairs(Players:GetPlayers()) do
+		if otherPlayer ~= player and otherPlayer:IsFriendsWith(player.UserId) then
+			friendsCount += 1
+		end
+	end
+	multiplier *= (1 + (friendsCount * 0.10))
+
+	if data.Codes.Verified then
+		multiplier *= 2
+	end
+
+	if player.MembershipType == Enum.MembershipType.Premium then
+		multiplier *= 1.1
+	end
+
+	if FindValue(data.Gamepasses, "VIP") then
+		multiplier *= 2
+	end
+
+	-- Gamepass X2 logic
+	local economyName = if key == "Money1"
+		then self.Template.Economy.Money1
+		elseif key == "Money2" then self.Template.Economy.Money2
+		elseif key == "Rebirth" then "Rebirths"
+		else key
+
+	if FindValue(data.Gamepasses, "x2 " .. economyName) then
+		multiplier *= 2
+	end
 
 	return multiplier
 end
@@ -568,28 +582,28 @@ function DataService:AddArea(player: Player, name: string, bypass: boolean?)
 			return
 		end
 
-		-- 3. Check if all bosses in the previous zone are beaten
-		local prevAreaId = string.format("Area%02d", lastUnlockedNumber)
-		local enemies = self.Template.Enemies
-		local areaEnemies = enemies and enemies[prevAreaId]
+		-- -- 3. Check if all bosses in the previous zone are beaten
+		-- local prevAreaId = string.format("Area%02d", lastUnlockedNumber)
+		-- local enemies = self.Template.Enemies
+		-- local areaEnemies = enemies and enemies[prevAreaId]
 
-		if areaEnemies then
-			local maxBossCount = 0
-			for enemyKey, _ in pairs(areaEnemies) do
-				local bIndex = tonumber(string.match(enemyKey, "Boss%s+(%d+)"))
-					or tonumber(string.match(enemyKey, "MiniBoss%s+(%d+)"))
-				if bIndex and bIndex > maxBossCount then
-					maxBossCount = bIndex
-				elseif enemyKey == "Boss" and 5 > maxBossCount then
-					maxBossCount = 5
-				end
-			end
+		-- if areaEnemies then
+		-- 	local maxBossCount = 0
+		-- 	for enemyKey, _ in pairs(areaEnemies) do
+		-- 		local bIndex = tonumber(string.match(enemyKey, "Boss%s+(%d+)"))
+		-- 			or tonumber(string.match(enemyKey, "MiniBoss%s+(%d+)"))
+		-- 		if bIndex and bIndex > maxBossCount then
+		-- 			maxBossCount = bIndex
+		-- 		elseif enemyKey == "Boss" and 5 > maxBossCount then
+		-- 			maxBossCount = 5
+		-- 		end
+		-- 	end
 
-			local progress = data.BossProgress and data.BossProgress[prevAreaId] or 0
-			if progress < maxBossCount then
-				return
-			end
-		end
+		-- 	local progress = data.BossProgress and data.BossProgress[prevAreaId] or 0
+		-- 	if progress < maxBossCount then
+		-- 		return
+		-- 	end
+		-- end
 
 		-- 4. Check if player has enough wins
 		local price = self.Template.Areas[name] and self.Template.Areas[name].Price or 0

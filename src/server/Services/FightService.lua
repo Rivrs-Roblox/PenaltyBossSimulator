@@ -46,6 +46,7 @@ local FightService = Knit.CreateService({
 		WaveUpdated = Knit.CreateSignal(),
 	},
 
+	OnBeforeFightTeleport = Signal.new(),
 	OnFightStarted = Signal.new(),
 	OnFightEnded = Signal.new(),
 	OnPlayerTeleported = Signal.new(),
@@ -132,11 +133,6 @@ function FightService:StartFight(player: Player, battleZone: Object, bossIndex: 
 		return
 	end
 
-	local offset = Vector3.new(-0.3, 0, -1.3)
-
-	player:RequestStreamAroundAsync(playerArea.Position)
-	playerCharacter:PivotTo(playerArea.CFrame * CFrame.new(offset))
-
 	local isTutorialFight = false
 	if data and data.TutorialStep == 1 and area == "Area01" then
 		isTutorialFight = true
@@ -150,6 +146,25 @@ function FightService:StartFight(player: Player, battleZone: Object, bossIndex: 
 		IsTutorialFight = isTutorialFight,
 		State = "WaitingForKick",
 	}
+
+	self.OnBeforeFightTeleport:Fire(player)
+
+	task.wait(0.1)
+
+	if not player.Parent or not self.Sessions[player] then
+		return
+	end
+
+	playerCharacter = player.Character
+	if not playerCharacter then
+		self.Sessions[player] = nil
+		return
+	end
+
+	local offset = Vector3.new(-0.3, 0, -1.3)
+
+	player:RequestStreamAroundAsync(playerArea.Position)
+	playerCharacter:PivotTo(playerArea.CFrame * CFrame.new(offset))
 
 	self.Client.FightStarted:Fire(player, area, bossIndex, isTutorialFight)
 	self.Client.WaveUpdated:Fire(player, 1)

@@ -77,14 +77,7 @@ function EggsService.Client:Hatch(Player: Player, Amount: number, Egg: string, A
 end
 
 --|| Functions ||--
-function EggsService:Hatch(
-	Player: Player,
-	Amount: number,
-	Egg: string,
-	AutoDelete: { string },
-	Robux: boolean,
-	Free: boolean
-)
+function EggsService:Hatch(Player: Player, Amount: number, Egg: string, AutoDelete: { string }, Robux: boolean, Free: boolean)
 	local data = DataService:GetData(Player)
 	if data == nil then
 		return false, warn("[EGGS SERVICE] Player has no data: " .. Player.Name)
@@ -165,7 +158,9 @@ function EggsService:Hatch(
 			data.DefaultEggEpicClaimed = true
 			data.TutorialDefaultEggEpicClaimed = true
 		else
-			warn(`[EGGS SERVICE] No {DEFAULT_EGG_GUARANTEED_RARITY} pet found for first hatch guarantee in egg: {Egg}`)
+			warn(
+				`[EGGS SERVICE] No {DEFAULT_EGG_GUARANTEED_RARITY} pet found for first hatch guarantee in egg: {Egg}`
+			)
 		end
 	end
 

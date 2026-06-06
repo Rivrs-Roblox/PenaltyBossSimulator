@@ -5,9 +5,12 @@
 
 -- Game services
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
 -- Packages
 local Roact = require(ReplicatedStorage.Packages.roact)
+
+local activeSliderOwner = nil
 
 local function makeToggleButton(params)
 	local enabled = params.enabled == true
@@ -83,9 +86,18 @@ return function(params: {})
 	local startValue = math.clamp(params.Value or 0, 0, 100)
 	local startEnabled = if params.Enabled ~= nil then params.Enabled else startValue > 0
 
-	local isDragging, setIsDragging = useState(false)
+	local _, setIsDragging = useState(false)
 	local currentValue, setCurrentValue = useState(startValue)
 	local isEnabled, setIsEnabled = useState(startEnabled)
+	local activeInputRef = hooks.useValue(nil)
+	local activeSliderFrameRef = hooks.useValue(nil)
+	local isMouseDraggingRef = hooks.useValue(false)
+	local isEnabledRef = hooks.useValue(isEnabled)
+	local onChangeRef = hooks.useValue(params.OnChange)
+	local sliderOwnerRef = hooks.useValue({})
+
+	isEnabledRef.value = isEnabled
+	onChangeRef.value = params.OnChange
 
 	useEffect(function()
 		local newValue = math.clamp(params.Value or 0, 0, 100)
@@ -94,7 +106,7 @@ return function(params: {})
 	end, { params.Value, params.Enabled })
 
 	local function updateValue(input, frame)
-		if not isEnabled then
+		if not isEnabledRef.value then
 			return
 		end
 
@@ -103,11 +115,87 @@ return function(params: {})
 		local newValue = math.floor(relativeX * 100 + 0.5)
 
 		setCurrentValue(newValue)
-		params.OnChange(newValue)
+		onChangeRef.value(newValue)
+	end
+
+	local function stopDragging()
+		if activeSliderOwner == sliderOwnerRef.value then
+			activeSliderOwner = nil
+		end
+
+		activeInputRef.value = nil
+		activeSliderFrameRef.value = nil
+		isMouseDraggingRef.value = false
+		setIsDragging(false)
 	end
 
 	local progress = math.clamp((currentValue or 0) / 100, 0, 1)
 	local zIndex = params.ZIndexBase
+	local touchTargetHeight = if UserInputService.TouchEnabled then 0.92 else 0.42
+	local sliderInputEvents = {
+		[Roact.Event.InputBegan] = function(obj, input)
+			if not isEnabledRef.value then
+				return
+			end
+
+			if activeSliderOwner ~= nil and activeSliderOwner ~= sliderOwnerRef.value then
+				return
+			end
+
+			if
+				input.UserInputType == Enum.UserInputType.MouseButton1
+				or input.UserInputType == Enum.UserInputType.Touch
+			then
+				activeSliderOwner = sliderOwnerRef.value
+				activeInputRef.value = input
+				activeSliderFrameRef.value = obj
+				isMouseDraggingRef.value = input.UserInputType == Enum.UserInputType.MouseButton1
+				setIsDragging(true)
+				updateValue(input, obj)
+			end
+		end,
+	}
+	local function withSliderInputEvents(props)
+		for event, handler in pairs(sliderInputEvents) do
+			props[event] = handler
+		end
+
+		return props
+	end
+
+	useEffect(function()
+		local inputChangedConnection = UserInputService.InputChanged:Connect(function(input)
+			local sliderFrame = activeSliderFrameRef.value
+			if sliderFrame == nil then
+				return
+			end
+
+			if input == activeInputRef.value or (isMouseDraggingRef.value and input.UserInputType == Enum.UserInputType.MouseMovement) then
+				updateValue(input, sliderFrame)
+			end
+		end)
+
+		local inputEndedConnection = UserInputService.InputEnded:Connect(function(input)
+			local sliderFrame = activeSliderFrameRef.value
+			if sliderFrame == nil then
+				return
+			end
+
+			if input == activeInputRef.value or (isMouseDraggingRef.value and input.UserInputType == Enum.UserInputType.MouseButton1) then
+				updateValue(input, sliderFrame)
+				stopDragging()
+			end
+		end)
+
+		return function()
+			if activeSliderOwner == sliderOwnerRef.value then
+				activeSliderOwner = nil
+			end
+
+			inputChangedConnection:Disconnect()
+			inputEndedConnection:Disconnect()
+		end
+	end, {})
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -182,34 +270,6 @@ return function(params: {})
 			BackgroundColor3 = Color3.fromHex("000000"),
 			BackgroundTransparency = if isEnabled then 0.5 else 0.75,
 			ZIndex = zIndex + 1,
-			[Roact.Event.InputBegan] = function(obj, input)
-				if
-					input.UserInputType == Enum.UserInputType.MouseButton1
-					or input.UserInputType == Enum.UserInputType.Touch
-				then
-					setIsDragging(true)
-					updateValue(input, obj)
-				end
-			end,
-			[Roact.Event.InputChanged] = function(obj, input)
-				if
-					isDragging
-					and (
-						input.UserInputType == Enum.UserInputType.MouseMovement
-						or input.UserInputType == Enum.UserInputType.Touch
-					)
-				then
-					updateValue(input, obj)
-				end
-			end,
-			[Roact.Event.InputEnded] = function(_, input)
-				if
-					input.UserInputType == Enum.UserInputType.MouseButton1
-					or input.UserInputType == Enum.UserInputType.Touch
-				then
-					setIsDragging(false)
-				end
-			end,
 		}, {
 			UICorner = Roact.createElement("UICorner", {
 				CornerRadius = UDim.new(0, 4),
@@ -253,6 +313,19 @@ return function(params: {})
 				}),
 			}),
 		}),
+
+		TouchTarget = Roact.createElement("ImageButton", withSliderInputEvents({
+			-- Larger transparent hitbox keeps the slider easy to drag on mobile.
+			AnchorPoint = Vector2.new(0, 0.5),
+			Position = UDim2.fromScale(0.04, 0.68),
+			Size = UDim2.fromScale(0.7, touchTargetHeight),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			ImageTransparency = 1,
+			AutoButtonColor = false,
+			Active = true,
+			ZIndex = zIndex + 4,
+		})),
 
 		Toggle = makeToggleButton({
 			enabled = isEnabled,

@@ -242,7 +242,7 @@ return function(params: {})
 			BackgroundTransparency = 0.25,
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundColor3 = Color3.fromHex("000000"),
-			ZIndex = 2,
+			ZIndex = 3,
 			BorderSizePixel = 0,
 			Size = UDim2.fromScale(1, 1), -- only covers map area, not the buy button
 		}, {

@@ -21,6 +21,7 @@ local UIHighlighter = require(script.Parent.Parent.Modules.UIHighlighter)
 -- Controllers
 local NotificationController
 local FightController
+local DataCacheController
 
 -- Services
 local DataService
@@ -50,6 +51,7 @@ local isAdvancing = false
 
 local _winsCache = 0
 local _allBossBeaten = false
+local _zone2Price = nil
 
 -- Consts
 local ARROW_SPAWN_RATE = 0.25 -- in sec
@@ -104,7 +106,7 @@ local TUTORIAL_STEPS = {
 		Target = 150,
 	},
 	[5] = {
-		Text = "Gain 50 Wins by defeating the goalies!",
+		Text = "Gain 10 Wins by defeating the goalies!",
 		ArrowTarget = function()
 			local PenaltyZone = workspace.Area01
 				:FindFirstChild("PenaltyZone")
@@ -113,7 +115,7 @@ local TUTORIAL_STEPS = {
 				:WaitForChild("Pivot", 10)
 			return PenaltyZone
 		end,
-		Target = 50,
+		Target = 10,
 	},
 	[6] = {
 		Text = "Buy a player to increase your Wins gain!",
@@ -140,7 +142,8 @@ local TUTORIAL_STEPS = {
 		end,
 		Target = 0,
 		Condition = function()
-			return _winsCache >= 1_000 and _allBossBeaten
+			-- return _winsCache >= _zone2Price and _allBossBeaten
+			return _winsCache >= _zone2Price
 		end,
 	},
 }
@@ -577,6 +580,10 @@ end
 function TutorialController:KnitStart()
 	NotificationController = Knit.GetController("NotificationController")
 	FightController = Knit.GetController("FightController")
+	DataCacheController = Knit.GetController("DataCacheController")
+	local template = DataCacheController:GetFile("Template")
+
+	_zone2Price = template.Areas.Zone2.Price or 100
 
 	DataService:GetData(player):andThen(function(data)
 		if not data.TutorialComplete then

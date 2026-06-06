@@ -595,7 +595,7 @@ function PetsService:KnitInit()
 		end)
 	end
 
-	FightService.OnFightStarted:Connect(function(player)
+	FightService.OnBeforeFightTeleport:Connect(function(player)
 		self:UnequipPetsForFight(player)
 	end)
 

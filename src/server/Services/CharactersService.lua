@@ -28,11 +28,7 @@ local function getPreviousRegularCharacterId(charactersTemplate: table, id: numb
 	local previousId = nil
 
 	for characterId, characterEntry in pairs(charactersTemplate) do
-		if
-			type(characterId) == "number"
-			and characterId < id
-			and isRegularPurchasableCharacter(characterEntry)
-		then
+		if type(characterId) == "number" and characterId < id and isRegularPurchasableCharacter(characterEntry) then
 			if previousId == nil or characterId > previousId then
 				previousId = characterId
 			end
@@ -197,7 +193,7 @@ function CharactersService:Buy(player: Player, id: number, bypassPrice: boolean?
 		if previousCharacterId ~= nil and not table.find(data.Characters.Unlocked, previousCharacterId) then
 			local previousCharacter = self.Template.Characters[previousCharacterId]
 			local previousCharacterName = previousCharacter
-				and (previousCharacter.DisplayName or previousCharacter.Name)
+					and (previousCharacter.DisplayName or previousCharacter.Name)
 				or "previous character"
 
 			return {
@@ -321,13 +317,24 @@ function CharactersService:KnitInit()
 end
 
 function CharactersService:KnitStart()
-	for _, player in pairs(Players:GetPlayers()) do
-		self:Setup(player)
+	local function trackPlayer(player)
+		player.CharacterAdded:Connect(function(character)
+			if self.IsChanging[player] then
+				return
+			end
+			self:Setup(player)
+		end)
+
+		if player.Character then
+			self:Setup(player)
+		end
 	end
 
-	Players.PlayerAdded:Connect(function(player)
-		self:Setup(player)
-	end)
+	for _, player in pairs(Players:GetPlayers()) do
+		trackPlayer(player)
+	end
+
+	Players.PlayerAdded:Connect(trackPlayer)
 
 	Players.PlayerRemoving:Connect(function(player)
 		self.IsChanging[player] = nil

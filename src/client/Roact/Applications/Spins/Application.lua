@@ -137,7 +137,7 @@ function Spins(_, hooks)
 	}, {
 		Content = Blue_Background({
 			title = "Spin Wheels",
-			titleIcon = UI.Rewards or UI.Spin_Wheel or "",
+			titleIcon = UI.Spin_Wheel or "",
 			size = UDim2.fromScale(0.7, 0.7),
 			pos = UDim2.fromScale(0.5, 0.5),
 			ratio = 1.6,

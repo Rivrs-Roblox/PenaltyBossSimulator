@@ -31,6 +31,10 @@ local Frames = script.Parent.Frames
 local VolumeSlider = require(Frames.Slider)
 local Item = require(Frames.Item)
 
+-- UI
+local DataCacheController = Knit.GetController("DataCacheController")
+local UI = DataCacheController:GetFile("Images")
+
 local SETTINGS_ICON = "rbxassetid://125225286754597"
 local AMBIENTS_ICON = "rbxassetid://126045313881885"
 local MUSIC_ICON = "rbxassetid://135360238783529"
@@ -163,7 +167,7 @@ function Settings(_, hooks)
 	}, {
 		Content = Blue_Background({
 			title = "Settings",
-			titleIcon = SETTINGS_ICON,
+			titleIcon = UI.Settings or SETTINGS_ICON,
 			size = panelSize,
 			pos = UDim2.fromScale(0.5, 0.5),
 			ratio = 1,

@@ -43,6 +43,9 @@ local UIController = Knit.GetController("UIController")
 -- UI
 local UI = DataCacheController:GetFile("Images")
 
+local EMPTY_BOTTOM_ROWS = 2
+local FRIEND_COLUMNS = 2
+
 local function CloseButton()
 	return Roact.createElement("ImageButton", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -209,7 +212,7 @@ function Friends(_, hooks)
 
 	local sortedFriend = SortOnlineFriend(FriendsReducer.Friends)
 
-	for i, infos in pairs(sortedFriend) do
+	for i, infos in ipairs(sortedFriend) do
 		if table.find(FriendsReducer.InvitedFriends, infos.Id) == nil then
 			friends[i] = Friend({
 				id = infos.Id,
@@ -223,6 +226,53 @@ function Friends(_, hooks)
 	end
 
 	local friendsCount = GetTableLength(friends)
+	local friendListChildren = {}
+
+	for key, friend in pairs(friends) do
+		friendListChildren["Friend_" .. tostring(key)] = friend
+	end
+
+	if friendsCount > 0 then
+		for i = 1, EMPTY_BOTTOM_ROWS * FRIEND_COLUMNS do
+			friendListChildren["BottomSpacer_" .. i] = Roact.createElement("Frame", {
+				BackgroundTransparency = 1,
+				BorderSizePixel = 0,
+				LayoutOrder = 999999 + i,
+				ZIndex = 1,
+			})
+		end
+	end
+
+	friendListChildren.UIPadding = Roact.createElement("UIPadding", {
+		PaddingTop = UDim.new(0.01, 0),
+		PaddingBottom = UDim.new(0.05, 0),
+	})
+
+	friendListChildren.Grid = Roact.createElement("UIGridLayout", {
+		CellPadding = UDim2.fromScale(0.027, 0.1),
+		CellSize = UDim2.fromScale(0.46, 0.4),
+		FillDirectionMaxCells = FRIEND_COLUMNS,
+		HorizontalAlignment = Enum.HorizontalAlignment.Center,
+		SortOrder = Enum.SortOrder.LayoutOrder,
+	})
+
+	friendListChildren.NoFriends = Roact.createElement("Frame", {
+		BackgroundTransparency = 1,
+		LayoutOrder = 2,
+		Size = UDim2.fromScale(1, 0.4),
+		Visible = friendsCount == 0,
+		ZIndex = 4,
+	}, {
+		Text = Text({
+			text = "You've invited all your friends ! 🙁",
+			color = Color3.fromHex("ffffff"),
+			position = UDim2.fromScale(0.5, 0.5),
+			size = UDim2.fromScale(0.9, 0.35),
+			stroke = 1.5,
+			strokeColor = Color3.fromHex("15284c"),
+			index = 5,
+		}),
+	})
 
 	return Roact.createElement("Frame", {
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -263,39 +313,7 @@ function Friends(_, hooks)
 				ScrollingDirection = Enum.ScrollingDirection.Y,
 				Size = UDim2.fromScale(0.95, 0.428),
 				ZIndex = 3,
-			}, {
-				UIPadding = Roact.createElement("UIPadding", {
-					PaddingTop = UDim.new(0.05, 0),
-					PaddingBottom = UDim.new(0.05, 0),
-				}),
-				Grid = Roact.createElement("UIGridLayout", {
-					CellPadding = UDim2.fromScale(0.027, 0.1),
-					CellSize = UDim2.fromScale(0.46, 0.4),
-					FillDirectionMaxCells = 2,
-					HorizontalAlignment = Enum.HorizontalAlignment.Center,
-					SortOrder = Enum.SortOrder.LayoutOrder,
-				}),
-
-				Roact.createFragment(friends),
-
-				NoFriends = Roact.createElement("Frame", {
-					BackgroundTransparency = 1,
-					LayoutOrder = 2,
-					Size = UDim2.fromScale(1, 0.4),
-					Visible = friendsCount == 0,
-					ZIndex = 4,
-				}, {
-					Text = Text({
-						text = "You've invited all your friends ! 🙁",
-						color = Color3.fromHex("ffffff"),
-						position = UDim2.fromScale(0.5, 0.5),
-						size = UDim2.fromScale(0.9, 0.35),
-						stroke = 1.5,
-						strokeColor = Color3.fromHex("15284c"),
-						index = 5,
-					}),
-				}),
-			}),
+			}, friendListChildren),
 		}),
 	})
 end

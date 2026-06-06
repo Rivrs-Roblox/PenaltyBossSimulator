@@ -7,7 +7,7 @@ return table.freeze({
 		[3] = "Completed 120 Power Training",
 		[4] = "Completed Buy Coach",
 		[5] = "Completed 150 Power Training",
-		[6] = "Completed 50 Wins Challenge",
+		[6] = "Completed 10 Wins Challenge",
 		[7] = "Completed Buy Player",
 		[8] = "Completed Pet Hatching",
 		[9] = "Unlocked New Zone (Tutorial End)",

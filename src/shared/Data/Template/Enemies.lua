@@ -1,12 +1,12 @@
 return table.freeze({
-	["Tutorial"] = { Name = "Mateus", Power = 30, Reward = 25 },
+	["Tutorial"] = { Name = "Mateus", Power = 30, Reward = 1 },
 
 	["Area01"] = {
 		["Boss 1"] = { Name = "Mateus", Power = 100, Reward = 1 },
 		["Boss 2"] = { Name = "Caio", Power = 3_636, Reward = 2 },
 		["Boss 3"] = { Name = "Vinicius", Power = 12_004, Reward = 4 },
 		["Boss 4"] = { Name = "Thiago", Power = 55_652, Reward = 8 },
-		["Boss 5"] = { Name = "Edarsun Moras", Power = 169_401, Reward = 16 },
+		["Boss 5"] = { Name = "Edarsun Moras", Power = 135_521, Reward = 16 },
 	},
 
 	["Area02"] = {
@@ -80,5 +80,4 @@ return table.freeze({
 		["Boss 4"] = { Name = "John", Power = 2_475_074_513_137_670, Reward = 145_907_058_040 },
 		["Boss 5"] = { Name = "Gordan Kickferdo", Power = 5_493_271_326_935_570, Reward = 291_814_116_080 },
 	},
-
 })

@@ -52,7 +52,7 @@ Preloader.ControllersLoadedSignal:Connect(function()
 end)
 
 Preloader.EndPreloaderSignal:Connect(function(bool)
-
+	Players.LocalPlayer:SetAttribute("PreloaderFinished", true)
 	-- Handle teleportation or any other post-loading logic here
 	--[[local TeleportationService = KnitClient.GetService("TeleportationService")
 	TeleportationService:HandlePlayerSpawn()]]

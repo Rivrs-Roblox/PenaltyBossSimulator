@@ -360,7 +360,7 @@ function RightFrame(_, hooks)
 			}),
 
 			Rewards = UIButton({
-				icon = UI.Gift,
+				icon = UI.Rewards,
 				text = "Rewards",
 				order = 1,
 				frame = FramesConstants.Rewards,

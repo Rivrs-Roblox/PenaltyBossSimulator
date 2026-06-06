@@ -326,7 +326,7 @@ function CoachesService:KnitInit()
 		end)
 	end
 
-	FightService.OnFightStarted:Connect(function(player)
+	FightService.OnBeforeFightTeleport:Connect(function(player)
 		local data = DataService:GetData(player)
 		if data == nil then
 			return

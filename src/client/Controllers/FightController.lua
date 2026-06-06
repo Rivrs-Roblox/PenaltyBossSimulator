@@ -808,7 +808,13 @@ function FightController:StartPenaltyRound(wave)
 	if wave == 1 then
 		-- Boss Cinematic Intro
 		local goalieModel = GoalieController:GetGoalieModel()
-		if goalieModel then
+		local bossId = self.CurrentArea and self.BossIndex and (self.CurrentArea .. "_" .. self.BossIndex)
+		local alreadyPlayed = bossId and self.PlayedCinematics[bossId]
+
+		if goalieModel and not alreadyPlayed then
+			if bossId then
+				self.PlayedCinematics[bossId] = true
+			end
 			self:PlayBossCinematicIntro(goalieModel, function()
 				self:SetupPenaltyRound()
 			end)
@@ -1079,6 +1085,7 @@ end
 function FightController:KnitStart()
 	self.Template = DataCacheController:GetFile("Template")
 	self.ShootAnimationData = DataCacheController:GetFile("ShootAnimationData")
+	self.PlayedCinematics = {}
 
 	-- Preload assets
 	self:PreloadNecessaryAssets()
@@ -1173,7 +1180,7 @@ function FightController:KnitStart()
 
 	FightService.WaveUpdated:Connect(function(wave)
 		if wave == "Cleared" then
-			FightUIController:PlaySuccessText("ALL GOALIES BEATEN!")
+			FightUIController:PlaySuccessText("YOU WIN!")
 			CameraController:CameraInFrontOfPlayer()
 			self:PlayResultAnimation("Win")
 		elseif wave == "Lost" then
@@ -1244,7 +1251,17 @@ function FightController:KnitStart()
 
 		if data.TutorialStep == 1 then
 			if area == "Area01" then
-				self:StartFight(area)
+				task.spawn(function()
+					if not game:IsLoaded() then
+						game.Loaded:Wait()
+					end
+					local character = player.Character or player.CharacterAdded:Wait()
+					character:WaitForChild("HumanoidRootPart")
+					if not player:GetAttribute("PreloaderFinished") then
+						player:GetAttributeChangedSignal("PreloaderFinished"):Wait()
+					end
+					self:StartFight(area)
+				end)
 			end
 		end
 	end

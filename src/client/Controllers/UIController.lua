@@ -396,34 +396,34 @@ function UIController:BuyArea(area)
 			return
 		end
 
-		-- Check if player has beaten all bosses in the previous zone
-		local prevAreaId = string.format("Area%02d", lastUnlockedNumber)
-		local enemies = self.Template and self.Template.Enemies
-		local areaEnemies = enemies and enemies[prevAreaId]
+		-- -- Check if player has beaten all bosses in the previous zone
+		-- local prevAreaId = string.format("Area%02d", lastUnlockedNumber)
+		-- local enemies = self.Template and self.Template.Enemies
+		-- local areaEnemies = enemies and enemies[prevAreaId]
 
-		if areaEnemies then
-			local maxBossCount = 0
-			for enemyKey, _ in pairs(areaEnemies) do
-				local bIndex = tonumber(string.match(enemyKey, "Boss%s+(%d+)"))
-					or tonumber(string.match(enemyKey, "MiniBoss%s+(%d+)"))
-				if bIndex and bIndex > maxBossCount then
-					maxBossCount = bIndex
-				elseif enemyKey == "Boss" and 5 > maxBossCount then
-					maxBossCount = 5
-				end
-			end
+		-- if areaEnemies then
+		-- 	local maxBossCount = 0
+		-- 	for enemyKey, _ in pairs(areaEnemies) do
+		-- 		local bIndex = tonumber(string.match(enemyKey, "Boss%s+(%d+)"))
+		-- 			or tonumber(string.match(enemyKey, "MiniBoss%s+(%d+)"))
+		-- 		if bIndex and bIndex > maxBossCount then
+		-- 			maxBossCount = bIndex
+		-- 		elseif enemyKey == "Boss" and 5 > maxBossCount then
+		-- 			maxBossCount = 5
+		-- 		end
+		-- 	end
 
-			local progress = data.BossProgress and data.BossProgress[prevAreaId] or 0
-			if progress < maxBossCount then
-				NotificationController:Notify({
-					tag = "BuyArea",
-					text = "You must beat all bosses in the previous zone first!",
-					type = "ERROR",
-				})
-				blockBuyArea = false
-				return
-			end
-		end
+		-- 	local progress = data.BossProgress and data.BossProgress[prevAreaId] or 0
+		-- 	if progress < maxBossCount then
+		-- 		NotificationController:Notify({
+		-- 			tag = "BuyArea",
+		-- 			text = "You must beat all bosses in the previous zone first!",
+		-- 			type = "ERROR",
+		-- 		})
+		-- 		blockBuyArea = false
+		-- 		return
+		-- 	end
+		-- end
 
 		if data.Wins >= area.Price then
 			DataService:AddArea(area.Id)
