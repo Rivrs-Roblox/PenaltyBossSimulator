@@ -1,46 +1,46 @@
 return table.freeze({
 	[1] = {
 		Image = "Wins",
-		Name = "15 Wins",
+		Name = "100 Wins",
 		Reward = "Currency",
 		Currency = "Wins",
-		Amount = 15,
+		Amount = 100,
 		Claimed = false,
 	},
 
 	[2] = {
-		Image = "Sergeant",
-		Name = "1 Sergeant",
+		Image = "Flamingo",
+		Name = "1 Flamingo",
 		Reward = "Pets",
-		Pet = "Sergeant",
+		Pet = "Flamingo",
 		Amount = 1,
 		Claimed = false,
 	},
 
 	[3] = {
 		Image = "Money2",
-		Name = "100k MONEY_2",
+		Name = "10K Power",
 		Reward = "Currency",
 		Currency = "Money2",
-		Amount = 100_000,
+		Amount = 10_000,
 		Claimed = false,
 	},
 
 	[4] = {
 		Image = "Wins",
-		Name = "50k Wins",
+		Name = "25K Wins",
 		Reward = "Currency",
 		Currency = "Wins",
-		Amount = 50_000,
+		Amount = 25_000,
 		Claimed = false,
 	},
 
 	[5] = {
 		Image = "Money2",
-		Name = "1m MONEY_2",
+		Name = "250K Power",
 		Reward = "Currency",
 		Currency = "Money2",
-		Amount = 1_000_000,
+		Amount = 250_000,
 		Claimed = false,
 	},
 
@@ -54,10 +54,10 @@ return table.freeze({
 	},
 
 	[7] = {
-		Image = "DavidBekam_UI",
-		Name = "David Bekam",
-		Reward = "Character",
-		Character = "David Bekam",
+		Image = "IceDragonRifle_UI",
+		Name = "Ice Dragon Rifle",
+		Reward = "Weapon",
+		Weapon = "Ice Dragon Rifle",
 		Amount = 1,
 		Claimed = false,
 	},

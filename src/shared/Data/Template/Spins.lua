@@ -1,16 +1,16 @@
 return table.freeze({
 	["Free"] = {
 		[1] = {
-			Name = "+100 MONEY_2",
+			Name = "+500 MONEY_2",
 			Reward = "Money2",
-			Amount = 100,
+			Amount = 500,
 			Chance = 50,
 		},
 
 		[2] = {
-			Name = "+40 Win",
+			Name = "+50 Win",
 			Reward = "Wins",
-			Amount = 40,
+			Amount = 50,
 			Chance = 40,
 		},
 

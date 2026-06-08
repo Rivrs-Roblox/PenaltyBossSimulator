@@ -15,7 +15,7 @@ return {
 		Currency = "Money2",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(25)} MONEY2`, 25 },
+			Zone1 = { `x{FormatNumber(500)} MONEY2`, 500 },
 			Zone2 = { `x{FormatNumber(50)} MONEY2`, 50 },
 			Zone3 = { `x{FormatNumber(225)} MONEY2`, 225 },
 			Zone4 = { `x{FormatNumber(11250)} MONEY2`, 11250 },
@@ -47,7 +47,7 @@ return {
 		Currency = "Wins",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(5)} Wins`, 5 },
+			Zone1 = { `x{FormatNumber(20)} Wins`, 20 },
 			Zone2 = { `x{FormatNumber(10)} Wins`, 10 },
 			Zone3 = { `x{FormatNumber(25)} Wins`, 25 },
 			Zone4 = { `x{FormatNumber(50)} Wins`, 50 },
@@ -79,7 +79,7 @@ return {
 		Currency = "Money2",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(25)} MONEY2`, 25 },
+			Zone1 = { `x{FormatNumber(5_000)} MONEY2`, 5_000 },
 			Zone2 = { `x{FormatNumber(500)} MONEY2`, 500 },
 			Zone3 = { `x{FormatNumber(2250)} MONEY2`, 2250 },
 			Zone4 = { `x{FormatNumber(112500)} MONEY2`, 112500 },
@@ -143,7 +143,7 @@ return {
 		Currency = "Wins",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(10)} Wins`, 10 },
+			Zone1 = { `x{FormatNumber(200)} Wins`, 200 },
 			Zone2 = { `x{FormatNumber(20)} Wins`, 20 },
 			Zone3 = { `x{FormatNumber(50)} Wins`, 50 },
 			Zone4 = { `x{FormatNumber(100)} Wins`, 100 },
@@ -241,7 +241,7 @@ return {
 		Currency = "Money2",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(5_000)} MONEY2`, 125 },
+			Zone1 = { `x{FormatNumber(50_000)} MONEY2`, 50_000 },
 			Zone2 = { `x{FormatNumber(100_000)} MONEY2`, 2500 },
 			Zone3 = { `x{FormatNumber(2_000_000)} MONEY2`, 11250 },
 			Zone4 = { `x{FormatNumber(40_000_000)} MONEY2`, 562500 },
@@ -273,7 +273,7 @@ return {
 		Currency = "Money2",
 
 		Areas = {
-			Zone1 = { `x{FormatNumber(250)} MONEY2`, 250 },
+			Zone1 = { `x{FormatNumber(5_000_000)} MONEY2`, 5_000_000 },
 			Zone2 = { `x{FormatNumber(5000)} MONEY2`, 5000 },
 			Zone3 = { `x{FormatNumber(22500)} MONEY2`, 22500 },
 			Zone4 = { `x{FormatNumber(1125000)} MONEY2`, 1125000 },
