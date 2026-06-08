@@ -60,7 +60,7 @@ return {
 
 	["SpottedEgg"] = {
 		["Name"] = "Spotted Egg",
-		["Price"] = 80,
+		["Price"] = 30,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Duck"] = {
@@ -115,7 +115,7 @@ return {
 
 	["JuvenileEgg"] = {
 		["Name"] = "Juvenile Egg",
-		["Price"] = 40_000,
+		["Price"] = 11_250,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Fox"] = {
@@ -170,7 +170,7 @@ return {
 	-- Third Area
 	["SushiEgg"] = {
 		["Name"] = "Sushi Egg",
-		["Price"] = 40_000,
+		["Price"] = 3_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Fox"] = {
@@ -198,7 +198,7 @@ return {
 	-- Fourth area
 	["CowboyEgg"] = {
 		["Name"] = "Cowboy Egg",
-		["Price"] = 500_000,
+		["Price"] = 1_200_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Mouse"] = {
@@ -226,7 +226,7 @@ return {
 	-- Fifth area
 	["DamierEgg"] = {
 		["Name"] = "Damier Egg",
-		["Price"] = 4_000_000,
+		["Price"] = 480_000_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Alien"] = {
@@ -254,7 +254,7 @@ return {
 	-- Sixth area
 	["SombreroEgg"] = {
 		["Name"] = "Sombrero Egg",
-		["Price"] = 100_000_000,
+		["Price"] = 94_500_000_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Monkey"] = {
@@ -283,7 +283,7 @@ return {
 
 	["SkaterEgg"] = {
 		["Name"] = "Skater Egg",
-		["Price"] = 50_000_000_000,
+		["Price"] = 2.4e16,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Donkey"] = {
@@ -311,7 +311,7 @@ return {
 	-- Eighth area
 	["MafiaEgg"] = {
 		["Name"] = "Mafia Egg",
-		["Price"] = 2_000_000_000_000,
+		["Price"] = 7.2e18,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Pancat"] = {
@@ -339,7 +339,7 @@ return {
 	-- Ninth area
 	["CoconutEgg"] = {
 		["Name"] = "Coconut Egg",
-		["Price"] = 200_000_000_000_000,
+		["Price"] = 1.88571e21,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Zombie"] = {
@@ -367,7 +367,7 @@ return {
 	-- Tenth area
 	["HooliganEgg"] = {
 		["Name"] = "Hooligan Egg",
-		["Price"] = 800_000_000_000_000,
+		["Price"] = 2.07429e23,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Bull"] = {
