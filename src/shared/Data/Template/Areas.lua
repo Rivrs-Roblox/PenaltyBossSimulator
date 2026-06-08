@@ -11,7 +11,7 @@ return table.freeze({
 		Id = "Zone2",
 		Name = "Argentina Streets",
 		Image = "rbxassetid://98983795835460",
-		Price = 110,
+		Price = 4800,
 		Order = 2,
 	},
 
@@ -19,7 +19,7 @@ return table.freeze({
 		Id = "Zone3",
 		Name = "Japan School Stadium",
 		Image = "rbxassetid://115000417483751",
-		Price = 433,
+		Price = 11250000,
 		Order = 3,
 	},
 
@@ -27,7 +27,7 @@ return table.freeze({
 		Id = "Zone4",
 		Name = "USA Training Arena",
 		Image = "rbxassetid://86427168704177",
-		Price = 244_473,
+		Price = 4500000000,
 		Order = 4,
 	},
 
@@ -35,7 +35,7 @@ return table.freeze({
 		Id = "Zone5",
 		Name = "Germany Arena",
 		Image = "rbxassetid://95556806161480",
-		Price = 4_542_819,
+		Price = 3000000000000,
 		Order = 5,
 	},
 
@@ -43,7 +43,7 @@ return table.freeze({
 		Id = "Zone6",
 		Name = "Spain Stadium",
 		Image = "rbxassetid://73320902333206",
-		Price = 46_308_566,
+		Price = 1800000000000000,
 		Order = 6,
 	},
 
@@ -51,7 +51,7 @@ return table.freeze({
 		Id = "Zone7",
 		Name = "France Arena",
 		Image = "rbxassetid://113028043759482",
-		Price = 509_856_227,
+		Price = 567000000000000000,
 		Order = 7,
 	},
 
@@ -59,7 +59,7 @@ return table.freeze({
 		Id = "Zone8",
 		Name = "Italy Colosseum Arena",
 		Image = "rbxassetid://85699866242264",
-		Price = 16_316_154_319,
+		Price = 210000000000000000000,
 		Order = 8,
 	},
 
@@ -67,7 +67,7 @@ return table.freeze({
 		Id = "Zone9",
 		Name = "Qatar World Arena",
 		Image = "rbxassetid://96065852643818",
-		Price = 712_541_624_973,
+		Price = 86400000000000000000000,
 		Order = 9,
 	},
 
@@ -75,8 +75,7 @@ return table.freeze({
 		Id = "Zone10",
 		Name = "Wembley Stadium",
 		Image = "rbxassetid://139905020731359",
-		Price = 38_750_711_201_683,
+		Price = 29700000000000000000000000,
 		Order = 10,
 	},
-
 })
