@@ -77,6 +77,7 @@ local DataService = Knit.CreateService({
 	},
 
 	PowerUpdatedSignal = Signal.new(),
+	PowerDecreasedSignal = Signal.new(),
 })
 
 -- Constants
@@ -251,6 +252,7 @@ function DataService:GetWinsPackAmount(player: Player, pack: string)
 		["Zone9"]  = 2.97e25,
 		["Zone10"] = 2.97e25,
 	}
+	local PACKS_BASE = self.Template.WinsPacks
 
 	local MULTIPLIERS = { SMALL = 1, REGULAR = 4, BIG = 16, HUGE = 192 }
 
@@ -263,7 +265,11 @@ function DataService:GetWinsPackAmount(player: Player, pack: string)
 	local nextCost = NEXT_ZONE_COST[currentZone] or NEXT_ZONE_COST["Zone10"]
 	local small = nextCost * 0.028
 
-	return math.round(small * MULTIPLIERS[pack] * (1 + 1.1 * data.Rebirth))
+	-- return math.round(small * MULTIPLIERS[pack] * (1 + 1.1 * data.Rebirth))
+	return math.round(
+		PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack]
+			+ PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack] * (0.2 * data.Rebirth)
+	)
 end
 
 -- Edit value in player data & leaderstats
@@ -326,6 +332,15 @@ function DataService:ChangeValue(player: Player, key: string, value: number, can
 	self:_updateLeaderStats(player)
 
 	return value
+end
+
+function DataService:FirePowerDecreased(player: Player, source: string?)
+	local data = self:GetData(player)
+	if data == nil then
+		return
+	end
+
+	self.PowerDecreasedSignal:Fire(player, data.Money2, source)
 end
 
 function DataService:ChangeValueRebirth(player: Player)
