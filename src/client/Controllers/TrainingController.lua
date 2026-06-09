@@ -17,6 +17,8 @@ local Zone = require(ReplicatedStorage.Shared.ZonePlus)
 -- Services
 local TrainingService
 local BallService
+local DataService
+local MonetizationService
 
 -- Controllers
 local NotificationController
@@ -24,6 +26,7 @@ local AutoController
 local CharactersController
 local TrailsController
 local FightController
+local DataCacheController
 
 -- Player
 local player = Players.LocalPlayer
@@ -59,6 +62,10 @@ local goalPulseCache = setmetatable({}, { __mode = "k" })
 local currentTrainingShotId
 local lastGoalPulseShotId
 local isTrainingProjectileActive = false
+local trainingAreasData
+local UIImages
+local localPlayerPower: number?
+local localPlayerGamepasses = {}
 
 local HOLD_DURATION = 0.5
 local COOLDOWN_TIME = 0.45
@@ -93,6 +100,94 @@ end
 
 local function getCurrentTrainingAnimationData()
 	return getTrainingAnimationData(getTrainingAreaIndex(currentTrainingArea))
+end
+
+local function hasGamepass(name: string): boolean
+	return table.find(localPlayerGamepasses, name) ~= nil
+end
+
+local function getTrainingAreaData(trainingArea: Instance?)
+	if not trainingArea or not trainingAreasData then
+		return nil
+	end
+
+	local area = trainingArea:GetAttribute("Area")
+	local index = trainingArea:GetAttribute("Index")
+	local areaData = trainingAreasData[area]
+	if not areaData then
+		return nil
+	end
+
+	return areaData[index]
+end
+
+local function getTrainingRequirementBillboard(trainingArea: Instance?)
+	local areaParent = trainingArea and trainingArea.Parent
+	local requirement = areaParent and areaParent:FindFirstChild("Requirement")
+	return requirement and requirement:FindFirstChild("BillboardGui")
+end
+
+local function getTrainingPowerImage(trainingArea: Instance?)
+	local billboard = getTrainingRequirementBillboard(trainingArea)
+	if not billboard then
+		return nil
+	end
+
+	local powerImage = billboard:FindFirstChild("PowerImage", true)
+	if powerImage and (powerImage:IsA("ImageLabel") or powerImage:IsA("ImageButton")) then
+		return powerImage
+	end
+
+	return nil
+end
+
+local function updateTrainingAreaRequirementIcon(trainingArea: Instance?)
+	if localPlayerPower == nil or not UIImages then
+		return
+	end
+
+	local areaData = getTrainingAreaData(trainingArea)
+	local powerImage = getTrainingPowerImage(trainingArea)
+	if not areaData or not powerImage then
+		return
+	end
+
+	if powerImage:GetAttribute("TrainingUnlockedImage") == nil then
+		powerImage:SetAttribute("TrainingUnlockedImage", powerImage.Image)
+	end
+
+	local originalImage = powerImage:GetAttribute("TrainingUnlockedImage")
+	if typeof(originalImage) ~= "string" then
+		originalImage = powerImage.Image
+	end
+
+	local powerRequirement = tonumber(areaData.PowerRequirement) or 0
+	local unlockedByPower = localPlayerPower >= powerRequirement
+	local unlockedByVip = not areaData.VIP or hasGamepass("VIP")
+
+	if not unlockedByPower or not unlockedByVip then
+		powerImage.Image = UIImages.Lock or originalImage
+	elseif areaData.VIP then
+		powerImage.Image = UIImages.VIP or originalImage
+	else
+		powerImage.Image = UIImages.Money2 or originalImage
+	end
+end
+
+local function updateTrainingAreaRequirementIcons()
+	for _, trainingArea in ipairs(trainingAreas) do
+		updateTrainingAreaRequirementIcon(trainingArea)
+	end
+end
+
+local function setLocalTrainingData(data)
+	if typeof(data) ~= "table" then
+		return
+	end
+
+	localPlayerPower = tonumber(data.Money2) or 0
+	localPlayerGamepasses = data.Gamepasses or {}
+	updateTrainingAreaRequirementIcons()
 end
 
 local function getMaxAnimationSpeed(animData): number
@@ -739,14 +834,16 @@ local function startTrainingAreaVisual(trainingArea)
 	end
 end
 
-local function stopTrainingAreaVisual(trainingArea)
+local function stopTrainingAreaVisual(trainingArea, skipServerStop: boolean?)
 	if trainingArea == nil then
 		print("Training area is nil")
 		return
 	end
 	local index = trainingArea:GetAttribute("Index")
 
-	TrainingService:StopTraining(trainingArea)
+	if not skipServerStop then
+		TrainingService:StopTraining(trainingArea)
+	end
 
 	if index == 1 then
 		--local beam = trainingArea.Parent:FindFirstChild("Beam")
@@ -918,7 +1015,7 @@ function TrainingController:StartTraining(trainingArea, isTransport)
 	requestStart(1)
 end
 
-function TrainingController:StopTraining(trainingArea)
+function TrainingController:StopTraining(trainingArea, skipServerStop: boolean?)
 	--enableMovement()
 	-- showOtherPlayers()
 
@@ -953,7 +1050,7 @@ function TrainingController:StopTraining(trainingArea)
 		setCharacterBallVisual(true)
 	end
 
-	stopTrainingAreaVisual(trainingArea)
+	stopTrainingAreaVisual(trainingArea, skipServerStop)
 
 	if currentTrainingArea then
 		currentTrainingArea = nil
@@ -986,6 +1083,8 @@ end
 function TrainingController:KnitStart()
 	BallService = Knit.GetService("BallService")
 	TrainingService = Knit.GetService("TrainingService")
+	DataService = Knit.GetService("DataService")
+	MonetizationService = Knit.GetService("MonetizationService")
 	TrainingService.InsufficientPower:Connect(function(amount)
 		NotificationController:Notify({
 			tag = "Training",
@@ -994,11 +1093,45 @@ function TrainingController:KnitStart()
 		})
 	end)
 
+	TrainingService.TrainingStopped:Connect(function(trainingArea)
+		if not self.IsTraining and pendingTrainingArea == nil then
+			return
+		end
+
+		if trainingArea ~= nil and currentTrainingArea ~= nil and currentTrainingArea ~= trainingArea then
+			return
+		end
+
+		self:StopTraining(trainingArea or currentTrainingArea or pendingTrainingArea, true)
+	end)
+
 	NotificationController = Knit.GetController("NotificationController")
 	AutoController = Knit.GetController("AutoController")
 	CharactersController = Knit.GetController("CharactersController")
 	TrailsController = Knit.GetController("TrailsController")
 	FightController = Knit.GetController("FightController")
+	DataCacheController = Knit.GetController("DataCacheController")
+
+	trainingAreasData = DataCacheController:GetFile("Template").TrainingAreas
+	UIImages = DataCacheController:GetFile("Images")
+
+	DataService:GetData():andThen(setLocalTrainingData)
+
+	DataService.Money2Updated:Connect(function(value)
+		if localPlayerPower == nil then
+			DataService:GetData():andThen(setLocalTrainingData)
+			return
+		end
+
+		local powerDelta = tonumber(value) or 0
+		localPlayerPower += powerDelta
+		updateTrainingAreaRequirementIcons()
+	end)
+
+	MonetizationService.GamepassesUpdate:Connect(function(gamepasses)
+		localPlayerGamepasses = gamepasses or {}
+		updateTrainingAreaRequirementIcons()
+	end)
 
 	AutoTrainingSignals.AutoTrainingStopped:Connect(function()
 		if currentTrainingArea then
@@ -1094,6 +1227,7 @@ function TrainingController:KnitStart()
 				self:StopTraining(trainingArea)
 			end)
 			table.insert(trainingAreas, trainingArea)
+			updateTrainingAreaRequirementIcon(trainingArea)
 		end
 
 		for _, area in CollectionService:GetTagged("TrainingArea") do

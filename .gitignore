@@ -1,0 +1,26 @@
+~$Penalty_GameData.xlsx
+~$PPS_Simulation.xlsx
+~$Zone_Balance.xlsx
+Balance_Progression_20h.xlsx
+CharacterProgression_50lvl.tsv
+Coach_Progression.xlsx
+CostProgression_Comparison.xlsx
+export_coach.py
+export_pps_simulation.py
+Penalty_GameData.xlsx
+Penalty_GameData_Complete.csv
+PenaltyBoss_PowerProgression.xlsx
+PetProgression.tsv
+PPS_Simulation.xlsx
+Progress 0605.xlsx
+PROGRESSION_BALANCE_PLAN.md
+simulate_balance.py
+SinkProgression_50Lvl.xlsx
+SWORD_PROGRESSION_DATA.md
+TrainingAreas_new.lua
+WinsAllocation.tsv
+WinsEconomy.xlsx
+WinsProgression_50lvl.tsv
+Zone_Balance.xlsx
+__pycache__/simulate_balance.cpython-314.pyc
+src/shared/Data/Template/TrainingAreas_proposed.lua
