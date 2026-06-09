@@ -1355,7 +1355,7 @@ local Pets = {
 
 	["Fire Pony"] = {
 		["Name"] = "Fire Pony",
-		["Power"] = 5_000,
+		["Power"] = 7.8,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1364,7 +1364,7 @@ local Pets = {
 	},
 	["Cloud Whale"] = {
 		["Name"] = "Cloud Whale",
-		["Power"] = 15_000,
+		["Power"] = 26.04,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1373,7 +1373,7 @@ local Pets = {
 	},
 	["Chinese Dragon"] = {
 		["Name"] = "Chinese Dragon",
-		["Power"] = 26_500,
+		["Power"] = 52.92,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
