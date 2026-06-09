@@ -2,6 +2,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 
 -- Knit Packages
 local Knit = require(ReplicatedStorage.Packages.Knit)
@@ -25,6 +26,7 @@ local TrainingAnimationData = require(ReplicatedStorage.Shared.Data.TrainingAnim
 local TrainingAreas
 local TrainingAreasData
 local PlayersInTraining = {}
+local PlayerTrainingAreas = {}
 
 local FACE_DURATION = 1
 local FACE_RESPONSIVENESS = 50
@@ -36,6 +38,7 @@ local TrainingService = Knit.CreateService({
 	Name = "TrainingService",
 	Client = {
 		InsufficientPower = Knit.CreateSignal(),
+		TrainingStopped = Knit.CreateSignal(),
 	},
 })
 
@@ -152,6 +155,15 @@ local function isPlayerRegisteredForTraining(player: Player, trainingArea): bool
 
 	local areaPlayers = PlayersInTraining[trainingArea]
 	return areaPlayers ~= nil and areaPlayers[player] == true
+end
+
+local function getPlayerTrainingArea(player: Player): Instance?
+	local trainingArea = PlayerTrainingAreas[player]
+	if typeof(trainingArea) == "Instance" then
+		return trainingArea
+	end
+
+	return nil
 end
 
 local function getTrainingAreaData(trainingArea)
@@ -370,7 +382,12 @@ function TrainingService:ShootTrainingBall(player: Player, trainingArea, speedMu
 	end
 
 	if not isPlayerPhysicallyInTrainingArea(player, trainingArea) then
-		self:StopTraining(player, trainingArea)
+		self:StopTrainingForReason(player, trainingArea, "Outside")
+		return false
+	end
+
+	if not canPlayerUseTrainingArea(player, trainingArea, false) then
+		self:StopTrainingForReason(player, trainingArea, "PowerDecreased")
 		return false
 	end
 
@@ -402,7 +419,7 @@ function TrainingService:Training(player: Player, trainingArea)
 	end
 
 	if not isPlayerPhysicallyInTrainingArea(player, trainingArea) then
-		self:StopTraining(player, trainingArea)
+		self:StopTrainingForReason(player, trainingArea, "Outside")
 		return false
 	end
 
@@ -414,6 +431,7 @@ function TrainingService:Training(player: Player, trainingArea)
 	local playerData = DataService:GetData(player)
 
 	if not canPlayerUseTrainingArea(player, trainingArea, true) then
+		self:StopTrainingForReason(player, trainingArea, "PowerDecreased")
 		return false
 	end
 
@@ -472,6 +490,7 @@ function TrainingService:StartTraining(player: Player, trainingArea)
 	end
 
 	PlayersInTraining[trainingArea][player] = true
+	PlayerTrainingAreas[player] = trainingArea
 	return {
 		Success = true,
 		Reason = "Started",
@@ -491,6 +510,10 @@ function TrainingService:StopTraining(player: Player, trainingArea)
 	if areaPlayers then
 		areaPlayers[player] = nil
 
+		if PlayerTrainingAreas[player] == trainingArea then
+			PlayerTrainingAreas[player] = nil
+		end
+
 		-- Hapus entri jika sudah kosong
 		if next(areaPlayers) == nil then
 			PlayersInTraining[trainingArea] = nil
@@ -509,6 +532,41 @@ function TrainingService:StopTraining(player: Player, trainingArea)
 	end
 
 	return true
+end
+
+function TrainingService:StopTrainingForReason(player: Player, trainingArea, reason: string?)
+	local wasTraining = isPlayerRegisteredForTraining(player, trainingArea)
+	self:StopTraining(player, trainingArea)
+
+	if wasTraining then
+		self.Client.TrainingStopped:Fire(player, trainingArea, reason)
+	end
+
+	return wasTraining
+end
+
+function TrainingService:StopTrainingIfPowerRequirementFailed(player: Player, currentPower: number?, reason: string?)
+	local trainingArea = getPlayerTrainingArea(player)
+	if not trainingArea then
+		return false
+	end
+
+	local areaData = getTrainingAreaData(trainingArea)
+	if not areaData then
+		return self:StopTrainingForReason(player, trainingArea, reason)
+	end
+
+	local power = tonumber(currentPower)
+	if power == nil then
+		local playerData = DataService:GetData(player)
+		power = playerData and tonumber(playerData.Money2) or 0
+	end
+
+	if power < (tonumber(areaData.PowerRequirement) or 0) then
+		return self:StopTrainingForReason(player, trainingArea, reason)
+	end
+
+	return false
 end
 
 function TrainingService:GetMostEffectiveArea(player: Player)
@@ -561,6 +619,17 @@ function TrainingService:KnitStart()
 	TrainingAreasData = DataCacheService:GetFile("Template").TrainingAreas
 
 	TrainingAreas = CollectionService:GetTagged("TrainingArea")
+
+	DataService.PowerDecreasedSignal:Connect(function(player: Player, currentPower: number, source: string?)
+		self:StopTrainingIfPowerRequirementFailed(player, currentPower, source or "PowerDecreased")
+	end)
+
+	Players.PlayerRemoving:Connect(function(player: Player)
+		local trainingArea = getPlayerTrainingArea(player)
+		if trainingArea then
+			self:StopTraining(player, trainingArea)
+		end
+	end)
 
 	for _, trainingArea in ipairs(TrainingAreas) do
 		local area = trainingArea:GetAttribute("Area")

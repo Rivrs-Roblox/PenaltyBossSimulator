@@ -199,6 +199,10 @@ function CoachesService:Buy(player: Player, id: number, bypassPrice: boolean?)
 	if not bypassPrice and price > 0 then
 		FunnelsModule:LogIGPEconomyEvent(player, currency, price, balance - price, coach.Name)
 		DataService:ChangeValue(player, currency, -price, true)
+
+		if currency == "Money2" then
+			DataService:FirePowerDecreased(player, "Coach")
+		end
 	end
 
 	table.insert(coachesData.Unlocked, id)

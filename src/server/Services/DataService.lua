@@ -77,6 +77,7 @@ local DataService = Knit.CreateService({
 	},
 
 	PowerUpdatedSignal = Signal.new(),
+	PowerDecreasedSignal = Signal.new(),
 })
 
 -- Constants
@@ -237,116 +238,7 @@ end
 
 -- Get the amount of given wins froms packs in the store based on player's rebirths
 function DataService:GetWinsPackAmount(player: Player, pack: string)
-	local PACKS_BASE = {
-		["Zone1"] = {
-			SMALL = 40,
-			REGULAR = 300,
-			BIG = 3000,
-			HUGE = 60000,
-		},
-		["Zone2"] = {
-			SMALL = 600,
-			REGULAR = 4500,
-			BIG = 45000,
-			HUGE = 900000,
-		},
-		["Zone3"] = {
-			SMALL = 9000,
-			REGULAR = 67500,
-			BIG = 675000,
-			HUGE = 13500000,
-		},
-		["Zone4"] = {
-			SMALL = 135000,
-			REGULAR = 1012500,
-			BIG = 10125000,
-			HUGE = 202500000,
-		},
-		["Zone5"] = {
-			SMALL = 2025000,
-			REGULAR = 15187500,
-			BIG = 151875000,
-			HUGE = 3037500000,
-		},
-		["Zone6"] = {
-			SMALL = 30375000,
-			REGULAR = 227812500,
-			BIG = 2278125000,
-			HUGE = 45562500000,
-		},
-		["Zone7"] = {
-			SMALL = 455625000,
-			REGULAR = 3417187500,
-			BIG = 34171875000,
-			HUGE = 683437500000,
-		},
-		["Zone8"] = {
-			SMALL = 6834375000,
-			REGULAR = 51257812500,
-			BIG = 512578125000,
-			HUGE = 10251562500000,
-		},
-		["Zone9"] = {
-			SMALL = 102515625000,
-			REGULAR = 768867187500,
-			BIG = 7688671875000,
-			HUGE = 153773437500000,
-		},
-		["Zone10"] = {
-			SMALL = 1537734375000,
-			REGULAR = 11533007812500,
-			BIG = 115330078125000,
-			HUGE = 2306601562500000,
-		},
-		["Zone11"] = {
-			SMALL = 23066015625000,
-			REGULAR = 172995117187500,
-			BIG = 1729951171875000,
-			HUGE = 34599023437500000,
-		},
-		["Zone12"] = {
-			SMALL = 345990234375000,
-			REGULAR = 2594926757812500,
-			BIG = 25949267578125000,
-			HUGE = 518985351562500000,
-		},
-		["Zone13"] = {
-			SMALL = 5189853515625000,
-			REGULAR = 38923901367187500,
-			BIG = 389239013671875000,
-			HUGE = 7784780273437499400,
-		},
-		["Zone14"] = {
-			SMALL = 77847802734375000,
-			REGULAR = 583858520507812600,
-			BIG = 5838585205078125600,
-			HUGE = 116771704101562482680,
-		},
-		["Zone15"] = {
-			SMALL = 116771704101562510,
-			REGULAR = 875787780761718910,
-			BIG = 8757877807617187800,
-			HUGE = 175157556152343724000,
-		},
-		["Zone16"] = {
-			SMALL = 175157556152343770,
-			REGULAR = 1313681671142578430,
-			BIG = 13136816711425781700,
-			HUGE = 262736334228515586000,
-		},
-		["Zone17"] = {
-			SMALL = 1313681671142578000,
-			REGULAR = 9852612533569338000,
-			BIG = 98526125335693380000,
-			HUGE = 1970522506713867700000,
-		},
-		["Zone18"] = {
-			SMALL = 9852612533569337000,
-			REGULAR = 73894594001770030000,
-			BIG = 738945940017700300000,
-			HUGE = 14789188003540006000000,
-		},
-	}
+	local PACKS_BASE = self.Template.WinsPacks
 
 	local data = self:GetData(player)
 	if data == nil then
@@ -355,7 +247,7 @@ function DataService:GetWinsPackAmount(player: Player, pack: string)
 
 	return math.round(
 		PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack]
-			+ PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack] * (1.1 * data.Rebirth)
+			+ PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack] * (0.2 * data.Rebirth)
 	)
 end
 
@@ -419,6 +311,15 @@ function DataService:ChangeValue(player: Player, key: string, value: number, can
 	self:_updateLeaderStats(player)
 
 	return value
+end
+
+function DataService:FirePowerDecreased(player: Player, source: string?)
+	local data = self:GetData(player)
+	if data == nil then
+		return
+	end
+
+	self.PowerDecreasedSignal:Fire(player, data.Money2, source)
 end
 
 function DataService:ChangeValueRebirth(player: Player)

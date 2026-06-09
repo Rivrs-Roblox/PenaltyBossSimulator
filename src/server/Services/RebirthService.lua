@@ -79,6 +79,7 @@ function RebirthService:Rebirth(player: Player)
 	local value = DataService:ChangeValueRebirth(player)
 	-- DataService:ChangeValue(player, "Money1", -data.Money1, true)
 	DataService:ChangeValue(player, "Money2", -data.Money2, true)
+	DataService:FirePowerDecreased(player, "Rebirth")
 	DataService:ChangeValue(player, "Wins", -nextRebirth, true)
 
 	return {

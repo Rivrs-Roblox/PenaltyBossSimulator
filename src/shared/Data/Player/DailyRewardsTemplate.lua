@@ -9,10 +9,10 @@ return table.freeze({
 	},
 
 	[2] = {
-		Image = "Flamingo",
-		Name = "1 Flamingo",
+		Image = "Sergeant",
+		Name = "1 Sergeant",
 		Reward = "Pets",
-		Pet = "Flamingo",
+		Pet = "Sergeant",
 		Amount = 1,
 		Claimed = false,
 	},
@@ -54,10 +54,10 @@ return table.freeze({
 	},
 
 	[7] = {
-		Image = "IceDragonRifle_UI",
-		Name = "Ice Dragon Rifle",
-		Reward = "Weapon",
-		Weapon = "Ice Dragon Rifle",
+		Image = "DavidBekam_UI",
+		Name = "David Bekam",
+		Reward = "Character",
+		Character = "David Bekam",
 		Amount = 1,
 		Claimed = false,
 	},
