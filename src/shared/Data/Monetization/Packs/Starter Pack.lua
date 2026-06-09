@@ -19,9 +19,9 @@ return table.freeze({
 		end,
 		["Purchased"] = function(self, userId)
 			local Player = Players:GetPlayerByUserId(userId)
-			DataService:ChangeValue(Player, "Money2", 50_000, true)
-			DataService:ChangeValue(Player, "Wins", 3_000, true)
-			DataService:ChangeValue(Player, "Rebirth", 5, true)
+			DataService:ChangeValue(Player, "Money2", 37_000_000_000, true)
+			DataService:ChangeValue(Player, "Wins", 4_000_000, true)
+			DataService:ChangeValue(Player, "Rebirth", 15, true)
 			PetsService:AddPet(Player, "Fire Pony")
 
 			CharactersService:Buy(Player, 35, true)
@@ -40,9 +40,9 @@ return table.freeze({
 			return { status = true, message = "" }
 		end,
 		["Purchased"] = function(self, userId)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 250_000, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 8000, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 10, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 6.4e16, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 400_000_000_000_000, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 25, true)
 
 			PetsService:AddPet(Players:GetPlayerByUserId(userId), "Cloud Whale")
 		end,
@@ -60,9 +60,9 @@ return table.freeze({
 			return { status = true, message = "" }
 		end,
 		["Purchased"] = function(self, userId)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 1_000_000, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 20_000, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 20, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 2.7e20, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 4.7e19, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 35, true)
 
 			PetsService:AddPet(Players:GetPlayerByUserId(userId), "Chinese Dragon")
 		end,

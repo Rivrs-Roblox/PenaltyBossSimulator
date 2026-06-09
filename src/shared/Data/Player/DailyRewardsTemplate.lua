@@ -54,10 +54,10 @@ return table.freeze({
 	},
 
 	[7] = {
-		Image = "IceDragonRifle_UI",
-		Name = "Ice Dragon Rifle",
-		Reward = "Weapon",
-		Weapon = "Ice Dragon Rifle",
+		Image = "DavidBekam_UI",
+		Name = "David Bekam",
+		Reward = "Character",
+		Character = "David Bekam",
 		Amount = 1,
 		Claimed = false,
 	},
