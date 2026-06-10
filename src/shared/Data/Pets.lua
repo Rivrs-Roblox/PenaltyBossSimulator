@@ -857,7 +857,7 @@ local Pets = {
 	},
 	["Blue Dragon"] = {
 		["Name"] = "Blue Dragon",
-		["Power"] = 34,
+		["Power"] = 27,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -866,7 +866,7 @@ local Pets = {
 	},
 	["Norauto"] = {
 		["Name"] = "Norauto",
-		["Power"] = 48,
+		["Power"] = 38,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -875,7 +875,7 @@ local Pets = {
 	},
 	["Gasuo"] = {
 		["Name"] = "Gasuo",
-		["Power"] = 22,
+		["Power"] = 18,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,

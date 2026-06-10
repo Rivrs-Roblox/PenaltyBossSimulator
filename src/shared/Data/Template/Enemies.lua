@@ -6,7 +6,7 @@ return table.freeze({
 		["Boss 2"] = { Name = "Caio",            Power = 40000,         Reward = 24         },
 		["Boss 3"] = { Name = "Vinicius",        Power = 150000,        Reward = 36         },
 		["Boss 4"] = { Name = "Thiago",          Power = 800000,        Reward = 48         },
-		["Boss 5"] = { Name = "Edarsun Moras",   Power = 3000000,       Reward = 80         },
+		["Boss 5"] = { Name = "Edarsun Moras",   Power = 3000000,       Reward = 180        },
 	},
 
 	["Area02"] = {

@@ -33,7 +33,7 @@ return {
 
 	["DefaultEgg"] = {
 		["Name"] = "Common Egg",
-		["Price"] = 5,
+		["Price"] = 20,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Dog"] = {
@@ -60,7 +60,7 @@ return {
 
 	["SpottedEgg"] = {
 		["Name"] = "Spotted Egg",
-		["Price"] = 30,
+		["Price"] = 400,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Duck"] = {

@@ -11,7 +11,7 @@ return table.freeze({
 		Id = "Zone2",
 		Name = "Argentina Streets",
 		Image = "rbxassetid://98983795835460",
-		Price = 4800,
+		Price = 7000,
 		Order = 2,
 	},
 
