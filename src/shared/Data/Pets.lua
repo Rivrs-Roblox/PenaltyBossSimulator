@@ -4,7 +4,7 @@ local Pets = {
 
 	["Dog"] = {
 		["Name"] = "Dog",
-		["Power"] = 1,
+		["Power"] = 2,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -12,7 +12,7 @@ local Pets = {
 	},
 	["Cat"] = {
 		["Name"] = "Cat",
-		["Power"] = 2,
+		["Power"] = 4,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -20,7 +20,7 @@ local Pets = {
 	},
 	["Pig"] = {
 		["Name"] = "Pig",
-		["Power"] = 3,
+		["Power"] = 6,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -28,7 +28,7 @@ local Pets = {
 	},
 	["Cow"] = {
 		["Name"] = "Cow",
-		["Power"] = 5,
+		["Power"] = 10,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -36,7 +36,7 @@ local Pets = {
 	},
 	["Bunny"] = {
 		["Name"] = "Bunny",
-		["Power"] = 7,
+		["Power"] = 14,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -46,7 +46,7 @@ local Pets = {
 	--Egg2 SpottedEgg
 	["Duck"] = {
 		["Name"] = "Duck",
-		["Power"] = 2,
+		["Power"] = 4,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -54,7 +54,7 @@ local Pets = {
 	},
 	["Bear"] = {
 		["Name"] = "Bear",
-		["Power"] = 3,
+		["Power"] = 6,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -62,7 +62,7 @@ local Pets = {
 	},
 	["Dalmation"] = {
 		["Name"] = "Dalmation",
-		["Power"] = 5,
+		["Power"] = 10,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -70,7 +70,7 @@ local Pets = {
 	},
 	["Chicken"] = {
 		["Name"] = "Chicken",
-		["Power"] = 8,
+		["Power"] = 16,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -78,7 +78,7 @@ local Pets = {
 	},
 	["Flamingo"] = {
 		["Name"] = "Flamingo",
-		["Power"] = 11,
+		["Power"] = 22,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -88,7 +88,7 @@ local Pets = {
 	-- Egg 3 Coconut Egg
 	["Gecko"] = {
 		["Name"] = "Gecko",
-		["Power"] = 2,
+		["Power"] = 4,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -96,7 +96,7 @@ local Pets = {
 	},
 	["Ferret"] = {
 		["Name"] = "Ferret",
-		["Power"] = 5,
+		["Power"] = 10,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -104,7 +104,7 @@ local Pets = {
 	},
 	["Scorpion"] = {
 		["Name"] = "Scorpion",
-		["Power"] = 7,
+		["Power"] = 14,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -112,7 +112,7 @@ local Pets = {
 	},
 	["Camel"] = {
 		["Name"] = "Camel",
-		["Power"] = 11,
+		["Power"] = 22,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -120,7 +120,7 @@ local Pets = {
 	},
 	["Hippo"] = {
 		["Name"] = "Hippo",
-		["Power"] = 16,
+		["Power"] = 32,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -130,7 +130,7 @@ local Pets = {
 	-- Egg 4 IceEgg
 	["Fox"] = {
 		["Name"] = "Fox",
-		["Power"] = 3,
+		["Power"] = 6,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -138,7 +138,7 @@ local Pets = {
 	},
 	["Penguin"] = {
 		["Name"] = "Penguin",
-		["Power"] = 7,
+		["Power"] = 14,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -146,7 +146,7 @@ local Pets = {
 	},
 	["Seal"] = {
 		["Name"] = "Seal",
-		["Power"] = 10,
+		["Power"] = 20,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -154,7 +154,7 @@ local Pets = {
 	},
 	["Polar Bear"] = {
 		["Name"] = "Polar Bear",
-		["Power"] = 17,
+		["Power"] = 34,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -162,7 +162,7 @@ local Pets = {
 	},
 	["Walrus"] = {
 		["Name"] = "Walrus",
-		["Power"] = 24,
+		["Power"] = 48,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -172,7 +172,7 @@ local Pets = {
 	-- Egg 5 StreetEgg
 	["Mouse"] = {
 		["Name"] = "Mouse",
-		["Power"] = 5,
+		["Power"] = 10,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -180,7 +180,7 @@ local Pets = {
 	},
 	["Raccoon"] = {
 		["Name"] = "Raccoon",
-		["Power"] = 10,
+		["Power"] = 20,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -188,7 +188,7 @@ local Pets = {
 	},
 	["Hamster"] = {
 		["Name"] = "Hamster",
-		["Power"] = 15,
+		["Power"] = 30,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -196,7 +196,7 @@ local Pets = {
 	},
 	["Corgi"] = {
 		["Name"] = "Corgi",
-		["Power"] = 25,
+		["Power"] = 50,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -204,7 +204,7 @@ local Pets = {
 	},
 	["Husky"] = {
 		["Name"] = "Husky",
-		["Power"] = 35,
+		["Power"] = 70,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -214,7 +214,7 @@ local Pets = {
 	-- Egg 6 SpaceEgg
 	["Alien"] = {
 		["Name"] = "Alien",
-		["Power"] = 8,
+		["Power"] = 16,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -223,7 +223,7 @@ local Pets = {
 
 	["Jeebo"] = {
 		["Name"] = "Jeebo",
-		["Power"] = 15,
+		["Power"] = 30,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -232,7 +232,7 @@ local Pets = {
 
 	["Angel"] = {
 		["Name"] = "Angel",
-		["Power"] = 23,
+		["Power"] = 46,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -241,7 +241,7 @@ local Pets = {
 	},
 	["Capricorn"] = {
 		["Name"] = "Capricorn",
-		["Power"] = 38,
+		["Power"] = 76,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -250,7 +250,7 @@ local Pets = {
 
 	["Dragon BZ"] = {
 		["Name"] = "Dragon BZ",
-		["Power"] = 53,
+		["Power"] = 106,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -261,7 +261,7 @@ local Pets = {
 	-- Egg 7 Green Egg
 	["Monkey"] = {
 		["Name"] = "Monkey",
-		["Power"] = 11,
+		["Power"] = 22,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -270,7 +270,7 @@ local Pets = {
 
 	["Parrot"] = {
 		["Name"] = "Parrot",
-		["Power"] = 23,
+		["Power"] = 46,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -280,7 +280,7 @@ local Pets = {
 
 	["Lemur"] = {
 		["Name"] = "Lemur",
-		["Power"] = 34,
+		["Power"] = 68,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -288,7 +288,7 @@ local Pets = {
 	},
 	["Parakeet"] = {
 		["Name"] = "Parakeet",
-		["Power"] = 57,
+		["Power"] = 114,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -298,7 +298,7 @@ local Pets = {
 
 	["Gorilla"] = {
 		["Name"] = "Gorilla",
-		["Power"] = 80,
+		["Power"] = 160,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -308,7 +308,7 @@ local Pets = {
 	-- Egg 8 Bomb Egg
 	["Donkey"] = {
 		["Name"] = "Donkey",
-		["Power"] = 17,
+		["Power"] = 34,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -317,7 +317,7 @@ local Pets = {
 
 	["Hoag"] = {
 		["Name"] = "Hoag",
-		["Power"] = 34,
+		["Power"] = 68,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -326,7 +326,7 @@ local Pets = {
 
 	["Platypus"] = {
 		["Name"] = "Platypus",
-		["Power"] = 51,
+		["Power"] = 102,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -334,7 +334,7 @@ local Pets = {
 	},
 	["Axolotl"] = {
 		["Name"] = "Axolotl",
-		["Power"] = 85,
+		["Power"] = 170,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -343,7 +343,7 @@ local Pets = {
 
 	["Bigfoot"] = {
 		["Name"] = "Bigfoot",
-		["Power"] = 120,
+		["Power"] = 240,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -353,7 +353,7 @@ local Pets = {
 	-- Egg 9 Skater Egg
 	["Pancat"] = {
 		["Name"] = "Pancat",
-		["Power"] = 26,
+		["Power"] = 52,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -362,7 +362,7 @@ local Pets = {
 
 	["Strawberry Bunny"] = {
 		["Name"] = "Strawberry Bunny",
-		["Power"] = 51,
+		["Power"] = 102,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -371,7 +371,7 @@ local Pets = {
 
 	["Hamster Sprinkles"] = {
 		["Name"] = "Hamster Sprinkles",
-		["Power"] = 77,
+		["Power"] = 154,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -379,7 +379,7 @@ local Pets = {
 	},
 	["Chantilly Corgi"] = {
 		["Name"] = "Chantilly Corgi",
-		["Power"] = 128,
+		["Power"] = 256,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -388,7 +388,7 @@ local Pets = {
 
 	["Kitsune"] = {
 		["Name"] = "Kitsune",
-		["Power"] = 179,
+		["Power"] = 358,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -398,7 +398,7 @@ local Pets = {
 	-- Egg10 MonsterEgg
 	["Zombie"] = {
 		["Name"] = "Zombie",
-		["Power"] = 38,
+		["Power"] = 76,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -407,7 +407,7 @@ local Pets = {
 
 	["Goblin"] = {
 		["Name"] = "Goblin",
-		["Power"] = 77,
+		["Power"] = 154,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -416,7 +416,7 @@ local Pets = {
 
 	["Cyclops"] = {
 		["Name"] = "Cyclops",
-		["Power"] = 115,
+		["Power"] = 230,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -424,7 +424,7 @@ local Pets = {
 	},
 	["Devil"] = {
 		["Name"] = "Devil",
-		["Power"] = 192,
+		["Power"] = 384,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -433,7 +433,7 @@ local Pets = {
 
 	["MothMan"] = {
 		["Name"] = "MothMan",
-		["Power"] = 269,
+		["Power"] = 538,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -444,7 +444,7 @@ local Pets = {
 	-- Egg 11 Eagle Egg
 	["Bull"] = {
 		["Name"] = "Bull",
-		["Power"] = 58,
+		["Power"] = 116,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -453,7 +453,7 @@ local Pets = {
 
 	["Swan"] = {
 		["Name"] = "Swan",
-		["Power"] = 115,
+		["Power"] = 230,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -463,7 +463,7 @@ local Pets = {
 
 	["Pegasus"] = {
 		["Name"] = "Pegasus",
-		["Power"] = 173,
+		["Power"] = 346,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -472,7 +472,7 @@ local Pets = {
 	},
 	["Griffin"] = {
 		["Name"] = "Griffin",
-		["Power"] = 288,
+		["Power"] = 576,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -482,7 +482,7 @@ local Pets = {
 
 	["Phoenix"] = {
 		["Name"] = "Phoenix",
-		["Power"] = 404,
+		["Power"] = 808,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -493,7 +493,7 @@ local Pets = {
 	-- Egg 12 Water Egg
 	["Dolphin"] = {
 		["Name"] = "Dolphin",
-		["Power"] = 86,
+		["Power"] = 172,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -502,7 +502,7 @@ local Pets = {
 
 	["Shark"] = {
 		["Name"] = "Shark",
-		["Power"] = 173,
+		["Power"] = 346,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -511,7 +511,7 @@ local Pets = {
 
 	["Orca"] = {
 		["Name"] = "Orca",
-		["Power"] = 259,
+		["Power"] = 518,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -519,7 +519,7 @@ local Pets = {
 	},
 	["Nessie"] = {
 		["Name"] = "Nessie",
-		["Power"] = 432,
+		["Power"] = 864,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -528,7 +528,7 @@ local Pets = {
 
 	["Kraken"] = {
 		["Name"] = "Kraken",
-		["Power"] = 605,
+		["Power"] = 1210,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -538,7 +538,7 @@ local Pets = {
 	-- Egg 13 Mafia Egg
 	["Beaver"] = {
 		["Name"] = "Beaver",
-		["Power"] = 130,
+		["Power"] = 260,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -547,7 +547,7 @@ local Pets = {
 
 	["Capybara"] = {
 		["Name"] = "Capybara",
-		["Power"] = 259,
+		["Power"] = 518,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -556,7 +556,7 @@ local Pets = {
 
 	["Cheeta"] = {
 		["Name"] = "Cheeta",
-		["Power"] = 389,
+		["Power"] = 778,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -564,7 +564,7 @@ local Pets = {
 	},
 	["Tiger"] = {
 		["Name"] = "Tiger",
-		["Power"] = 649,
+		["Power"] = 1298,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -573,7 +573,7 @@ local Pets = {
 
 	["Lion"] = {
 		["Name"] = "Lion",
-		["Power"] = 908,
+		["Power"] = 1816,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -583,7 +583,7 @@ local Pets = {
 	-- Egg 14 Conductor Egg
 	["Bat"] = {
 		["Name"] = "Bat",
-		["Power"] = 195,
+		["Power"] = 390,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -593,7 +593,7 @@ local Pets = {
 
 	["Spider"] = {
 		["Name"] = "Spider",
-		["Power"] = 389,
+		["Power"] = 778,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -602,7 +602,7 @@ local Pets = {
 
 	["Ermine"] = {
 		["Name"] = "Ermine",
-		["Power"] = 584,
+		["Power"] = 1168,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -610,7 +610,7 @@ local Pets = {
 	},
 	["Kiwi"] = {
 		["Name"] = "Kiwi",
-		["Power"] = 973,
+		["Power"] = 1946,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -619,7 +619,7 @@ local Pets = {
 
 	["Black Shuk"] = {
 		["Name"] = "Black Shuk",
-		["Power"] = 1362,
+		["Power"] = 2724,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -629,7 +629,7 @@ local Pets = {
 	-- Egg 15 Junk Egg
 	["Deer"] = {
 		["Name"] = "Deer",
-		["Power"] = 292,
+		["Power"] = 584,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -638,7 +638,7 @@ local Pets = {
 
 	["Zebra"] = {
 		["Name"] = "Zebra",
-		["Power"] = 584,
+		["Power"] = 1168,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -647,7 +647,7 @@ local Pets = {
 
 	["Rhino"] = {
 		["Name"] = "Rhino",
-		["Power"] = 876,
+		["Power"] = 1752,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -655,7 +655,7 @@ local Pets = {
 	},
 	["Elephant"] = {
 		["Name"] = "Elephant",
-		["Power"] = 1460,
+		["Power"] = 2920,
 		["Rarity"] = "Epic",
 
 		["Speed"] = 18,
@@ -664,7 +664,7 @@ local Pets = {
 
 	["Giraffe"] = {
 		["Name"] = "Giraffe",
-		["Power"] = 2044,
+		["Power"] = 4088,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,
@@ -674,7 +674,7 @@ local Pets = {
 	-- Egg 16 Lab Egg
 	["Fish"] = {
 		["Name"] = "Fish",
-		["Power"] = 438,
+		["Power"] = 876,
 		["Rarity"] = "Common",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -682,7 +682,7 @@ local Pets = {
 
 	["Turtle"] = {
 		["Name"] = "Turtle",
-		["Power"] = 876,
+		["Power"] = 1752,
 		["Rarity"] = "Uncommon",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -690,7 +690,7 @@ local Pets = {
 
 	["Goldfish"] = {
 		["Name"] = "Goldfish",
-		["Power"] = 1314,
+		["Power"] = 2628,
 		["Rarity"] = "Rare",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -698,7 +698,7 @@ local Pets = {
 
 	["Crab"] = {
 		["Name"] = "Crab",
-		["Power"] = 2189,
+		["Power"] = 4378,
 		["Rarity"] = "Epic",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -706,7 +706,7 @@ local Pets = {
 
 	["Whale"] = {
 		["Name"] = "Whale",
-		["Power"] = 3065,
+		["Power"] = 6130,
 		["Rarity"] = "Legendary",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -715,7 +715,7 @@ local Pets = {
 	-- Egg 17 Disco Egg
 	["Blue Bird"] = {
 		["Name"] = "Blue Bird",
-		["Power"] = 657,
+		["Power"] = 1314,
 		["Rarity"] = "Common",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -724,7 +724,7 @@ local Pets = {
 
 	["Canary"] = {
 		["Name"] = "Canary",
-		["Power"] = 1314,
+		["Power"] = 2628,
 		["Rarity"] = "Uncommon",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -733,7 +733,7 @@ local Pets = {
 
 	["Pelican"] = {
 		["Name"] = "Pelican",
-		["Power"] = 1971,
+		["Power"] = 3942,
 		["Rarity"] = "Rare",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -742,7 +742,7 @@ local Pets = {
 
 	["Toucan"] = {
 		["Name"] = "Toucan",
-		["Power"] = 3284,
+		["Power"] = 6568,
 		["Rarity"] = "Epic",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -751,7 +751,7 @@ local Pets = {
 
 	["Quetzal"] = {
 		["Name"] = "Quetzal",
-		["Power"] = 4598,
+		["Power"] = 9196,
 		["Rarity"] = "Legendary",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -761,7 +761,7 @@ local Pets = {
 	-- Egg 18 Arcade Egg
 	["White Dragon"] = {
 		["Name"] = "White Dragon",
-		["Power"] = 985,
+		["Power"] = 1970,
 		["Rarity"] = "Common",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -770,7 +770,7 @@ local Pets = {
 
 	["Green Dragon"] = {
 		["Name"] = "Green Dragon",
-		["Power"] = 1971,
+		["Power"] = 3942,
 		["Rarity"] = "Uncommon",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -779,7 +779,7 @@ local Pets = {
 
 	["Purple Dragon"] = {
 		["Name"] = "Purple Dragon",
-		["Power"] = 2956,
+		["Power"] = 5912,
 		["Rarity"] = "Rare",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -788,7 +788,7 @@ local Pets = {
 
 	["Orange Dragon"] = {
 		["Name"] = "Orange Dragon",
-		["Power"] = 4926,
+		["Power"] = 9852,
 		["Rarity"] = "Epic",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -797,7 +797,7 @@ local Pets = {
 
 	["Red Dragon"] = {
 		["Name"] = "Red Dragon",
-		["Power"] = 6897,
+		["Power"] = 13794,
 		["Rarity"] = "Legendary",
 		["Speed"] = 18,
 		["Movement"] = "Fly",
@@ -807,7 +807,7 @@ local Pets = {
 	-- Egg 19 Sunken Egg
 	["Blue Penguin"] = {
 		["Name"] = "Blue Penguin",
-		["Power"] = 1478,
+		["Power"] = 2956,
 		["Rarity"] = "Common",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -815,7 +815,7 @@ local Pets = {
 
 	["Snow Seal"] = {
 		["Name"] = "Snow Seal",
-		["Power"] = 2956,
+		["Power"] = 5912,
 		["Rarity"] = "Uncommon",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -823,7 +823,7 @@ local Pets = {
 
 	["Squid"] = {
 		["Name"] = "Squid",
-		["Power"] = 4434,
+		["Power"] = 8868,
 		["Rarity"] = "Rare",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -831,7 +831,7 @@ local Pets = {
 
 	["Sea Turtle"] = {
 		["Name"] = "Sea Turtle",
-		["Power"] = 7389,
+		["Power"] = 14778,
 		["Rarity"] = "Epic",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -839,7 +839,7 @@ local Pets = {
 
 	["Narval"] = {
 		["Name"] = "Narval",
-		["Power"] = 10345,
+		["Power"] = 20690,
 		["Rarity"] = "Legendary",
 		["Speed"] = 18,
 		["Movement"] = "Walk",
@@ -849,7 +849,7 @@ local Pets = {
 
 	["Unicorn"] = {
 		["Name"] = "Unicorn",
-		["Power"] = 500,
+		["Power"] = 1000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -857,7 +857,7 @@ local Pets = {
 	},
 	["Blue Dragon"] = {
 		["Name"] = "Blue Dragon",
-		["Power"] = 17,
+		["Power"] = 34,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -866,7 +866,7 @@ local Pets = {
 	},
 	["Norauto"] = {
 		["Name"] = "Norauto",
-		["Power"] = 24,
+		["Power"] = 48,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -875,7 +875,7 @@ local Pets = {
 	},
 	["Gasuo"] = {
 		["Name"] = "Gasuo",
-		["Power"] = 11,
+		["Power"] = 22,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -884,7 +884,7 @@ local Pets = {
 	},
 	["Ruffy"] = {
 		["Name"] = "Ruffy",
-		["Power"] = 35,
+		["Power"] = 70,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -892,7 +892,7 @@ local Pets = {
 	},
 	["Lunar Moth"] = {
 		["Name"] = "Lunar Moth",
-		["Power"] = 18.9,
+		["Power"] = 37.8,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -901,7 +901,7 @@ local Pets = {
 	},
 	["White Tiger"] = {
 		["Name"] = "White Tiger",
-		["Power"] = 27.9,
+		["Power"] = 55.8,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -909,7 +909,7 @@ local Pets = {
 	},
 	["Demonic Paon"] = {
 		["Name"] = "Demonic Paon",
-		["Power"] = 65.1,
+		["Power"] = 130.2,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -918,7 +918,7 @@ local Pets = {
 	},
 	["Golden Ram"] = {
 		["Name"] = "Golden Ram",
-		["Power"] = 180.6,
+		["Power"] = 361.2,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -926,7 +926,7 @@ local Pets = {
 	},
 	["Sun Lion"] = {
 		["Name"] = "Sun Lion",
-		["Power"] = 3250000,
+		["Power"] = 6500000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -934,7 +934,7 @@ local Pets = {
 	},
 	["Doctor Crow"] = {
 		["Name"] = "Doctor Crow",
-		["Power"] = 9500000,
+		["Power"] = 19000000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -947,7 +947,7 @@ local Pets = {
 	--Dominus Egg
 	["Infernus"] = {
 		["Name"] = "Infernus",
-		["Power"] = 7.8125,
+		["Power"] = 15.625,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -955,7 +955,7 @@ local Pets = {
 	},
 	["Empyreus"] = {
 		["Name"] = "Empyreus",
-		["Power"] = 20,
+		["Power"] = 40,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -963,7 +963,7 @@ local Pets = {
 	},
 	["Frigidus"] = {
 		["Name"] = "Frigidus",
-		["Power"] = 20,
+		["Power"] = 40,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -971,7 +971,7 @@ local Pets = {
 	},
 	["Rex"] = {
 		["Name"] = "Rex",
-		["Power"] = 40,
+		["Power"] = 80,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -979,7 +979,7 @@ local Pets = {
 	},
 	["Praefectus"] = {
 		["Name"] = "Praefectus",
-		["Power"] = 50,
+		["Power"] = 100,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -989,7 +989,7 @@ local Pets = {
 	--	Christmas Egg
 	["Gnome"] = {
 		["Name"] = "Gnome",
-		["Power"] = 8,
+		["Power"] = 16,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -997,7 +997,7 @@ local Pets = {
 	},
 	["Snowman"] = {
 		["Name"] = "Snowman",
-		["Power"] = 25,
+		["Power"] = 50,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1005,7 +1005,7 @@ local Pets = {
 	},
 	["Elf"] = {
 		["Name"] = "Elf",
-		["Power"] = 50,
+		["Power"] = 100,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1013,7 +1013,7 @@ local Pets = {
 	},
 	["Reindeer"] = {
 		["Name"] = "Reindeer",
-		["Power"] = 100,
+		["Power"] = 200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1021,7 +1021,7 @@ local Pets = {
 	},
 	["Santa Claus"] = {
 		["Name"] = "Santa Claus",
-		["Power"] = 200,
+		["Power"] = 400,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1031,7 +1031,7 @@ local Pets = {
 	--Soldier Egg
 	["Private Soldier"] = {
 		["Name"] = "Private Soldier",
-		["Power"] = 8,
+		["Power"] = 16,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1039,7 +1039,7 @@ local Pets = {
 	},
 	["Sergeant"] = {
 		["Name"] = "Sergeant",
-		["Power"] = 25,
+		["Power"] = 50,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1047,7 +1047,7 @@ local Pets = {
 	},
 	["Captain"] = {
 		["Name"] = "Captain",
-		["Power"] = 50,
+		["Power"] = 100,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1055,7 +1055,7 @@ local Pets = {
 	},
 	["Major"] = {
 		["Name"] = "Major",
-		["Power"] = 100,
+		["Power"] = 200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1063,7 +1063,7 @@ local Pets = {
 	},
 	["General TungTung"] = {
 		["Name"] = "General TungTung",
-		["Power"] = 200,
+		["Power"] = 400,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1073,7 +1073,7 @@ local Pets = {
 	--Giga Chad Egg
 	["Nerd"] = {
 		["Name"] = "Nerd",
-		["Power"] = 30,
+		["Power"] = 60,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1081,7 +1081,7 @@ local Pets = {
 	},
 	["Beta"] = {
 		["Name"] = "Beta",
-		["Power"] = 55,
+		["Power"] = 110,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1089,7 +1089,7 @@ local Pets = {
 	},
 	["Alpha"] = {
 		["Name"] = "Alpha",
-		["Power"] = 70,
+		["Power"] = 140,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1097,7 +1097,7 @@ local Pets = {
 	},
 	["Chad"] = {
 		["Name"] = "Chad",
-		["Power"] = 100,
+		["Power"] = 200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1105,7 +1105,7 @@ local Pets = {
 	},
 	["Giga Chad"] = {
 		["Name"] = "Giga Chad",
-		["Power"] = 150,
+		["Power"] = 300,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1115,7 +1115,7 @@ local Pets = {
 	-- REJOIN
 	["Sakura Deer"] = {
 		["Name"] = "Sakura Deer",
-		["Power"] = 53,
+		["Power"] = 106,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1124,7 +1124,7 @@ local Pets = {
 	-- Evolutive
 	["Child DragonBat"] = {
 		["Name"] = "Child DragonBat",
-		["Power"] = 100,
+		["Power"] = 200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1133,7 +1133,7 @@ local Pets = {
 	},
 	["Juvenile DragonBat"] = {
 		["Name"] = "Juvenile DragonBat",
-		["Power"] = 500,
+		["Power"] = 1000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1142,7 +1142,7 @@ local Pets = {
 	},
 	["Adolescent DragonBat"] = {
 		["Name"] = "Adolescent DragonBat",
-		["Power"] = 1000,
+		["Power"] = 2000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1151,7 +1151,7 @@ local Pets = {
 	},
 	["Adult DragonBat"] = {
 		["Name"] = "Adult DragonBat",
-		["Power"] = 2000,
+		["Power"] = 4000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1160,7 +1160,7 @@ local Pets = {
 	},
 	["Elder DragonBat"] = {
 		["Name"] = "Elder DragonBat",
-		["Power"] = 3000,
+		["Power"] = 6000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1171,7 +1171,7 @@ local Pets = {
 	--Super hero egg
 	["Eagle Eye"] = {
 		["Name"] = "Eagle Eye",
-		["Power"] = 49,
+		["Power"] = 98,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1180,7 +1180,7 @@ local Pets = {
 	},
 	["Metalman"] = {
 		["Name"] = "Metalman",
-		["Power"] = 93,
+		["Power"] = 186,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1189,7 +1189,7 @@ local Pets = {
 	},
 	["Batface"] = {
 		["Name"] = "Batface",
-		["Power"] = 175,
+		["Power"] = 350,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1198,7 +1198,7 @@ local Pets = {
 	},
 	["Spooderman"] = {
 		["Name"] = "Spooderman",
-		["Power"] = 420,
+		["Power"] = 840,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1207,7 +1207,7 @@ local Pets = {
 	},
 	["Superguy"] = {
 		["Name"] = "Superguy",
-		["Power"] = 600,
+		["Power"] = 1200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1218,7 +1218,7 @@ local Pets = {
 	--Military Egg
 	["Light Recon"] = {
 		["Name"] = "Light Recon",
-		["Power"] = 125,
+		["Power"] = 250,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1227,7 +1227,7 @@ local Pets = {
 	},
 	["Tank"] = {
 		["Name"] = "Tank",
-		["Power"] = 250,
+		["Power"] = 500,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1236,7 +1236,7 @@ local Pets = {
 	},
 	["Missile Launcher"] = {
 		["Name"] = "Missile Launcher",
-		["Power"] = 450,
+		["Power"] = 900,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1245,7 +1245,7 @@ local Pets = {
 	},
 	["Copter"] = {
 		["Name"] = "Copter",
-		["Power"] = 700,
+		["Power"] = 1400,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1254,7 +1254,7 @@ local Pets = {
 	},
 	["Bombardiro Crocodilo"] = {
 		["Name"] = "Bombardiro Crocodilo",
-		["Power"] = 1000,
+		["Power"] = 2000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1265,7 +1265,7 @@ local Pets = {
 	--Ball Egg
 	["Cat Ball"] = {
 		["Name"] = "Cat Ball",
-		["Power"] = 5,
+		["Power"] = 10,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1273,7 +1273,7 @@ local Pets = {
 	},
 	["Platypus Ball"] = {
 		["Name"] = "Platypus Ball",
-		["Power"] = 7,
+		["Power"] = 14,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1281,7 +1281,7 @@ local Pets = {
 	},
 	["Viking Ball"] = {
 		["Name"] = "Viking Ball",
-		["Power"] = 11,
+		["Power"] = 22,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1289,7 +1289,7 @@ local Pets = {
 	},
 	["Dragon Ball"] = {
 		["Name"] = "Dragon Ball",
-		["Power"] = 17,
+		["Power"] = 34,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1297,7 +1297,7 @@ local Pets = {
 	},
 	["Chainsaw Ball"] = {
 		["Name"] = "Chainsaw Ball",
-		["Power"] = 27,
+		["Power"] = 54,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1307,7 +1307,7 @@ local Pets = {
 	--Monster Egg
 	["Drake"] = {
 		["Name"] = "Drake",
-		["Power"] = 21,
+		["Power"] = 42,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1316,7 +1316,7 @@ local Pets = {
 	},
 	["Behemoth"] = {
 		["Name"] = "Behemoth",
-		["Power"] = 38,
+		["Power"] = 76,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1325,7 +1325,7 @@ local Pets = {
 	},
 	["Leviathan"] = {
 		["Name"] = "Leviathan",
-		["Power"] = 62,
+		["Power"] = 124,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1334,7 +1334,7 @@ local Pets = {
 	},
 	["Yog Sothoth"] = {
 		["Name"] = "Yog Sothoth",
-		["Power"] = 105,
+		["Power"] = 210,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1343,7 +1343,7 @@ local Pets = {
 	},
 	["Cthulhu"] = {
 		["Name"] = "Cthulhu",
-		["Power"] = 175,
+		["Power"] = 350,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1355,7 +1355,7 @@ local Pets = {
 
 	["Fire Pony"] = {
 		["Name"] = "Fire Pony",
-		["Power"] = 7.8,
+		["Power"] = 15.6,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1364,7 +1364,7 @@ local Pets = {
 	},
 	["Cloud Whale"] = {
 		["Name"] = "Cloud Whale",
-		["Power"] = 26.04,
+		["Power"] = 52.08,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1373,7 +1373,7 @@ local Pets = {
 	},
 	["Chinese Dragon"] = {
 		["Name"] = "Chinese Dragon",
-		["Power"] = 52.92,
+		["Power"] = 105.84,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1385,7 +1385,7 @@ local Pets = {
 
 	["Dragon BZ Fire"] = {
 		["Name"] = "Dragon BZ Fire",
-		["Power"] = 72,
+		["Power"] = 144,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1395,7 +1395,7 @@ local Pets = {
 
 	["Kitsune Ice"] = {
 		["Name"] = "Kitsune Ice",
-		["Power"] = 112,
+		["Power"] = 224,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1404,7 +1404,7 @@ local Pets = {
 
 	["Griffin Thunder"] = {
 		["Name"] = "Griffin Thunder",
-		["Power"] = 490,
+		["Power"] = 980,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1415,7 +1415,7 @@ local Pets = {
 	-- Exclusive Chest
 	["Lirili"] = {
 		["Name"] = "Lirili",
-		["Power"] = 45,
+		["Power"] = 90,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1424,7 +1424,7 @@ local Pets = {
 
 	["Udindindun"] = {
 		["Name"] = "Udindindun",
-		["Power"] = 75,
+		["Power"] = 150,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1464,7 +1464,7 @@ local Pets = {
 	-- Boss Exclusive
 	["MothMan Dark"] = {
 		["Name"] = "MothMan Dark",
-		["Power"] = 300,
+		["Power"] = 600,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1474,7 +1474,7 @@ local Pets = {
 
 	["Patapim Evolved"] = {
 		["Name"] = "Patapim Evolved",
-		["Power"] = 5000,
+		["Power"] = 10000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1483,7 +1483,7 @@ local Pets = {
 
 	["Sahur Evolved"] = {
 		["Name"] = "Sahur Evolved",
-		["Power"] = 5000,
+		["Power"] = 10000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1493,7 +1493,7 @@ local Pets = {
 	-- SEASON PASS
 	["Chill Guy"] = {
 		["Name"] = "Chill Guy",
-		["Power"] = 300,
+		["Power"] = 600,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1502,7 +1502,7 @@ local Pets = {
 
 	["Gigamate"] = {
 		["Name"] = "Gigamate",
-		["Power"] = 350,
+		["Power"] = 700,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1511,7 +1511,7 @@ local Pets = {
 
 	["Giga Brainrot"] = {
 		["Name"] = "Giga Brainrot",
-		["Power"] = 400,
+		["Power"] = 800,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1521,7 +1521,7 @@ local Pets = {
 	-- Brainrot Egg
 	["Ambalabu"] = {
 		["Name"] = "Ambalabu",
-		["Power"] = 100,
+		["Power"] = 200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1530,7 +1530,7 @@ local Pets = {
 
 	["Chimpanzini"] = {
 		["Name"] = "Chimpanzini",
-		["Power"] = 250,
+		["Power"] = 500,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1539,7 +1539,7 @@ local Pets = {
 
 	["Saturno"] = {
 		["Name"] = "Saturno",
-		["Power"] = 400,
+		["Power"] = 800,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1548,7 +1548,7 @@ local Pets = {
 
 	["Assassino"] = {
 		["Name"] = "Assassino",
-		["Power"] = 600,
+		["Power"] = 1200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1557,7 +1557,7 @@ local Pets = {
 
 	["Bombombini"] = {
 		["Name"] = "Bombombini",
-		["Power"] = 1000,
+		["Power"] = 2000,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1568,7 +1568,7 @@ local Pets = {
 	-- Crewmate Egg
 	["Crewmate"] = {
 		["Name"] = "Crewmate",
-		["Power"] = 120,
+		["Power"] = 240,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1577,7 +1577,7 @@ local Pets = {
 
 	["Ghostmate"] = {
 		["Name"] = "Ghostmate",
-		["Power"] = 300,
+		["Power"] = 600,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1586,7 +1586,7 @@ local Pets = {
 
 	["Engineer"] = {
 		["Name"] = "Engineer",
-		["Power"] = 420,
+		["Power"] = 840,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1595,7 +1595,7 @@ local Pets = {
 
 	["Guardian"] = {
 		["Name"] = "Guardian",
-		["Power"] = 700,
+		["Power"] = 1400,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1605,7 +1605,7 @@ local Pets = {
 
 	["Impostor"] = {
 		["Name"] = "Impostor",
-		["Power"] = 1200,
+		["Power"] = 2400,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
