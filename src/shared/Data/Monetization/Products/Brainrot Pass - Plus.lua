@@ -78,7 +78,7 @@ return table.freeze({
 
 			-- BodyService:Buy(player, 23, true)
 			-- PetsService:AddPet(player, "Gold Chill Guy")
-			DataService:GiveBadge(player, 3630708367673288)
+			-- DataService:GiveBadge(player, "BrainrotPassPlus")
 		end,
 		["RestrictedRegionCanBuy"] = true,
 	},

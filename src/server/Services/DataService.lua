@@ -34,23 +34,6 @@ local ProfileTemplate = nil
 local ProfileStore = nil
 local ServerConfig = require(ServerStorage.Data.ServerConfig)
 
-local BadgesId = {
-	["Zone1"] = 1533207517245352,
-	["Zone2"] = 4268649669368622,
-	["Zone3"] = 419785454511090,
-	["Zone4"] = 2140424674360387,
-	["Zone5"] = 3906373985996575,
-	["Zone6"] = 1594237895618651,
-	["Zone7"] = 2987423990601894,
-	["Zone8"] = 1419013033698560,
-	["Zone9"] = 768551665149645,
-	["Zone10"] = 459471181043442,
-	-- ["Zone11"] = 2277013782656006,
-	-- ["Zone12"] = 798903646621705,
-	-- ["Zone13"] = 1330872371903188,
-	-- ["Zone14"] = 2692997590463276,
-}
-
 -- Tambahkan table untuk menyimpan checkpoint terakhir setiap player
 local economyMilestones = {}
 
@@ -518,7 +501,7 @@ function DataService:AddArea(player: Player, name: string, bypass: boolean?)
 	local number = tonumber(string.match(name, "%d+"))
 	FunnelsModule:LogProgressionStep(player, 1, number)
 
-	self:GiveBadge(player, BadgesId[name])
+	self:GiveBadge(player, name)
 end
 
 -- Change player's area
@@ -580,9 +563,14 @@ function DataService:TutorialFinished(player: Player, state: boolean)
 	self.Client.TutorialCompleted:Fire(player)
 end
 
-function DataService:GiveBadge(player: Player, badgeId: number)
+function DataService:GiveBadge(player: Player, badgeName: string)
 	local data = self:GetData(player)
 	if data == nil then
+		return
+	end
+
+	local badgeId = self.Template.Badges[badgeName]
+	if not badgeId then
 		return
 	end
 
@@ -620,11 +608,7 @@ function DataService:GiveBadgeForEachUnlockedArea(player: Player)
 	end
 
 	for _, value in data.Areas.Unlocked do
-		if BadgesId[value] then
-			local badgeId = BadgesId[value]
-
-			self:GiveBadge(player, badgeId)
-		end
+		self:GiveBadge(player, value)
 	end
 end
 

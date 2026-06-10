@@ -347,7 +347,7 @@ function Rebirth(_, hooks)
 			InfoText = Text({
 				text = "Rebirthing will reset your currency & in exchange give you a multiplier increase!",
 				color = Color3.fromHex("fafafa"),
-				position = UDim2.fromScale(0.5, 0.21),
+				position = UDim2.fromScale(0.5, 0.19),
 				size = UDim2.fromScale(0.9, 0.08),
 				stroke = 2,
 				strokeColor = Color3.fromHex("143758"),
@@ -357,7 +357,7 @@ function Rebirth(_, hooks)
 			Center = Roact.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundTransparency = 1,
-				Position = UDim2.fromScale(0.5, 0.52),
+				Position = UDim2.fromScale(0.5, 0.5),
 				Size = UDim2.fromScale(0.9, 0.52),
 				ZIndex = 3,
 			}, {
@@ -421,21 +421,30 @@ function Rebirth(_, hooks)
 					currentValue = currentRebirth,
 					nextValue = nextRebirth,
 					layoutOrder = 1,
-					size = UDim2.fromScale(1, 0.2),
+					size = UDim2.fromScale(1, 0.175),
 				}),
 				Money2Row = Row({
 					name = "Money2",
 					currentValue = PlayerReducer.Money2,
 					nextValue = 0,
 					layoutOrder = 2,
-					size = UDim2.fromScale(1, 0.2),
+					size = UDim2.fromScale(1, 0.175),
 				}),
-				MultiplierRow = Row({
-					name = "Multiplier",
+				WinsMultiplierRow = Row({
+					name = "Wins",
 					currentValue = "+" .. tostring(currentRebirth * 20) .. "%",
 					nextValue = "+" .. tostring(nextRebirth * 20) .. "%",
 					layoutOrder = 3,
-					size = UDim2.fromScale(1, 0.2),
+					isUpgrade = true;
+					size = UDim2.fromScale(1, 0.175),
+				}),
+				Money2MultiplierRow = Row({
+					name = "Money2",
+					currentValue = "+" .. tostring(currentRebirth * 20) .. "%",
+					nextValue = "+" .. tostring(nextRebirth * 20) .. "%",
+					layoutOrder = 4,
+					isUpgrade = true,
+					size = UDim2.fromScale(1, 0.175),
 				}),
 			}),
 

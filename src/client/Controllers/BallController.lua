@@ -296,7 +296,8 @@ function BallController:AnimateBallKick(
 	result: string,
 	goalPos: Vector3,
 	isSpecialKick: boolean,
-	callbacks: {}?
+	callbacks: {}?,
+	isGoalCornerBlasted: boolean?
 )
 	local ball = self._ballModel
 	if not ball then
@@ -389,11 +390,13 @@ function BallController:AnimateBallKick(
 		local cornerOffset = if pointerPosition < 0.5 then -25 else 25
 		local targetPos = goalPos + rightDir * cornerOffset + Vector3.new(0, 5, 0)
 
+		local isBlasted = if isGoalCornerBlasted ~= nil then isGoalCornerBlasted else true
+
 		local wrappedCallbacks = {
 			onGoalieReact = callbacks and callbacks.onGoalieReact,
 			onResult = callbacks and callbacks.onResult,
 			onArrived = function()
-				if not (goalieHipHeight >= BIG_HIP_THRESHOLD) then
+				if not (goalieHipHeight >= BIG_HIP_THRESHOLD) or not isBlasted then
 					if callbacks and callbacks.onArrived then
 						callbacks.onArrived()
 					end
@@ -409,7 +412,7 @@ function BallController:AnimateBallKick(
 				end
 			end,
 			onBallHitGoalie = function()
-				if goalieHipHeight >= BIG_HIP_THRESHOLD then
+				if goalieHipHeight >= BIG_HIP_THRESHOLD and isBlasted then
 					self._ballSpeed = 0
 					GoalieController:PauseGoalieAnimation()
 
