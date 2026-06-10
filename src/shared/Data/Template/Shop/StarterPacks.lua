@@ -7,7 +7,7 @@ return table.freeze({
 		PriceIcon = "rbxassetid://111603154886540",
 		ValueIcons = "rbxassetid://80043784673484",
 		CharacterMultiplier = "x15.5",
-		PetMultiplier = "x5000",
+		PetMultiplier = "x250",
 		Rewards = {
 			{ Id = "Money2", Amount = "+50k" },
 			{ Id = "Wins", Amount = "+3k" },

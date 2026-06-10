@@ -87,7 +87,7 @@ local Pets = {
 	-- Egg 3
 	["Gecko"] = {
 		["Name"] = "Gecko",
-		["Power"] = 4,
+		["Power"] = 7,
 		["Rarity"] = "Common",
 
 		["Speed"] = 18,
@@ -95,7 +95,7 @@ local Pets = {
 	},
 	["Ferret"] = {
 		["Name"] = "Ferret",
-		["Power"] = 10,
+		["Power"] = 17,
 		["Rarity"] = "Uncommon",
 
 		["Speed"] = 18,
@@ -103,7 +103,7 @@ local Pets = {
 	},
 	["Scorpion"] = {
 		["Name"] = "Scorpion",
-		["Power"] = 14,
+		["Power"] = 25,
 		["Rarity"] = "Rare",
 
 		["Speed"] = 18,
@@ -111,15 +111,15 @@ local Pets = {
 	},
 	["Camel"] = {
 		["Name"] = "Camel",
-		["Power"] = 22,
+		["Power"] = 21,
 		["Rarity"] = "Epic",
 
-		["Speed"] = 18,
+		["Speed"] = 40,
 		["Movement"] = "Walk",
 	},
 	["Hippo"] = {
 		["Name"] = "Hippo",
-		["Power"] = 32,
+		["Power"] = 56,
 		["Rarity"] = "Legendary",
 
 		["Speed"] = 18,

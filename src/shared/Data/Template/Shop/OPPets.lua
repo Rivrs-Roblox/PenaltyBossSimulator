@@ -7,28 +7,28 @@ return table.freeze({
 	Pet_1 = {
 		Name = "Lunar Moth",
 		Icon = "Lunar Moth UI",
-		Text = "x37.8",
+		Text = "x50",
 		Price = 149,
 	},
 
 	Pet_2 = {
 		Name = "White Tiger",
 		Icon = "White Tiger UI",
-		Text = "x55.8",
+		Text = "x120",
 		Price = 249,
 	},
 
 	Pet_3 = {
 		Name = "Demonic Paon",
 		Icon = "Demonic Paon UI",
-		Text = "x130.2",
+		Text = "x340",
 		Price = 399,
 	},
 
 	Pet_4 = {
 		Name = "Golden Ram",
 		Icon = "Golden Ram",
-		Text = "x361.2",
+		Text = "x700",
 		Price = 599,
 	},
 

@@ -1,7 +1,7 @@
 return table.freeze({
 	["Zone1"] = {
 		[1] = { PowerPerSecond = 22, PowerRequirement = 0, VIP = false },
-		[2] = { PowerPerSecond = 27, PowerRequirement = 20041, VIP = false },
+		[2] = { PowerPerSecond = 27, PowerRequirement = 20000, VIP = false },
 		[3] = { PowerPerSecond = 33, PowerRequirement = 80000, VIP = false },
 		[4] = { PowerPerSecond = 41, PowerRequirement = 550000, VIP = false },
 		[5] = { PowerPerSecond = 53, PowerRequirement = 1250000, VIP = false },
@@ -10,19 +10,19 @@ return table.freeze({
 
 	["Zone2"] = {
 		[1] = { PowerPerSecond = 866, PowerRequirement = 0, VIP = false },
-		[2] = { PowerPerSecond = 1056, PowerRequirement = 44226708, VIP = false },
-		[3] = { PowerPerSecond = 1288, PowerRequirement = 144703384, VIP = false },
-		[4] = { PowerPerSecond = 1611, PowerRequirement = 981346157, VIP = false },
-		[5] = { PowerPerSecond = 2095, PowerRequirement = 3271153856, VIP = false },
+		[2] = { PowerPerSecond = 1056, PowerRequirement = 44225000, VIP = false },
+		[3] = { PowerPerSecond = 1288, PowerRequirement = 144700000, VIP = false },
+		[4] = { PowerPerSecond = 1611, PowerRequirement = 781500000, VIP = false },
+		[5] = { PowerPerSecond = 2095, PowerRequirement = 2775000000, VIP = false },
 		[6] = { PowerPerSecond = 2561, PowerRequirement = 0, VIP = true },
 	},
 
 	["Zone3"] = {
 		[1] = { PowerPerSecond = 2722, PowerRequirement = 0, VIP = false },
-		[2] = { PowerPerSecond = 3321, PowerRequirement = 7066354363, VIP = false },
-		[3] = { PowerPerSecond = 4051, PowerRequirement = 24583316467, VIP = false },
-		[4] = { PowerPerSecond = 5066, PowerRequirement = 130430769256, VIP = false },
-		[5] = { PowerPerSecond = 6585, PowerRequirement = 434769230852, VIP = false },
+		[2] = { PowerPerSecond = 3321, PowerRequirement = 7055000000, VIP = false },
+		[3] = { PowerPerSecond = 4051, PowerRequirement = 24585000000, VIP = false },
+		[4] = { PowerPerSecond = 5066, PowerRequirement = 130000000000, VIP = false },
+		[5] = { PowerPerSecond = 6585, PowerRequirement = 435000000000, VIP = false },
 		[6] = { PowerPerSecond = 8048, PowerRequirement = 0, VIP = true },
 	},
 

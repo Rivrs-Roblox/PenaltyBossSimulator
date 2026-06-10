@@ -4,25 +4,25 @@ return table.freeze({
 	["Area01"] = {
 		["Boss 1"] = { Name = "Mateus",          Power = 5000,          Reward = 12         },
 		["Boss 2"] = { Name = "Caio",            Power = 40000,         Reward = 24         },
-		["Boss 3"] = { Name = "Vinicius",        Power = 150000,        Reward = 36         },
-		["Boss 4"] = { Name = "Thiago",          Power = 800000,        Reward = 48         },
+		["Boss 3"] = { Name = "Vinicius",        Power = 150000,        Reward = 42         },
+		["Boss 4"] = { Name = "Thiago",          Power = 800000,        Reward = 66         },
 		["Boss 5"] = { Name = "Edarsun Moras",   Power = 3000000,       Reward = 180        },
 	},
 
 	["Area02"] = {
-		["Boss 1"] = { Name = "Agustin",         Power = 15403846,      Reward = 625        },
-		["Boss 2"] = { Name = "Lautaro",         Power = 88453417,      Reward = 1250       },
-		["Boss 3"] = { Name = "Jaoquin",         Power = 190472078,     Reward = 1875       },
-		["Boss 4"] = { Name = "Franco",          Power = 364582237,     Reward = 2500       },
-		["Boss 5"] = { Name = "Emiliano Martanez", Power = 6542307712,  Reward = 31250      },
+		["Boss 1"] = { Name = "Agustin",         Power = 10500000,      Reward = 625        },
+		["Boss 2"] = { Name = "Lautaro",         Power = 88425000,      Reward = 1450       },
+		["Boss 3"] = { Name = "Jaoquin",         Power = 200500000,     Reward = 2375       },
+		["Boss 4"] = { Name = "Franco",          Power = 865000000,     Reward = 3800       },
+		["Boss 5"] = { Name = "Emiliano Martanez", Power = 4250000000,  Reward = 31250      },
 	},
 
 	["Area03"] = {
-		["Boss 1"] = { Name = "Darto",           Power = 2616923077,    Reward = 125000     },
+		["Boss 1"] = { Name = "Darto",           Power = 7650000000,    Reward = 125000     },
 		["Boss 2"] = { Name = "Ren",             Power = 14132708726,   Reward = 250000     },
 		["Boss 3"] = { Name = "Souta",           Power = 28621416739,   Reward = 375000     },
 		["Boss 4"] = { Name = "Makoto",          Power = 51523377408,   Reward = 500000     },
-		["Boss 5"] = { Name = "Zion Suzaki",     Power = 869538461705,  Reward = 6250000    },
+		["Boss 5"] = { Name = "Zion Suzaki",     Power = 109538461705,  Reward = 6250000    },
 	},
 
 	["Area04"] = {

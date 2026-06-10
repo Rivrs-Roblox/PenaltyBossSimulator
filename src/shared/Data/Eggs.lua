@@ -34,7 +34,7 @@ return {
 	-- Egg 2
 	["SpottedEgg"] = {
 		["Name"] = "Spotted Egg",
-		["Price"] = 400,
+		["Price"] = 350,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Duck"] = {
@@ -63,7 +63,7 @@ return {
 	-- Egg 3
 	["SilverEgg"] = {
 		["Name"] = "Silver Egg",
-		["Price"] = 50,
+		["Price"] = 160_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Gecko"] = {
