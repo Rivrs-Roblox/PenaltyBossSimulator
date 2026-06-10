@@ -110,6 +110,7 @@ local function getBestAutoWinTarget(data, enemiesData, bossProgress)
 
 	local bestArea = "Area01"
 	local bestBossIndex = 1
+	local highestDefeatableBossReward = 0
 	local highestDefeatableBossPower = 0
 
 	for areaName, areaData in pairs(enemiesData) do
@@ -148,16 +149,25 @@ local function getBestAutoWinTarget(data, enemiesData, bossProgress)
 
 			if bossData then
 				local goaliePower = bossData.Power or 0
-				-- We want to find the highest boss power that is <= playerPower
+				local rewardWins = bossData.Reward or 0
+
+				-- We want to find the boss with the highest Wins reward that we can defeat
 				if playerPower >= goaliePower then
-					if goaliePower > highestDefeatableBossPower then
+					if rewardWins > highestDefeatableBossReward then
+						highestDefeatableBossReward = rewardWins
 						highestDefeatableBossPower = goaliePower
 						bestArea = areaName
 						bestBossIndex = bossIndex
-					elseif goaliePower == highestDefeatableBossPower and areaName >= bestArea then
-						-- tie-breaker: prefer higher area
-						bestArea = areaName
-						bestBossIndex = bossIndex
+					elseif rewardWins == highestDefeatableBossReward then
+						-- tie-breaker: if rewards are equal, choose higher power or higher area
+						if goaliePower > highestDefeatableBossPower then
+							highestDefeatableBossPower = goaliePower
+							bestArea = areaName
+							bestBossIndex = bossIndex
+						elseif goaliePower == highestDefeatableBossPower and areaName >= bestArea then
+							bestArea = areaName
+							bestBossIndex = bossIndex
+						end
 					end
 				end
 			end
@@ -167,7 +177,7 @@ local function getBestAutoWinTarget(data, enemiesData, bossProgress)
 	-- If the player's power is too low to defeat ANY boss in ANY unlocked area
 	-- (e.g. immediately after a rebirth, player power is 0 or extremely low),
 	-- we fall back to the very first boss of their highest unlocked area.
-	if highestDefeatableBossPower == 0 then
+	if highestDefeatableBossReward == 0 then
 		local highestUnlockedAreaNum = 1
 		local highestUnlockedAreaName = "Area01"
 

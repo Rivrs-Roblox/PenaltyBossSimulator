@@ -29,9 +29,7 @@ local StoreController = Knit.GetController("StoreController")
 local function calculateAmount(zone, rebirth, pack)
 	local PACKS_BASE = Template.WinsPacks
 
-	return math.round(
-		PACKS_BASE[zone[table.maxn(zone)]][pack] + PACKS_BASE[zone[table.maxn(zone)]][pack] * (0.2 * rebirth)
-	)
+	return PACKS_BASE[zone[table.maxn(zone)]][pack]
 end
 
 local WinsCard = require(script.Parent.WinsCard)

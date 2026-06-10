@@ -68,8 +68,10 @@ function MonetizationService:HasGamepass(player: Player, name: string)
 	end
 
 	if passId ~= 0 then
-		local res = MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
-		if typeof(res) == "boolean" then
+		local success, res = pcall(function()
+			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, passId)
+		end)
+		if success and typeof(res) == "boolean" then
 			return res
 		end
 		return false
@@ -259,6 +261,10 @@ end
 
 function MonetizationService:CheckPetSlots(player: Player)
 	local data = DataService:GetData(player)
+	if not data then
+		return
+	end
+
 	local targetEquipped = 4
 
 	if self:HasGamepass(player, "+2 Pet Equip") then
@@ -306,21 +312,36 @@ function MonetizationService:KnitInit()
 	self.MonetizationList = DataCacheService:GetFile("Monetization")
 	self.Template = DataCacheService:GetFile("Template")
 
-	Players.PlayerAdded:Connect(function(player)
-		local data = DataService:GetData(player)
-
-		task.wait(0.5)
-		for id, d in self.MonetizationList.GamePasses do
-			print("[MONETIZATION SERVICE] Checking if player has gamepass " .. d.Name)
-			if self:HasGamepass(player, d.Name) and not table.find(data.Gamepasses, d.Name) then
-				table.insert(data.Gamepasses, d.Name)
-				print("[MONETIZATION SERVICE] Player has gamepass " .. d.Name)
-				task.wait(0.1)
+	local function onPlayerAdded(player)
+		task.spawn(function()
+			-- wait for player Attribute DataLoaded to be true
+			if not player:GetAttribute("DataLoaded") then
+				player:GetAttributeChangedSignal("DataLoaded"):Wait()
 			end
-		end
 
-		self:CheckPetSlots(player)
-	end)
+			local data = DataService:GetData(player)
+			if not data then
+				return
+			end
+
+			task.wait(0.5)
+			for id, d in self.MonetizationList.GamePasses do
+				print("[MONETIZATION SERVICE] Checking if player has gamepass " .. d.Name)
+				if not table.find(data.Gamepasses, d.Name) and self:HasGamepass(player, d.Name) then
+					table.insert(data.Gamepasses, d.Name)
+					print("[MONETIZATION SERVICE] Player has gamepass " .. d.Name)
+					task.wait(0.1)
+				end
+			end
+
+			self:CheckPetSlots(player)
+		end)
+	end
+
+	for _, player in ipairs(Players:GetPlayers()) do
+		onPlayerAdded(player)
+	end
+	Players.PlayerAdded:Connect(onPlayerAdded)
 
 	-- MarketplaceService.PromptProductPurchaseFinished:Connect(
 	-- 	function(userId: number, productId: number, isPurchased: boolean)

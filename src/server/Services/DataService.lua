@@ -237,39 +237,15 @@ function DataService:GetData(player: Player): {} | nil
 end
 
 -- Get the amount of given wins froms packs in the store based on player's rebirths
--- Formula: Small = 2.8% × next zone unlock cost; Regular = Small×4; Big = Small×16; Huge = Small×192
 function DataService:GetWinsPackAmount(player: Player, pack: string)
-	-- Cost to unlock the NEXT zone, keyed by the player's current zone
-	local NEXT_ZONE_COST = {
-		["Zone1"]  = 4_800,
-		["Zone2"]  = 11_250_000,
-		["Zone3"]  = 4_500_000_000,
-		["Zone4"]  = 3_000_000_000_000,
-		["Zone5"]  = 1.8e15,
-		["Zone6"]  = 5.67e17,
-		["Zone7"]  = 2.1e20,
-		["Zone8"]  = 8.64e22,
-		["Zone9"]  = 2.97e25,
-		["Zone10"] = 2.97e25,
-	}
 	local PACKS_BASE = self.Template.WinsPacks
-
-	local MULTIPLIERS = { SMALL = 1, REGULAR = 4, BIG = 16, HUGE = 192 }
 
 	local data = self:GetData(player)
 	if data == nil then
 		return 0
 	end
 
-	local currentZone = data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]
-	local nextCost = NEXT_ZONE_COST[currentZone] or NEXT_ZONE_COST["Zone10"]
-	local small = nextCost * 0.028
-
-	-- return math.round(small * MULTIPLIERS[pack] * (1 + 1.1 * data.Rebirth))
-	return math.round(
-		PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack]
-			+ PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack] * (0.2 * data.Rebirth)
-	)
+	return PACKS_BASE[data.Areas.Unlocked[table.maxn(data.Areas.Unlocked)]][pack]
 end
 
 -- Edit value in player data & leaderstats
@@ -736,7 +712,11 @@ function DataService:KnitInit()
 		self:_loadData(player)
 		--self:_grantTestInventory(player)
 		local profile = self.Profiles[player]
-		self:AttachGlobalUpdates(profile, player)
+
+		if profile then
+			self:AttachGlobalUpdates(profile, player)
+		end
+
 		task.spawn(function()
 			self:GiveBadgeForEachUnlockedArea(player)
 		end)

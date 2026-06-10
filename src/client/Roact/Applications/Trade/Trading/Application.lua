@@ -52,15 +52,15 @@ end
 local function getPetPower(petName: string, PetsReducer)
     local petData = PetsData[petName]
     if petData == nil then
-        return nil
+        return 0
     end
 
     local powerData = petData.Power
     if powerData == nil and petData.Type == "Scaling" then
-        powerData = PetsReducer.ScaledPetsPower[petName]
+        powerData = PetsReducer.ScaledPetsPower[petName] or 0
     end
 
-    return powerData
+    return tonumber(powerData) or 0
 end
 
 local function getPetColor(rarity: string)
@@ -236,7 +236,6 @@ function Trading(_, hooks)
 
     local SearchText, SetSearchText = hooks.useState("")
 
-    local index = 0
     local MyPets = {}
 
     for id, pet in pairs(TradeReducer.MyPets) do
@@ -252,10 +251,8 @@ function Trading(_, hooks)
                 bg_color = getPetColor(pet.Rarity),
                 rarity = pet.Rarity,
                 my_side = true,
-                order = index,
+                order = -(powerData * 10000),
             })
-
-            index += 1
         end
     end
 
@@ -273,16 +270,13 @@ function Trading(_, hooks)
                     bg_color = getPetColor(pet.Rarity),
                     rarity = pet.Rarity,
                     my_side = true,
-                    order = index,
+                    order = -powerData,
                 })
-
-                index += 1
             end
         end
     end
 
     local HisPets = {}
-    index = 0
     for id, pet in pairs(TradeReducer.HisPets) do
         local powerData = getPetPower(pet.Name, PetsReducer)
 
@@ -295,10 +289,8 @@ function Trading(_, hooks)
             bg_color = getPetColor(pet.Rarity),
             rarity = pet.Rarity,
             my_side = false,
-            order = index,
+            order = -powerData,
         })
-
-        index += 1
     end
 
     local otherPlayerName = "Other"
