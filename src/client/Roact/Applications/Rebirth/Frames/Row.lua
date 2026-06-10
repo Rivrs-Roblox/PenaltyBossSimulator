@@ -55,6 +55,7 @@ return function(params: {})
 			pos = UDim2.fromScale(0.5, 0.5),
 			size = UDim2.fromScale(1, 0.2),
 			layoutOrder = 1,
+			isUpgrade = false,
 		},
 	})
 
@@ -81,6 +82,16 @@ return function(params: {})
 			ZIndex = 4,
 		}, {
 			Ratio = AspectRatio({ ratio = 1 }),
+			UpgradeIcon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = UI.Upgrade_Multiplier,
+				Position = UDim2.fromScale(0.85, 0.7),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(0.75, 0.75),
+				Visible = params.isUpgrade,
+				ZIndex = 4,
+			}),
 		}),
 
 		CurrentText = Text({
@@ -102,7 +113,7 @@ return function(params: {})
 			ImageColor3 = Color3.fromHex("1aff00"),
 			Position = UDim2.fromScale(0.45, 0.5),
 			ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(0.6, 0.6),
+			Size = UDim2.fromScale(0.7, 0.7),
 			ZIndex = 4,
 		}, {
 			Ratio = AspectRatio({ ratio = 1 }),
@@ -118,6 +129,17 @@ return function(params: {})
 			ZIndex = 4,
 		}, {
 			Ratio = AspectRatio({ ratio = 1 }),
+
+			UpgradeIcon = Roact.createElement("ImageLabel", {
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = UI.Upgrade_Multiplier,
+				Position = UDim2.fromScale(0.85, 0.7),
+				ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(0.75, 0.75),
+				Visible = params.isUpgrade,
+				ZIndex = 4,
+			}),
 		}),
 
 		NextText = Text({

@@ -1,7 +1,6 @@
 local Pets = {
 
-	--Egg1 DefaultEgg
-
+	--Egg 1
 	["Dog"] = {
 		["Name"] = "Dog",
 		["Power"] = 2,
@@ -43,7 +42,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	--Egg2 SpottedEgg
+	--Egg 2
 	["Duck"] = {
 		["Name"] = "Duck",
 		["Power"] = 4,
@@ -85,7 +84,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 3 Coconut Egg
+	-- Egg 3
 	["Gecko"] = {
 		["Name"] = "Gecko",
 		["Power"] = 4,
@@ -127,7 +126,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 4 IceEgg
+	-- Egg 4
 	["Fox"] = {
 		["Name"] = "Fox",
 		["Power"] = 6,
@@ -169,7 +168,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 5 StreetEgg
+	-- Egg 5
 	["Mouse"] = {
 		["Name"] = "Mouse",
 		["Power"] = 10,
@@ -211,7 +210,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 6 SpaceEgg
+	-- Egg 6
 	["Alien"] = {
 		["Name"] = "Alien",
 		["Power"] = 16,
@@ -258,7 +257,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Egg 7 Green Egg
+	-- Egg 7
 	["Monkey"] = {
 		["Name"] = "Monkey",
 		["Power"] = 22,
@@ -305,7 +304,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 8 Bomb Egg
+	-- Egg 8
 	["Donkey"] = {
 		["Name"] = "Donkey",
 		["Power"] = 34,
@@ -350,7 +349,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 9 Skater Egg
+	-- Egg 9
 	["Pancat"] = {
 		["Name"] = "Pancat",
 		["Power"] = 52,
@@ -395,7 +394,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg10 MonsterEgg
+	-- Egg10
 	["Zombie"] = {
 		["Name"] = "Zombie",
 		["Power"] = 76,
@@ -441,7 +440,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Egg 11 Eagle Egg
+	-- Egg 11
 	["Bull"] = {
 		["Name"] = "Bull",
 		["Power"] = 116,
@@ -490,7 +489,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Egg 12 Water Egg
+	-- Egg 12
 	["Dolphin"] = {
 		["Name"] = "Dolphin",
 		["Power"] = 172,
@@ -535,7 +534,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 13 Mafia Egg
+	-- Egg 13
 	["Beaver"] = {
 		["Name"] = "Beaver",
 		["Power"] = 260,
@@ -580,7 +579,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 14 Conductor Egg
+	-- Egg 14
 	["Bat"] = {
 		["Name"] = "Bat",
 		["Power"] = 390,
@@ -626,7 +625,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 15 Junk Egg
+	-- Egg 15
 	["Deer"] = {
 		["Name"] = "Deer",
 		["Power"] = 584,
@@ -671,7 +670,7 @@ local Pets = {
 		["Movement"] = "Walk",
 	},
 
-	-- Egg 16 Lab Egg
+	-- Egg 16
 	["Fish"] = {
 		["Name"] = "Fish",
 		["Power"] = 876,
@@ -758,7 +757,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Egg 18 Arcade Egg
+	-- Egg 18
 	["White Dragon"] = {
 		["Name"] = "White Dragon",
 		["Power"] = 1970,
@@ -804,7 +803,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Egg 19 Sunken Egg
+	-- Egg 19
 	["Blue Penguin"] = {
 		["Name"] = "Blue Penguin",
 		["Power"] = 2956,
@@ -849,12 +848,14 @@ local Pets = {
 
 	["Unicorn"] = {
 		["Name"] = "Unicorn",
-		["Power"] = 1000,
+		["Power"] = 100,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
 		["Movement"] = "Walk",
 	},
+
+	-- Time Rewards (Rewards.lua)
 	["Blue Dragon"] = {
 		["Name"] = "Blue Dragon",
 		["Power"] = 27,
@@ -882,6 +883,8 @@ local Pets = {
 		["Movement"] = "Fly",
 		["Higher"] = false,
 	},
+
+	--Unused
 	["Ruffy"] = {
 		["Name"] = "Ruffy",
 		["Power"] = 70,
@@ -890,6 +893,8 @@ local Pets = {
 		["Speed"] = 18,
 		["Movement"] = "Walk",
 	},
+
+	-- Store Pets
 	["Lunar Moth"] = {
 		["Name"] = "Lunar Moth",
 		["Power"] = 37.8,
@@ -924,6 +929,8 @@ local Pets = {
 		["Speed"] = 18,
 		["Movement"] = "Walk",
 	},
+
+	-- Store Pets (Next update)
 	["Sun Lion"] = {
 		["Name"] = "Sun Lion",
 		["Power"] = 6500000,
@@ -942,177 +949,7 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	--Exclusive Egg
-
-	--Dominus Egg
-	["Infernus"] = {
-		["Name"] = "Infernus",
-		["Power"] = 15.625,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Empyreus"] = {
-		["Name"] = "Empyreus",
-		["Power"] = 40,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Frigidus"] = {
-		["Name"] = "Frigidus",
-		["Power"] = 40,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Rex"] = {
-		["Name"] = "Rex",
-		["Power"] = 80,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Praefectus"] = {
-		["Name"] = "Praefectus",
-		["Power"] = 100,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-
-	--	Christmas Egg
-	["Gnome"] = {
-		["Name"] = "Gnome",
-		["Power"] = 16,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Snowman"] = {
-		["Name"] = "Snowman",
-		["Power"] = 50,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Elf"] = {
-		["Name"] = "Elf",
-		["Power"] = 100,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Reindeer"] = {
-		["Name"] = "Reindeer",
-		["Power"] = 200,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Santa Claus"] = {
-		["Name"] = "Santa Claus",
-		["Power"] = 400,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-
-	--Soldier Egg
-	["Private Soldier"] = {
-		["Name"] = "Private Soldier",
-		["Power"] = 16,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Sergeant"] = {
-		["Name"] = "Sergeant",
-		["Power"] = 50,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Captain"] = {
-		["Name"] = "Captain",
-		["Power"] = 100,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Major"] = {
-		["Name"] = "Major",
-		["Power"] = 200,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["General TungTung"] = {
-		["Name"] = "General TungTung",
-		["Power"] = 400,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-
-	--Giga Chad Egg
-	["Nerd"] = {
-		["Name"] = "Nerd",
-		["Power"] = 60,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Beta"] = {
-		["Name"] = "Beta",
-		["Power"] = 110,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Alpha"] = {
-		["Name"] = "Alpha",
-		["Power"] = 140,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Chad"] = {
-		["Name"] = "Chad",
-		["Power"] = 200,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-	["Giga Chad"] = {
-		["Name"] = "Giga Chad",
-		["Power"] = 300,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
-
-	-- REJOIN
+	-- Exit Gift (ExitGifts.lua)
 	["Sakura Deer"] = {
 		["Name"] = "Sakura Deer",
 		["Power"] = 106,
@@ -1121,147 +958,8 @@ local Pets = {
 		["Speed"] = 18,
 		["Movement"] = "Walk",
 	},
-	-- Evolutive
-	["Child DragonBat"] = {
-		["Name"] = "Child DragonBat",
-		["Power"] = 200,
-		["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Juvenile DragonBat"] = {
-		["Name"] = "Juvenile DragonBat",
-		["Power"] = 1000,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Adolescent DragonBat"] = {
-		["Name"] = "Adolescent DragonBat",
-		["Power"] = 2000,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Adult DragonBat"] = {
-		["Name"] = "Adult DragonBat",
-		["Power"] = 4000,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Elder DragonBat"] = {
-		["Name"] = "Elder DragonBat",
-		["Power"] = 6000,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-
-	--Super hero egg
-	["Eagle Eye"] = {
-		["Name"] = "Eagle Eye",
-		["Power"] = 98,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Metalman"] = {
-		["Name"] = "Metalman",
-		["Power"] = 186,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Batface"] = {
-		["Name"] = "Batface",
-		["Power"] = 350,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Spooderman"] = {
-		["Name"] = "Spooderman",
-		["Power"] = 840,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Superguy"] = {
-		["Name"] = "Superguy",
-		["Power"] = 1200,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-
-	--Military Egg
-	["Light Recon"] = {
-		["Name"] = "Light Recon",
-		["Power"] = 250,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Tank"] = {
-		["Name"] = "Tank",
-		["Power"] = 500,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Missile Launcher"] = {
-		["Name"] = "Missile Launcher",
-		["Power"] = 900,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-		["Higher"] = false,
-	},
-	["Copter"] = {
-		["Name"] = "Copter",
-		["Power"] = 1400,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-	["Bombardiro Crocodilo"] = {
-		["Name"] = "Bombardiro Crocodilo",
-		["Power"] = 2000,
-		["Rarity"] = "Exclusive",
-
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
-
+	--Exclusive Egg
 	--Ball Egg
 	["Cat Ball"] = {
 		["Name"] = "Cat Ball",
@@ -1352,7 +1050,6 @@ local Pets = {
 	},
 
 	-- PACKS
-
 	["Fire Pony"] = {
 		["Name"] = "Fire Pony",
 		["Power"] = 15.6,
@@ -1381,236 +1078,547 @@ local Pets = {
 		["Higher"] = false,
 	},
 
-	-- Exclusive Pack
+	--[[ non-available pets
+	--Dominus Egg
+	-- ["Infernus"] = {
+	-- 	["Name"] = "Infernus",
+	-- 	["Power"] = 15.625,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Dragon BZ Fire"] = {
-		["Name"] = "Dragon BZ Fire",
-		["Power"] = 144,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Empyreus"] = {
+	-- 	["Name"] = "Empyreus",
+	-- 	["Power"] = 40,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Frigidus"] = {
+	-- 	["Name"] = "Frigidus",
+	-- 	["Power"] = 40,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Kitsune Ice"] = {
-		["Name"] = "Kitsune Ice",
-		["Power"] = 224,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Rex"] = {
+	-- 	["Name"] = "Rex",
+	-- 	["Power"] = 80,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Praefectus"] = {
+	-- 	["Name"] = "Praefectus",
+	-- 	["Power"] = 100,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Griffin Thunder"] = {
-		["Name"] = "Griffin Thunder",
-		["Power"] = 980,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
+	-- --	Christmas Egg
+	-- ["Gnome"] = {
+	-- 	["Name"] = "Gnome",
+	-- 	["Power"] = 16,
+	-- 	["Rarity"] = "Exclusive",
 
-	-- Exclusive Chest
-	["Lirili"] = {
-		["Name"] = "Lirili",
-		["Power"] = 90,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Snowman"] = {
+	-- 	["Name"] = "Snowman",
+	-- 	["Power"] = 50,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Elf"] = {
+	-- 	["Name"] = "Elf",
+	-- 	["Power"] = 100,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Udindindun"] = {
-		["Name"] = "Udindindun",
-		["Power"] = 150,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Reindeer"] = {
+	-- 	["Name"] = "Reindeer",
+	-- 	["Power"] = 200,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Santa Claus"] = {
+	-- 	["Name"] = "Santa Claus",
+	-- 	["Power"] = 400,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Patapim"] = {
-		["Name"] = "Patapim",
-		["Type"] = "Scaling",
-		["Multiplier"] = 1.2,
-		["Rarity"] = "Secret",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- --Soldier Egg
+	-- ["Private Soldier"] = {
+	-- 	["Name"] = "Private Soldier",
+	-- 	["Power"] = 16,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Tralalero"] = {
-		["Name"] = "Tralalero",
-		["Type"] = "Scaling",
-		["Multiplier"] = 2,
-		["Rarity"] = "Secret",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Sergeant"] = {
+	-- 	["Name"] = "Sergeant",
+	-- 	["Power"] = 50,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Captain"] = {
+	-- 	["Name"] = "Captain",
+	-- 	["Power"] = 100,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Tung Tung Sahur"] = {
-		["Name"] = "Tung Tung Sahur",
-		["Type"] = "Scaling",
-		["Multiplier"] = 3,
-		["Rarity"] = "Secret",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Major"] = {
+	-- 	["Name"] = "Major",
+	-- 	["Power"] = 200,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["General TungTung"] = {
+	-- 	["Name"] = "General TungTung",
+	-- 	["Power"] = 400,
+	-- 	["Rarity"] = "Exclusive",
 
-	-- Boss Exclusive
-	["MothMan Dark"] = {
-		["Name"] = "MothMan Dark",
-		["Power"] = 600,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
+	-- --Giga Chad Egg
+	-- ["Nerd"] = {
+	-- 	["Name"] = "Nerd",
+	-- 	["Power"] = 60,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Patapim Evolved"] = {
-		["Name"] = "Patapim Evolved",
-		["Power"] = 10000,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Beta"] = {
+	-- 	["Name"] = "Beta",
+	-- 	["Power"] = 110,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Alpha"] = {
+	-- 	["Name"] = "Alpha",
+	-- 	["Power"] = 140,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Sahur Evolved"] = {
-		["Name"] = "Sahur Evolved",
-		["Power"] = 10000,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Chad"] = {
+	-- 	["Name"] = "Chad",
+	-- 	["Power"] = 200,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	-- ["Giga Chad"] = {
+	-- 	["Name"] = "Giga Chad",
+	-- 	["Power"] = 300,
+	-- 	["Rarity"] = "Exclusive",
 
-	-- SEASON PASS
-	["Chill Guy"] = {
-		["Name"] = "Chill Guy",
-		["Power"] = 600,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- -- Evolutive
+	-- ["Child DragonBat"] = {
+	-- 	["Name"] = "Child DragonBat",
+	-- 	["Power"] = 200,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Gigamate"] = {
-		["Name"] = "Gigamate",
-		["Power"] = 700,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Juvenile DragonBat"] = {
+	-- 	["Name"] = "Juvenile DragonBat",
+	-- 	["Power"] = 1000,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Adolescent DragonBat"] = {
+	-- 	["Name"] = "Adolescent DragonBat",
+	-- 	["Power"] = 2000,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Giga Brainrot"] = {
-		["Name"] = "Giga Brainrot",
-		["Power"] = 800,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Adult DragonBat"] = {
+	-- 	["Name"] = "Adult DragonBat",
+	-- 	["Power"] = 4000,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Elder DragonBat"] = {
+	-- 	["Name"] = "Elder DragonBat",
+	-- 	["Power"] = 6000,
+	-- 	["Rarity"] = "Exclusive",
 
-	-- Brainrot Egg
-	["Ambalabu"] = {
-		["Name"] = "Ambalabu",
-		["Power"] = 200,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- --Super hero egg
+	-- ["Eagle Eye"] = {
+	-- 	["Name"] = "Eagle Eye",
+	-- 	["Power"] = 98,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Chimpanzini"] = {
-		["Name"] = "Chimpanzini",
-		["Power"] = 500,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Metalman"] = {
+	-- 	["Name"] = "Metalman",
+	-- 	["Power"] = 186,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Batface"] = {
+	-- 	["Name"] = "Batface",
+	-- 	["Power"] = 350,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Saturno"] = {
-		["Name"] = "Saturno",
-		["Power"] = 800,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Spooderman"] = {
+	-- 	["Name"] = "Spooderman",
+	-- 	["Power"] = 840,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Superguy"] = {
+	-- 	["Name"] = "Superguy",
+	-- 	["Power"] = 1200,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Assassino"] = {
-		["Name"] = "Assassino",
-		["Power"] = 1200,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- --Military Egg
+	-- ["Light Recon"] = {
+	-- 	["Name"] = "Light Recon",
+	-- 	["Power"] = 250,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Bombombini"] = {
-		["Name"] = "Bombombini",
-		["Power"] = 2000,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Tank"] = {
+	-- 	["Name"] = "Tank",
+	-- 	["Power"] = 500,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Missile Launcher"] = {
+	-- 	["Name"] = "Missile Launcher",
+	-- 	["Power"] = 900,
+	-- 	["Rarity"] = "Exclusive",
 
-	-- Crewmate Egg
-	["Crewmate"] = {
-		["Name"] = "Crewmate",
-		["Power"] = 240,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Copter"] = {
+	-- 	["Name"] = "Copter",
+	-- 	["Power"] = 1400,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+	-- ["Bombardiro Crocodilo"] = {
+	-- 	["Name"] = "Bombardiro Crocodilo",
+	-- 	["Power"] = 2000,
+	-- 	["Rarity"] = "Exclusive",
 
-	["Ghostmate"] = {
-		["Name"] = "Ghostmate",
-		["Power"] = 600,
-		["Rarity"] = "Exclusive",
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- -- Exclusive Pack
 
-	["Engineer"] = {
-		["Name"] = "Engineer",
-		["Power"] = 840,
-		["Rarity"] = "Exclusive",
+	-- ["Dragon BZ Fire"] = {
+	-- 	["Name"] = "Dragon BZ Fire",
+	-- 	["Power"] = 144,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
 
-	["Guardian"] = {
-		["Name"] = "Guardian",
-		["Power"] = 1400,
-		["Rarity"] = "Exclusive",
+	-- ["Kitsune Ice"] = {
+	-- 	["Name"] = "Kitsune Ice",
+	-- 	["Power"] = 224,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Fly",
-		["Higher"] = false,
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
 
-	["Impostor"] = {
-		["Name"] = "Impostor",
-		["Power"] = 2400,
-		["Rarity"] = "Exclusive",
+	-- ["Griffin Thunder"] = {
+	-- 	["Name"] = "Griffin Thunder",
+	-- 	["Power"] = 980,
+	-- 	["Rarity"] = "Exclusive",
 
-		["Speed"] = 18,
-		["Movement"] = "Walk",
-	},
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+
+	-- -- Exclusive Chest
+	-- ["Lirili"] = {
+	-- 	["Name"] = "Lirili",
+	-- 	["Power"] = 90,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Udindindun"] = {
+	-- 	["Name"] = "Udindindun",
+	-- 	["Power"] = 150,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Patapim"] = {
+	-- 	["Name"] = "Patapim",
+	-- 	["Type"] = "Scaling",
+	-- 	["Multiplier"] = 1.2,
+	-- 	["Rarity"] = "Secret",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Tralalero"] = {
+	-- 	["Name"] = "Tralalero",
+	-- 	["Type"] = "Scaling",
+	-- 	["Multiplier"] = 2,
+	-- 	["Rarity"] = "Secret",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Tung Tung Sahur"] = {
+	-- 	["Name"] = "Tung Tung Sahur",
+	-- 	["Type"] = "Scaling",
+	-- 	["Multiplier"] = 3,
+	-- 	["Rarity"] = "Secret",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- -- Boss Exclusive
+	-- ["MothMan Dark"] = {
+	-- 	["Name"] = "MothMan Dark",
+	-- 	["Power"] = 600,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+
+	-- ["Patapim Evolved"] = {
+	-- 	["Name"] = "Patapim Evolved",
+	-- 	["Power"] = 10000,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Sahur Evolved"] = {
+	-- 	["Name"] = "Sahur Evolved",
+	-- 	["Power"] = 10000,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- -- SEASON PASS
+	-- ["Chill Guy"] = {
+	-- 	["Name"] = "Chill Guy",
+	-- 	["Power"] = 600,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Gigamate"] = {
+	-- 	["Name"] = "Gigamate",
+	-- 	["Power"] = 700,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Giga Brainrot"] = {
+	-- 	["Name"] = "Giga Brainrot",
+	-- 	["Power"] = 800,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- -- Brainrot Egg
+	-- ["Ambalabu"] = {
+	-- 	["Name"] = "Ambalabu",
+	-- 	["Power"] = 200,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Chimpanzini"] = {
+	-- 	["Name"] = "Chimpanzini",
+	-- 	["Power"] = 500,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Saturno"] = {
+	-- 	["Name"] = "Saturno",
+	-- 	["Power"] = 800,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Assassino"] = {
+	-- 	["Name"] = "Assassino",
+	-- 	["Power"] = 1200,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Bombombini"] = {
+	-- 	["Name"] = "Bombombini",
+	-- 	["Power"] = 2000,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+
+	-- -- Crewmate Egg
+	-- ["Crewmate"] = {
+	-- 	["Name"] = "Crewmate",
+	-- 	["Power"] = 240,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Ghostmate"] = {
+	-- 	["Name"] = "Ghostmate",
+	-- 	["Power"] = 600,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Engineer"] = {
+	-- 	["Name"] = "Engineer",
+	-- 	["Power"] = 840,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+
+	-- ["Guardian"] = {
+	-- 	["Name"] = "Guardian",
+	-- 	["Power"] = 1400,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Fly",
+	-- 	["Higher"] = false,
+	-- },
+
+	-- ["Impostor"] = {
+	-- 	["Name"] = "Impostor",
+	-- 	["Power"] = 2400,
+	-- 	["Rarity"] = "Exclusive",
+
+	-- 	["Speed"] = 18,
+	-- 	["Movement"] = "Walk",
+	-- },
+	--]]
 }
 
 local basePets = {}

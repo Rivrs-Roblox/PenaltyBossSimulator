@@ -126,7 +126,7 @@ function DailyRewardsService:ClaimReward(player: Player, id: number, bypassTime:
 			PetsService:AddPet(player, Reward.Pet)
 		end
 	elseif Reward.Reward == "Egg" then
-		local eggName = Reward.Egg or "DragonBatEgg"
+		local eggName = Reward.Egg or "DefaultEgg"
 		local _, pets = EggsService:Hatch(player, Reward.Amount or 1, eggName, {}, true)
 		self.Client.EggHatched:Fire(player, pets, eggName)
 	elseif Reward.Reward == "Upgrade" and Reward.Upgrade == "+1PetEquip" then

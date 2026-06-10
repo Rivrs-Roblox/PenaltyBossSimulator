@@ -32,6 +32,9 @@ return table.freeze({
 	Wins = "rbxassetid://116196577698114",
 	Wins_NoStroke = "rbxassetid://129424156147325",
 	Multiplier = "rbxassetid://71199624438527",
+	Wins_Multiplier_Upgrade = "rbxassetid://116196577698114",
+	Money2_Multiplier_Upgrade = "rbxassetid://77032573971196",
+	Upgrade_Multiplier = "rbxassetid://86261730763936",
 	Stars = "rbxassetid://119997009207385",
 	Speed = "rbxassetid://119659399561028",
 

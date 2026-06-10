@@ -519,6 +519,14 @@ function FightController:ProceedKickAnimation(savedDirection: number, savedPower
 
 	local goalArea = self:GetPenaltyZonePart("GoalArea")
 
+	local isGoalCornerBlasted = true
+	if result == "GoalCorner" then
+		local goalieHipHeight = GoalieController:GetGoalieHipHeight()
+		if goalieHipHeight >= 3.5 then -- BIG_HIP_THRESHOLD
+			isGoalCornerBlasted = (math.random() < 0.5)
+		end
+	end
+
 	BallController:AnimateBallKick(savedDirection, result, goalArea.Position, isSpecialKick, {
 		onGoalieReact = function()
 			-- Kembalikan speed ke normal
@@ -527,7 +535,7 @@ function FightController:ProceedKickAnimation(savedDirection: number, savedPower
 			CameraController:StopCameraFollow()
 
 			-- Play animasi defend goalie
-			GoalieController:PlayGoalieDefendAnimation(savedDirection, result)
+			GoalieController:PlayGoalieDefendAnimation(savedDirection, result, isGoalCornerBlasted)
 		end,
 		onResult = function()
 			CameraController:StopCameraVisualEffect()
@@ -538,7 +546,7 @@ function FightController:ProceedKickAnimation(savedDirection: number, savedPower
 				CameraController:PlayShakePreset("Goal")
 			end
 		end,
-	})
+	}, isGoalCornerBlasted)
 
 	-- Camera: follow ball selama slow-mo (akan di-stop oleh onGoalieReact saat switch ke GoalCamera)
 	CameraController:FollowBallCamera()

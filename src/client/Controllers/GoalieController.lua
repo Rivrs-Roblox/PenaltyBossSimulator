@@ -283,7 +283,11 @@ function GoalieController:PlayBossIntroAnimation(callback: () -> ())
 	end
 end
 
-function GoalieController:PlayGoalieDefendAnimation(pointerPosition: number, result: string)
+function GoalieController:PlayGoalieDefendAnimation(
+	pointerPosition: number,
+	result: string,
+	isGoalCornerBlasted: boolean?
+)
 	-- Pilih animasi defend berdasarkan arah bola dan hasil
 	local animName
 
@@ -317,7 +321,8 @@ function GoalieController:PlayGoalieDefendAnimation(pointerPosition: number, res
 	-- Pindahkan posisi goalie ke goalieTargetPos (kecuali GoalBlast/Defend Front tengah)
 	local shouldMove = result ~= "GoalBlast" and not isCenter
 
-	local goalieTargetPos = goalie.PrimaryPart.Position + leftDir * horizontalOffset
+	local multiplier = if result == "GoalCorner" and isGoalCornerBlasted == false then 0.6 else 1
+	local goalieTargetPos = goalie.PrimaryPart.Position + leftDir * (horizontalOffset * multiplier)
 
 	self:PlayGoalieAnimation(animName)
 

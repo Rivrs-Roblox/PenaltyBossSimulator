@@ -20,8 +20,6 @@ pcall(function()
 	Config = DS:GetDataStore("GameConfigs"):GetAsync("Global") or {}
 end)
 
-local BADGE_100_GOAL = 2622236422004443
-
 local FightConfig = Config.FightConfig
 	or {
 		ZONE_RED_LEFT_END = 0.10,
@@ -343,7 +341,7 @@ function FightService:ApplyKickResult(player: Player)
 		if data and data.TotalGoals then
 			data.TotalGoals += 1
 			if data.TotalGoals >= 100 then
-				DataService:GiveBadge(player, BADGE_100_GOAL)
+				DataService:GiveBadge(player, "100_Goals")
 			end
 		end
 

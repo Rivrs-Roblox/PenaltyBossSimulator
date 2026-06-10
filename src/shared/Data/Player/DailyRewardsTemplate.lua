@@ -9,10 +9,10 @@ return table.freeze({
 	},
 
 	[2] = {
-		Image = "Sergeant",
-		Name = "1 Sergeant",
+		Image = "Unicorn",
+		Name = "1 Unicorn",
 		Reward = "Pets",
-		Pet = "Sergeant",
+		Pet = "Unicorn",
 		Amount = 1,
 		Claimed = false,
 	},
