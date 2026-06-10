@@ -1,5 +1,5 @@
 return table.freeze({
-	["Tutorial"] = { Name = "Mateus", Power = 30, Reward = 1 },
+	["Tutorial"] = { Name = "Mateus", Power = 30, Reward = 5 },
 
 	["Area01"] = {
 		["Boss 1"] = { Name = "Mateus",          Power = 5000,          Reward = 12         },
