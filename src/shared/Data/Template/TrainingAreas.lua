@@ -22,7 +22,7 @@ return table.freeze({
 		[2] = { PowerPerSecond = 3321, PowerRequirement = 7055000000, VIP = false },
 		[3] = { PowerPerSecond = 4051, PowerRequirement = 24585000000, VIP = false },
 		[4] = { PowerPerSecond = 5066, PowerRequirement = 130000000000, VIP = false },
-		[5] = { PowerPerSecond = 6585, PowerRequirement = 435000000000, VIP = false },
+		[5] = { PowerPerSecond = 6585, PowerRequirement = 235000000000, VIP = false },
 		[6] = { PowerPerSecond = 8048, PowerRequirement = 0, VIP = true },
 	},
 
@@ -31,7 +31,7 @@ return table.freeze({
 		[2] = { PowerPerSecond = 26509, PowerRequirement = 1550180227819, VIP = false },
 		[3] = { PowerPerSecond = 32332, PowerRequirement = 5445616486235, VIP = false },
 		[4] = { PowerPerSecond = 40437, PowerRequirement = 27791208791265, VIP = false },
-		[5] = { PowerPerSecond = 52562, PowerRequirement = 92637362637551, VIP = false },
+		[5] = { PowerPerSecond = 52562, PowerRequirement = 62637362637551, VIP = false },
 		[6] = { PowerPerSecond = 64242, PowerRequirement = 0, VIP = true },
 	},
 
@@ -40,7 +40,7 @@ return table.freeze({
 		[2] = { PowerPerSecond = 164235, PowerRequirement = 262652279083680, VIP = false },
 		[3] = { PowerPerSecond = 200312, PowerRequirement = 1044279958573030, VIP = false },
 		[4] = { PowerPerSecond = 250525, PowerRequirement = 3247830000000000, VIP = false },
-		[5] = { PowerPerSecond = 325642, PowerRequirement = 10826100000000000, VIP = false },
+		[5] = { PowerPerSecond = 325642, PowerRequirement = 8826100000000000, VIP = false },
 		[6] = { PowerPerSecond = 398007, PowerRequirement = 0, VIP = true },
 	},
 

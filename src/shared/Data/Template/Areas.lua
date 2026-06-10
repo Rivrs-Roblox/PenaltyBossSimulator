@@ -27,7 +27,7 @@ return table.freeze({
 		Id = "Zone4",
 		Name = "USA Training Arena",
 		Image = "rbxassetid://86427168704177",
-		Price = 4500000000,
+		Price = 2500000000,
 		Order = 4,
 	},
 
@@ -35,7 +35,7 @@ return table.freeze({
 		Id = "Zone5",
 		Name = "Germany Arena",
 		Image = "rbxassetid://95556806161480",
-		Price = 3000000000000,
+		Price = 1950000000000,
 		Order = 5,
 	},
 

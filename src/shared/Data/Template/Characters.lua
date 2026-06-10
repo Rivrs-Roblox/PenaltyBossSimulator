@@ -97,7 +97,7 @@ return table.freeze({
 		Flag = "Spain",
 	},
 
-	-- Area02
+	
 	[4] = {
 		Name = "Kelvin Philips",
 		DisplayName = "Kelvin Philips",
@@ -116,6 +116,7 @@ return table.freeze({
 		Order = 8,
 		Flag = "USA",
 	},
+	-- Area02
 	[6] = {
 		Name = "Richarlisyun",
 		DisplayName = "Richarlisyun",
@@ -126,7 +127,7 @@ return table.freeze({
 		Flag = "Brazil",
 	},
 
-	-- Area03
+	
 	[7] = {
 		Name = "Koi Hovert",
 		DisplayName = "Koi Hovert",
@@ -145,22 +146,23 @@ return table.freeze({
 		Order = 11,
 		Flag = "Spain",
 	},
+	-- Area03
 	[9] = {
 		Name = "Alfonso Daviez",
 		DisplayName = "Alfonso Daviez",
 		Image = "rbxassetid://90716457204330",
-		Price = 31_200_000,
+		Price = 21_200_000,
 		Multiplier = 4.5,
 		Order = 12,
 		Flag = "Canada",
 	},
 
-	-- Area04
+	
 	[10] = {
 		Name = "Martin Odegard",
 		DisplayName = "Martin Odegard",
 		Image = "rbxassetid://133502388628672",
-		Price = 600_000_000,
+		Price = 126_000_000,
 		Multiplier = 5,
 		Order = 13,
 		Flag = "Norway",
@@ -169,27 +171,28 @@ return table.freeze({
 		Name = "Ashraf Hakimy",
 		DisplayName = "Ashraf Hakimy",
 		Image = "rbxassetid://111590200134164",
-		Price = 800_000_000,
+		Price = 567_000_000,
 		Multiplier = 5.5,
 		Order = 14,
 		Flag = "Morocco",
 	},
+	-- Area04
 	[12] = {
 		Name = "Federico Valverdi",
 		DisplayName = "Federico Valverdi",
 		Image = "rbxassetid://124321008363103",
-		Price = 10_000_000_000,
+		Price = 4_900_000_000,
 		Multiplier = 6,
 		Order = 15,
 		Flag = "Uruguay",
 	},
 
-	-- Area05
+	
 	[13] = {
 		Name = "Declean Rise",
 		DisplayName = "Declean Rise",
 		Image = "rbxassetid://106981005250613",
-		Price = 200_000_000_000,
+		Price = 39_000_000_000,
 		Multiplier = 6.5,
 		Order = 16,
 		Flag = "England",
@@ -198,27 +201,30 @@ return table.freeze({
 		Name = "Berniado Silvo",
 		DisplayName = "Berniado Silvo",
 		Image = "rbxassetid://76589987506038",
-		Price = 267_000_000_000,
+		Price = 192_000_000_000,
 		Multiplier = 7,
 		Order = 17,
 		Flag = "Portugal",
 	},
+
+	-- Area05
 	[15] = {
 		Name = "Franklin De Jongs",
 		DisplayName = "Franklin De Jongs",
 		Image = "rbxassetid://126795255918827",
-		Price = 3_330_000_000_000,
+		Price = 1_330_000_000_000,
 		Multiplier = 7.5,
 		Order = 18,
 		Flag = "Netherlands",
 	},
+	
 
-	-- Area06
+	
 	[16] = {
 		Name = "Enzo Fernandiz",
 		DisplayName = "Enzo Fernandiz",
 		Image = "rbxassetid://79991646848310",
-		Price = 33_800_000_000_000,
+		Price = 26_800_000_000_000,
 		Multiplier = 8,
 		Order = 19,
 		Flag = "Argentina",
@@ -227,11 +233,12 @@ return table.freeze({
 		Name = "Rodre",
 		DisplayName = "Rodre",
 		Image = "rbxassetid://118204609016882",
-		Price = 45_000_000_000_000,
+		Price = 146_000_000_000_000,
 		Multiplier = 8.5,
 		Order = 20,
 		Flag = "Spain",
 	},
+	-- Area06
 	[18] = {
 		Name = "Peedri",
 		DisplayName = "Peedri",
@@ -241,8 +248,8 @@ return table.freeze({
 		Order = 21,
 		Flag = "Spain",
 	},
-
-	-- Area07
+	
+	
 	[19] = {
 		Name = "Lautario Martinezo",
 		DisplayName = "Lautario Martinezo",
@@ -261,6 +268,9 @@ return table.freeze({
 		Order = 23,
 		Flag = "Germany",
 	},
+
+	-- Area07
+
 	[21] = {
 		Name = "Kvaratskeliya",
 		DisplayName = "Kvaratskeliya",
@@ -270,8 +280,8 @@ return table.freeze({
 		Order = 24,
 		Flag = "Georgia",
 	},
-
-	-- Area08
+	
+	
 	[22] = {
 		Name = "Rafel Leo",
 		DisplayName = "Rafel Leo",
@@ -281,6 +291,7 @@ return table.freeze({
 		Order = 25,
 		Flag = "Portugal",
 	},
+	
 	[23] = {
 		Name = "Bakayo Sakko",
 		DisplayName = "Bakayo Sakko",
@@ -290,6 +301,8 @@ return table.freeze({
 		Order = 26,
 		Flag = "England",
 	},
+
+	-- Area08
 	[24] = {
 		Name = "Victor Ohismen",
 		DisplayName = "Victor Ohismen",
@@ -299,8 +312,8 @@ return table.freeze({
 		Order = 27,
 		Flag = "Nigeria",
 	},
-
-	-- Area09
+	
+	
 	[25] = {
 		Name = "Pill Foder",
 		DisplayName = "Pill Foder",
@@ -319,6 +332,7 @@ return table.freeze({
 		Order = 29,
 		Flag = "France",
 	},
+	-- Area09
 	[27] = {
 		Name = "Hery Ken",
 		DisplayName = "Hery Ken",
@@ -329,7 +343,7 @@ return table.freeze({
 		Flag = "England",
 	},
 
-	-- Area10
+	
 	[28] = {
 		Name = "Robert Lewandosky",
 		DisplayName = "Robert Lewandosky",
@@ -339,6 +353,7 @@ return table.freeze({
 		Order = 31,
 		Flag = "Poland",
 	},
+	-- Area10
 	[29] = {
 		Name = "Erlin Haland",
 		DisplayName = "Erlin Haland",

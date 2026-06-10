@@ -120,7 +120,7 @@ return {
 	-- Egg 5
 	["SakuraEgg"] = {
 		["Name"] = "Sakura Egg",
-		["Price"] = 1_200_000_000,
+		["Price"] = 18_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Mouse"] = {
@@ -148,7 +148,7 @@ return {
 	-- Egg 6
 	["SushiEgg"] = {
 		["Name"] = "Sushi Egg",
-		["Price"] = 480_000_000_000,
+		["Price"] = 107_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Alien"] = {
@@ -177,7 +177,7 @@ return {
 	-- Egg 7
 	["EagleEgg"] = {
 		["Name"] = "Eagle Egg",
-		["Price"] = 94_500_000_000_000,
+		["Price"] = 4_200_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Monkey"] = {
@@ -205,7 +205,7 @@ return {
 	-- Egg 8
 	["CowboyEgg"] = {
 		["Name"] = "Cowboy Egg",
-		["Price"] = 2.4e16,
+		["Price"] = 33_660_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Donkey"] = {
@@ -234,7 +234,7 @@ return {
 	-- Egg 9
 	["BombEgg"] = {
 		["Name"] = "Bomb Egg",
-		["Price"] = 7.2e18,
+		["Price"] = 1_770_000_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Pancat"] = {
@@ -262,7 +262,7 @@ return {
 	-- Egg 10
 	["DamierEgg"] = {
 		["Name"] = "Damier Egg",
-		["Price"] = 1.88571e21,
+		["Price"] = 25_500_000_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Zombie"] = {
