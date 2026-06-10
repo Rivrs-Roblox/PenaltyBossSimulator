@@ -1265,7 +1265,7 @@ local Pets = {
 	--Ball Egg
 	["Cat Ball"] = {
 		["Name"] = "Cat Ball",
-		["Power"] = 10,
+		["Power"] = 125,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1273,7 +1273,7 @@ local Pets = {
 	},
 	["Platypus Ball"] = {
 		["Name"] = "Platypus Ball",
-		["Power"] = 14,
+		["Power"] = 175,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1281,7 +1281,7 @@ local Pets = {
 	},
 	["Viking Ball"] = {
 		["Name"] = "Viking Ball",
-		["Power"] = 22,
+		["Power"] = 275,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1289,7 +1289,7 @@ local Pets = {
 	},
 	["Dragon Ball"] = {
 		["Name"] = "Dragon Ball",
-		["Power"] = 34,
+		["Power"] = 425,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1297,7 +1297,7 @@ local Pets = {
 	},
 	["Chainsaw Ball"] = {
 		["Name"] = "Chainsaw Ball",
-		["Power"] = 54,
+		["Power"] = 675,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1307,7 +1307,7 @@ local Pets = {
 	--Monster Egg
 	["Drake"] = {
 		["Name"] = "Drake",
-		["Power"] = 42,
+		["Power"] = 4600,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1316,7 +1316,7 @@ local Pets = {
 	},
 	["Behemoth"] = {
 		["Name"] = "Behemoth",
-		["Power"] = 76,
+		["Power"] = 8300,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1325,7 +1325,7 @@ local Pets = {
 	},
 	["Leviathan"] = {
 		["Name"] = "Leviathan",
-		["Power"] = 124,
+		["Power"] = 13500,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1334,7 +1334,7 @@ local Pets = {
 	},
 	["Yog Sothoth"] = {
 		["Name"] = "Yog Sothoth",
-		["Power"] = 210,
+		["Power"] = 22900,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
@@ -1343,7 +1343,7 @@ local Pets = {
 	},
 	["Cthulhu"] = {
 		["Name"] = "Cthulhu",
-		["Power"] = 350,
+		["Power"] = 38200,
 		["Rarity"] = "Exclusive",
 
 		["Speed"] = 18,
