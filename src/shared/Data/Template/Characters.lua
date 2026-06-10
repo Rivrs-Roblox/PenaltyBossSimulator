@@ -91,7 +91,7 @@ return table.freeze({
 		Name = "Mark Cucurelo",
 		DisplayName = "Mark Cucurelo",
 		Image = "rbxassetid://117095260706272",
-		Price = 2_500,
+		Price = 500,
 		Multiplier = 1.75,
 		Order = 6,
 		Flag = "Spain",
