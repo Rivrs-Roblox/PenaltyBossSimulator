@@ -291,7 +291,7 @@ return {
 	-- Egg 11
 	["SombreroEgg"] = {
 		["Name"] = "Sombrero Egg",
-		["Price"] = 2.07429e23,
+		["Price"] = 765_000_000_000_000,
 		["Currency"] = "Wins",
 		["Pets"] = {
 			["Bull"] = {
