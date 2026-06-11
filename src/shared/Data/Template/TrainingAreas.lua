@@ -9,12 +9,12 @@ return table.freeze({
 	},
 
 	["Zone2"] = {
-		[1] = { PowerPerSecond = 866, PowerRequirement = 0, VIP = false },
-		[2] = { PowerPerSecond = 1056, PowerRequirement = 44225000, VIP = false },
-		[3] = { PowerPerSecond = 1288, PowerRequirement = 144700000, VIP = false },
-		[4] = { PowerPerSecond = 1611, PowerRequirement = 781500000, VIP = false },
-		[5] = { PowerPerSecond = 2095, PowerRequirement = 2775000000, VIP = false },
-		[6] = { PowerPerSecond = 2561, PowerRequirement = 0, VIP = true },
+		[1] = { PowerPerSecond = 900, PowerRequirement = 0, VIP = false },
+		[2] = { PowerPerSecond = 1250, PowerRequirement = 44225000, VIP = false },
+		[3] = { PowerPerSecond = 1500, PowerRequirement = 144700000, VIP = false },
+		[4] = { PowerPerSecond = 1850, PowerRequirement = 781500000, VIP = false },
+		[5] = { PowerPerSecond = 2350, PowerRequirement = 2775000000, VIP = false },
+		[6] = { PowerPerSecond = 2900, PowerRequirement = 0, VIP = true },
 	},
 
 	["Zone3"] = {
