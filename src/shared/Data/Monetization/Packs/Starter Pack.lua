@@ -19,8 +19,8 @@ return table.freeze({
 		end,
 		["Purchased"] = function(self, userId)
 			local Player = Players:GetPlayerByUserId(userId)
-			DataService:ChangeValue(Player, "Money2", 37_000_000_000, true)
-			DataService:ChangeValue(Player, "Wins", 4_000_000, true)
+			DataService:ChangeValue(Player, "Money2", 21_000_000_000, true)
+			DataService:ChangeValue(Player, "Wins", 11_250_000, true)
 			DataService:ChangeValue(Player, "Rebirth", 15, true)
 			PetsService:AddPet(Player, "Fire Pony")
 
@@ -40,8 +40,8 @@ return table.freeze({
 			return { status = true, message = "" }
 		end,
 		["Purchased"] = function(self, userId)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 6.4e16, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 400_000_000_000_000, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 42_225_354_148_589_100, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 1_800_000_000_000_000, true)
 			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 25, true)
 
 			PetsService:AddPet(Players:GetPlayerByUserId(userId), "Cloud Whale")
@@ -60,8 +60,8 @@ return table.freeze({
 			return { status = true, message = "" }
 		end,
 		["Purchased"] = function(self, userId)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 2.7e20, true)
-			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 4.7e19, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Money2", 167_363_953_387_265_500_000, true)
+			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Wins", 210_000_000_000_000_000_000, true)
 			DataService:ChangeValue(Players:GetPlayerByUserId(userId), "Rebirth", 35, true)
 
 			PetsService:AddPet(Players:GetPlayerByUserId(userId), "Chinese Dragon")
